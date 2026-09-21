@@ -1472,3 +1472,32 @@ CORRECTION TO MY OWN ADVICE
 
   Adding the function under Ontology SDK -> Resources is not about types. It
   is the permission grant. Do not test app permissions with a user token.
+
+--------------------------------------------------------------------------------
+2026-09-21 (later)  Advisor live in the app; impact formatting fixed
+--------------------------------------------------------------------------------
+  Functions (1) added under Ontology SDK -> Resources and saved. Panel renders.
+
+  BUG: impact rendered raw — 1352880, 46440, 1271127. The model returns
+  `impact` as free text and varies between runs: "$1,352,880" on one, a bare
+  number on the next. Both satisfy the prompt. Formatting a bare number in the
+  UI is more robust than another round of prompt tuning, so formatImpact()
+  converts digits-only strings to currency and passes everything else through
+  untouched — "3 communities" and "2 months of rent" are valid impacts and
+  must survive.
+
+  WHAT IT PRODUCED, live, against the app's own snapshot:
+    1. Reprice under-market renewals — $1,352,880, high confidence
+    2. Appeal Silos (Bexar) tax assessment — not quantified, File tax appeal
+    3. Raise rents at Arcilla Ridge (79% under market) — $46,440, links to
+       the community page
+    4. Pursue the 90+ day arrears concentration — $1,271,127, Waive or settle
+    5. Charge back resident-responsibility filter visits — Charge to resident
+
+  And the notes, which are the best thing on the panel: it named retention
+  against churn cost and refused the causal claim; it said neglect may be
+  actionable but the snapshot does not identify communities so no target can
+  be named; and it said per-visit filter cost and appeal success rates are
+  absent, which is why two impacts are unquantified. The model reporting the
+  limits of its own input is what makes the five suggestions above it worth
+  reading.

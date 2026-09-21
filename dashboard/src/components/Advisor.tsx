@@ -21,6 +21,32 @@ import css from "./Advisor.module.css";
  * reason to trust it.
  */
 
+const usd0 = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+/**
+ * The model returns `impact` as free text and is inconsistent about it between
+ * runs — "$1,352,880" on one, a bare 1352880 on the next. Both are correct
+ * answers to the prompt and neither is worth another round of prompt tuning,
+ * so a bare number is formatted here and anything else is passed through
+ * untouched. Never coerce: "3 communities" and "2 months of rent" are valid
+ * impacts and must survive.
+ */
+function formatImpact(raw: string): string {
+  const t = String(raw).trim();
+  if (!t) {
+    return t;
+  }
+  // Bare digits only — no currency symbol, no unit, no words.
+  if (/^-?\d+(\.\d+)?$/.test(t)) {
+    return usd0.format(Number(t));
+  }
+  return t;
+}
+
 const ACTION_LABEL: Record<string, string> = {
   "file-tax-appeal": "File tax appeal",
   "waive-rent-payment": "Waive or settle",
@@ -121,7 +147,7 @@ function Advisor(): React.ReactElement {
                     prompt tells the model to leave it blank rather than invent
                     a figure, so the basis is shown in its place. */}
                 {s.impact ? (
-                  <span className={css.ihAdvImpact}>{s.impact}</span>
+                  <span className={css.ihAdvImpact}>{formatImpact(s.impact)}</span>
                 ) : (
                   <span className={css.ihAdvNoImpact}>not quantified</span>
                 )}
