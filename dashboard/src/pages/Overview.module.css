@@ -1,0 +1,179 @@
+.page {
+  font-family: var(--ih-font-body);
+  color: var(--ih-text);
+  background: var(--ih-white);
+  min-height: 100vh;
+  padding: var(--ih-space-lg) var(--ih-space-xl) var(--ih-space-2xl);
+  box-sizing: border-box;
+}
+
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ih-space-md);
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--ih-n1);
+  padding-bottom: var(--ih-space-md);
+}
+
+.title {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.asOf {
+  font-size: 13px;
+  color: var(--ih-n6);
+}
+
+/* The synthetic-data disclosure. Visible on every screen rather than tucked
+   into an about page: anyone who sees a figure here should know where it came
+   from without having to ask. */
+.syntheticNotice {
+  margin: var(--ih-space-md) 0 0;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  background: var(--ih-banner-blue);
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--ih-text-secondary);
+}
+
+.verdict {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.35;
+  margin: var(--ih-space-xl) 0 var(--ih-space-lg);
+  max-width: 70ch;
+}
+
+.verdictFigure {
+  color: var(--ih-primary);
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1px;
+  background: var(--ih-n1);
+  border: 1px solid var(--ih-n1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.figure {
+  background: var(--ih-white);
+  padding: var(--ih-space-md);
+}
+
+.figureLabel {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ih-n6);
+  margin-bottom: var(--ih-space-xs);
+}
+
+.figureValue {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.1;
+}
+
+.figureNote {
+  font-size: 12px;
+  color: var(--ih-n6);
+  margin-top: var(--ih-space-xs);
+}
+
+.sectionTitle {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  margin: var(--ih-space-2xl) 0 var(--ih-space-xs);
+}
+
+.sectionNote {
+  font-size: 13px;
+  color: var(--ih-n6);
+  margin: 0 0 var(--ih-space-md);
+  max-width: 78ch;
+}
+
+/* Tables are the one thing allowed to scroll sideways on a narrow screen. */
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--ih-n1);
+  border-radius: 4px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ih-n6);
+  background: #fafafa;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  border-bottom: 1px solid var(--ih-n1);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  border-bottom: 1px solid #f2f2f2;
+  white-space: nowrap;
+}
+
+.table tbody tr:hover {
+  background: #fbfdf9;
+}
+
+/* Numeric columns align right. The header must carry the class too: a bare
+   `th { text-align: left }` outranks a class on the cell alone, which silently
+   drifts every numeric header away from its own numbers. */
+.num,
+.table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.gap {
+  color: var(--ih-error);
+  font-weight: 600;
+}
+
+.address {
+  font-weight: 600;
+}
+
+.state {
+  color: var(--ih-n6);
+}
+
+.status {
+  padding: var(--ih-space-2xl) 0;
+  color: var(--ih-n6);
+  font-size: 14px;
+}
+
+.error {
+  padding: var(--ih-space-md);
+  border: 1px solid var(--ih-error-light);
+  background: #fceeef;
+  border-radius: 4px;
+  color: #571e22;
+  font-size: 13px;
+}

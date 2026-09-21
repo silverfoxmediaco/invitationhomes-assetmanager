@@ -1,0 +1,65 @@
+/*
+ * Invitation Homes design tokens.
+ *
+ * Read from their own CSS custom properties on invitationhomes.com, not sampled
+ * from a screenshot. Their site is a consumer leasing funnel: white ground, big
+ * photography, green calls to action. This is a dense internal operations tool,
+ * so the palette carries over but the proportions do not.
+ *
+ * The trap worth knowing: --ih-success and --ih-primary are BOTH green and read
+ * as the same thing in a data table. One job per green — primary means
+ * interactive, success appears only in a status column, and they never sit
+ * adjacent.
+ */
+
+:root {
+  /* Brand */
+  --ih-primary: #206f06;
+  --ih-primary-light: #67bd47;
+  --ih-primary-dark: #195f02;
+  --ih-accent: #67bd47;
+  --ih-accent-dark: #63a72f;
+  --ih-accent-light: #9fcd3c;
+
+  /* The one deep, non-green brand colour. Dashboard chrome. */
+  --ih-corporate: #27565b;
+
+  /* Text and neutrals */
+  --ih-text: #212121;
+  --ih-text-secondary: #4d4d4d;
+  --ih-white: #fff;
+  --ih-n1: #e8e8e8;
+  --ih-n2: #d4d4d4;
+  --ih-n3: #bdbdbd;
+  --ih-n4: #a6a6a6;
+  --ih-n5: #8f8f8f;
+  --ih-n6: #7a7a7a;
+  --ih-n7: #636363;
+  --ih-n8: #4d4d4d;
+
+  /* Feedback */
+  --ih-success: #23a46e;
+  --ih-warning: #ebcb28;
+  --ih-error: #dd4b55;
+  --ih-error-light: #ec6f77;
+
+  /* Tints */
+  --ih-banner-blue: #def0fc;
+  --ih-banner-green: #c1eb65;
+
+  /* Type. Nunito 700 for display and headings, Hind for body and UI.
+     The contrast between the two IS the identity: a heading in Hind or body
+     copy in Nunito reads as off-brand even with the colours right. */
+  --ih-font-display: "Nunito", "Hind", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --ih-font-body: "Hind", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+
+  /* Spacing, 8pt */
+  --ih-space-xs: 4px;
+  --ih-space-sm: 8px;
+  --ih-space-md: 16px;
+  --ih-space-lg: 24px;
+  --ih-space-xl: 32px;
+  --ih-space-2xl: 48px;
+}

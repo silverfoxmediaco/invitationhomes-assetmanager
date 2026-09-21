@@ -1,7 +1,15 @@
+/* Brand fonts. Nunito 700 for display and headings, Hind for body and UI.
+   Imported before Blueprint so Blueprint can still override its own
+   component internals, and our tokens in theme.css come last. */
+@import url("https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap");
+
 /* BlueprintJS */
 @import "normalize.css";
 @import "@blueprintjs/core/lib/css/blueprint.css";
 @import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+
+/* Invitation Homes design tokens. Last, so they win. */
+@import "./theme.css";
 
 :root {
   font-family:

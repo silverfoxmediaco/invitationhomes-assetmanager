@@ -31,11 +31,68 @@ const scopes = [
   "api:use-mediasets-write",
 ];
 
-export const auth: PublicOauthClient = createPublicOauthClient(
+const rawAuth: PublicOauthClient = createPublicOauthClient(
   clientId,
   foundryUrl,
   redirectUrl,
   { scopes }
+);
+
+/**
+ * Workaround for a bug in @osdk/oauth 1.14.0 that strands a browser tab in a
+ * permanent sign-in failure. Diagnosed on a previous Foundry project; the same
+ * version ships here.
+ *
+ * What goes wrong: createPublicOauthClient writes { codeVerifier, state,
+ * oldUrl } into sessionStorage before redirecting to Foundry.
+ * maybeHandleAuthReturn only clears them in its CATCH block, so a SUCCESSFUL
+ * callback leaves them behind. signOut clears localStorage but not
+ * sessionStorage.
+ *
+ * A stale codeVerifier is not inert. On the next signIn the library sees one
+ * present and treats the CURRENT url as an auth callback, so it validates a
+ * url with no ?state and throws `response parameter "state" missing`.
+ * initiateLoginRedirect never runs, because the one path that could recover is
+ * the path the stale state blocks. sessionStorage survives reloads, so the tab
+ * stays broken until it is closed.
+ *
+ * It reads as intermittent: a fresh tab always works, a tab held across a
+ * sign-out never does.
+ *
+ * The retry is the part that matters. Clearing on success stops new tabs
+ * breaking; clearing and retrying on that specific error is the only thing
+ * that heals a tab, or a shared link, that is already poisoned.
+ */
+const OAUTH_SESSION_KEY = `@osdk/oauth : refresh : ${clientId}`;
+
+function clearOauthSession(): void {
+  try {
+    globalThis.sessionStorage?.removeItem(OAUTH_SESSION_KEY);
+  } catch {
+    // Private mode or blocked storage. Nothing to clear, nothing to report.
+  }
+}
+
+function isStalePkceError(e: unknown): boolean {
+  const message = e instanceof Error ? e.message : String(e ?? "");
+  return /parameter "?state"? missing|state.*missing/i.test(message);
+}
+
+export const auth: PublicOauthClient = Object.assign(
+  async function signIn(...args: Parameters<PublicOauthClient>) {
+    try {
+      const token = await rawAuth(...args);
+      clearOauthSession();
+      return token;
+    } catch (e) {
+      if (!isStalePkceError(e)) {
+        throw e;
+      }
+      clearOauthSession();
+      return await rawAuth(...args);
+    }
+  } as PublicOauthClient,
+  rawAuth
 );
 
 /**
