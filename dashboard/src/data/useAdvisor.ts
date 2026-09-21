@@ -38,7 +38,11 @@ export interface Suggestion {
   horizon: string;
   /** One of the four action types, or null when nothing executes it. */
   action: string | null;
-  target: { kind: "community" | "property" | "county" | null; id: string } | null;
+  /** `kind` is deliberately a loose string. The model returned "portfolio" on
+   *  the first live run — a sensible answer nobody had listed — and a union
+   *  type would have thrown that suggestion away rather than rendering it
+   *  without a link. Unknown kinds render as plain text. */
+  target: { kind: string | null; id: string } | null;
 }
 
 export interface AdvisorResult {

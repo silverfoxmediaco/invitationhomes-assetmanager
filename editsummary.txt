@@ -1418,3 +1418,57 @@ FRONT DOOR — the Target Air landing pattern, rebranded
 
   The synthetic-data notice sits OUTSIDE the sign-in card, not in it. Inside it
   would read as part of the sign-in terms and be skimmed with them.
+
+================================================================================
+2026-09-21  AI advisor panel, and a box-sizing regression I caused
+================================================================================
+
+THE ADVISOR IS LIVE
+  portfolioAdvisor published from AIP Logic, Claude Opus 4.8, ~16s per run.
+  Built: useSnapshot.ts (assembles the payload from the EXISTING page hooks),
+  useAdvisor.ts (calls it, parses, treats "not published" as its own state),
+  components/Advisor.tsx + .module.css, placed at the foot of the overview.
+
+  Called by URL rather than through the generated SDK so it works the moment
+  the function is published and a missing function is a clean 404 rather than
+  a TypeScript error that blocks the build.
+
+  RULE 1 HELD. First live run cited seventeen distinct figures, every one
+  traceable to the snapshot, with the single calculation declared as
+  "gapPerMonth 3870 x 12". Two suggestions returned an EMPTY impact with a
+  stated reason rather than inventing one, and dropped their own confidence
+  accordingly. Three of five attached the right action to the right object
+  kind. Second run went further and connected two communities in the same
+  county (Silos $8,308 and Arcilla Ridge $7,917, both Bexar).
+
+  Rule 5 also fired unprompted: "Retention is 46%, so raise carefully", with
+  the basis reading "46% retention noted as a tension, not a proven cost of
+  raising rent". It refused the causal claim the data cannot support.
+
+  The model's own `notes` found a real gap in MY snapshot design: neglect
+  orders are passed as a portfolio total, so it cannot target a community for
+  the filter chargeback. Worth adding per-community neglect counts.
+
+BOX-SIZING REGRESSION — MINE, CAUGHT BY JAMES ON THE DEPLOYED SITE
+  The sign-in button overflowed its card by 5px. Cause: removing BlueprintJS
+  this afternoon also removed the global `box-sizing: border-box` reset it was
+  quietly supplying. normalize.css deliberately does not set it, so everything
+  fell back to content-box and any `width: 100%` element carrying padding or a
+  border rendered wider than its parent. The button was 473px of content plus
+  40px padding plus 2px border inside a 473px card.
+
+  Fixed with the universal reset in index.css. Swept both the landing page and
+  /properties afterwards for any element still spilling past its parent: only
+  the intentional watermark and the parked drawer, and no horizontal document
+  scroll. Inputs and selects confirmed border-box.
+
+CORRECTION TO MY OWN ADVICE
+  I told James he could skip adding the function to SDK Resources because my
+  curl call worked. Wrong, and wrong for a reason worth recording: I tested
+  with a personal user token that has broad permissions, while the app's OAuth
+  client is marked Restricted and can only reach resources explicitly granted
+  to it. The panel returned 403
+  FunctionRegistry:ReadOntologyFunctionPermissionDenied.
+
+  Adding the function under Ontology SDK -> Resources is not about types. It
+  is the permission grant. Do not test app permissions with a user token.

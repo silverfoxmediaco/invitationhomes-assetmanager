@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Advisor from "@/components/Advisor";
 import { usePortfolio } from "@/data/usePortfolio";
 import css from "./Overview.module.css";
 
@@ -170,6 +171,8 @@ function Overview(): React.ReactElement {
           </Link>
         </p>
       )}
+
+      <Advisor />
     </div>
   );
 }

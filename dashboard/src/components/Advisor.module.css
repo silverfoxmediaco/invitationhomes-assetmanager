@@ -1,0 +1,233 @@
+/* "What to do about it".
+   Set apart from the rest of the dashboard — every other panel reports a
+   measurement, this one offers an opinion, and the reader should be able to
+   see which is which without reading a word. A tinted ground and the corporate
+   teal rule do that; nothing else on these pages uses either. */
+.ihAdvPanel {
+  margin-top: var(--ih-space-2xl);
+  padding: var(--ih-space-lg) var(--ih-space-xl) var(--ih-space-xl);
+  background: #f7faf5;
+  border: 1px solid var(--ih-n1);
+  border-top: 3px solid var(--ih-corporate);
+  border-radius: 4px;
+}
+
+.ihAdvBar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ih-space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--ih-space-lg);
+}
+
+.ihAdvHeading {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 20px;
+  margin: 0;
+}
+
+.ihAdvSub {
+  font-size: 12px;
+  color: var(--ih-n6);
+  margin: 2px 0 0;
+}
+
+.ihAdvRerun {
+  font-family: var(--ih-font-body);
+  font-size: 13px;
+  padding: var(--ih-space-xs) var(--ih-space-md);
+  border: 1px solid var(--ih-n2);
+  background: var(--ih-white);
+  color: var(--ih-text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ihAdvRerun:hover {
+  border-color: var(--ih-primary);
+  color: var(--ih-primary);
+}
+
+/* --- The list ------------------------------------------------------------- */
+.ihAdvList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ih-space-sm);
+}
+
+.ihAdvItem {
+  background: var(--ih-white);
+  border: 1px solid var(--ih-n1);
+  border-radius: 4px;
+  padding: var(--ih-space-md) var(--ih-space-lg);
+}
+
+.ihAdvHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ih-space-sm);
+  flex-wrap: wrap;
+}
+
+/* Ranked, and the rank is the model's own ordering by expected value. */
+.ihAdvRank {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ih-n5);
+  min-width: 14px;
+}
+
+.ihAdvTitle {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.3;
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ihAdvConfidence {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* Confidence is the model marking its own homework, so it is stated quietly.
+   Low is not an error — on the first run the model dropped to low precisely
+   because it refused to invent a figure, which is the behaviour we want. */
+.ihAdvConfHigh {
+  background: #e7f2e2;
+  color: #1f5410;
+}
+
+.ihAdvConfMed {
+  background: var(--ih-n1);
+  color: var(--ih-n7);
+}
+
+.ihAdvConfLow {
+  background: #fdf3cf;
+  color: #6b5d0f;
+}
+
+.ihAdvRationale {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ih-text-secondary);
+  margin: var(--ih-space-sm) 0 var(--ih-space-sm);
+  max-width: 88ch;
+}
+
+/* --- The workings --------------------------------------------------------- */
+.ihAdvMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--ih-space-sm);
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+.ihAdvImpact {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ih-text);
+}
+
+/* Blank impact is an answer, not a gap — the prompt tells the model to leave
+   it empty rather than invent one. Labelled so it does not read as a bug. */
+.ihAdvNoImpact {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--ih-n6);
+}
+
+.ihAdvBasis {
+  color: var(--ih-n6);
+}
+
+.ihAdvHorizon,
+.ihAdvTargetPlain {
+  color: var(--ih-n7);
+  background: var(--ih-n1);
+  padding: 1px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.ihAdvTargetLink {
+  color: var(--ih-primary);
+  background: #eef5ea;
+  padding: 1px 8px;
+  border-radius: 3px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ihAdvTargetLink:hover {
+  text-decoration: underline;
+}
+
+/* The point of the whole exercise: a suggestion that is not prose but a thing
+   the ontology can actually execute. Carries the brand green because it is the
+   one element here that would DO something. */
+.ihAdvAction {
+  color: var(--ih-white);
+  background: var(--ih-primary);
+  padding: 2px 10px;
+  border-radius: 3px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* --- States and footnotes ------------------------------------------------- */
+.ihAdvNote {
+  font-size: 13px;
+  color: var(--ih-text-secondary);
+  margin: 0;
+  max-width: 82ch;
+  line-height: 1.55;
+}
+
+.ihAdvError {
+  font-size: 13px;
+  color: #571e22;
+  background: #fceeef;
+  border-radius: 4px;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  margin: 0;
+  max-width: 82ch;
+}
+
+/* The model's own account of what it could not judge. Worth as much as the
+   suggestions — it is the difference between a limit and a silent omission. */
+.ihAdvNotes {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ih-n7);
+  background: var(--ih-white);
+  border: 1px solid var(--ih-n1);
+  border-radius: 4px;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  margin: var(--ih-space-sm) 0 0;
+  max-width: 90ch;
+}
+
+.ihAdvMethod {
+  margin: var(--ih-space-lg) 0 0;
+  padding-top: var(--ih-space-md);
+  border-top: 1px solid var(--ih-n1);
+  font-size: 12px;
+  color: var(--ih-n6);
+  line-height: 1.5;
+  max-width: 86ch;
+}

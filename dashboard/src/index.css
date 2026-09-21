@@ -15,6 +15,20 @@
    paint lands in a fallback face before reflowing. The link tag lets the
    browser start both at once. */
 
+/* Border-box everywhere.
+   This is not stylistic. BlueprintJS was supplying this reset and nothing
+   replaced it when Blueprint was removed, so every element fell back to the
+   browser default of content-box — and `width: 100%` on anything carrying
+   padding or a border then renders WIDER than its parent. The sign-in button
+   was 473px of content plus 40px of padding plus 2px of border inside a 473px
+   card, and spilled 5px past its own panel. normalize.css deliberately does
+   not set this, so it has to be set here. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* Hind is the default for everything, and Nunito is opted into by the display
    tokens. The scaffold shipped a "Source Sans Pro" stack here, which meant any
    element that did not explicitly name a font — the menu notes, for one — quietly
