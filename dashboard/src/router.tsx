@@ -10,6 +10,7 @@ import Maintenance from "@/pages/Maintenance";
 import Overview from "@/pages/Overview";
 import PropertyDetail from "@/pages/PropertyDetail";
 import PropertyList from "@/pages/PropertyList";
+import Scenario from "@/pages/Scenario";
 import { createBrowserRouter } from "react-router-dom";
 
 export const router = createBrowserRouter(
@@ -33,6 +34,7 @@ export const router = createBrowserRouter(
         { path: "/leasing", element: <Leasing /> },
         { path: "/at-risk", element: <AtRisk /> },
         { path: "/maintenance", element: <Maintenance /> },
+        { path: "/scenario", element: <Scenario /> },
       ],
     },
     {

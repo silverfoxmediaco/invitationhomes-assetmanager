@@ -1,0 +1,147 @@
+.back {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ih-primary);
+  text-decoration: none;
+  margin-bottom: var(--ih-space-md);
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* --- Controls -------------------------------------------------------------
+   Given real prominence rather than tucked into a corner. On every other page
+   the reader is looking at a measurement; here they are supposed to move
+   something and watch it change, and controls that look incidental do not get
+   touched. */
+.ihScControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ih-space-2xl);
+  align-items: flex-start;
+  margin: var(--ih-space-lg) 0 var(--ih-space-xl);
+  padding: var(--ih-space-lg);
+  background: #f7faf5;
+  border: 1px solid var(--ih-n1);
+  border-radius: 6px;
+}
+
+.ihScField {
+  min-width: 0;
+}
+
+.ihScLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ih-n6);
+  margin-bottom: var(--ih-space-sm);
+}
+
+/* Slider and number field together on purpose. Dragging is how somebody
+   explores the shape of the answer; typing is how they test the 2.5% their
+   board paper already says. Both write the same URL parameter. */
+.ihScRaiseRow {
+  display: flex;
+  align-items: center;
+  gap: var(--ih-space-md);
+}
+
+.ihScSlider {
+  width: 280px;
+  max-width: 50vw;
+  accent-color: var(--ih-primary);
+  cursor: pointer;
+}
+
+.ihScNumberWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--ih-n2);
+  border-radius: 4px;
+  background: var(--ih-white);
+  padding: 0 var(--ih-space-sm) 0 0;
+}
+
+.ihScNumberWrap:focus-within {
+  border-color: var(--ih-primary);
+  outline: 2px solid var(--ih-primary);
+  outline-offset: -1px;
+}
+
+.ihScNumber {
+  width: 68px;
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 20px;
+  text-align: right;
+  padding: var(--ih-space-xs) var(--ih-space-sm);
+  border: none;
+  background: transparent;
+  color: var(--ih-text);
+}
+
+.ihScNumber:focus {
+  outline: none;
+}
+
+.ihScPercent {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ih-n5);
+}
+
+.ihScTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ih-space-xs);
+}
+
+.ihScTab {
+  font-family: var(--ih-font-body);
+  font-size: 13px;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  border: 1px solid var(--ih-n2);
+  background: var(--ih-white);
+  color: var(--ih-text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ihScTab:hover {
+  border-color: var(--ih-n4);
+}
+
+.ihScTabActive,
+.ihScTabActive:hover {
+  background: var(--ih-primary);
+  border-color: var(--ih-primary);
+  color: var(--ih-white);
+}
+
+/* --- Figures -------------------------------------------------------------- */
+
+/* The number the page exists to produce. Teal rather than green or red: it is
+   neither good news nor bad, it is the threshold the decision turns on. */
+.ihScBreakeven {
+  color: var(--ih-corporate);
+}
+
+.ihScTotal {
+  font-weight: 700;
+}
+
+.ihScMethod {
+  margin-top: var(--ih-space-2xl);
+  padding-top: var(--ih-space-md);
+  border-top: 1px solid var(--ih-n1);
+  font-size: 12px;
+  color: var(--ih-n6);
+  line-height: 1.5;
+  max-width: 86ch;
+}

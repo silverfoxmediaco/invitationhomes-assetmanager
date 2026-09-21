@@ -45,6 +45,11 @@ const GROUPS: { title: string; items: Item[] }[] = [
       { to: "/collections", label: "Rent collection", note: "Collected, and collected on time" },
       { to: "/leasing", label: "Leasing", note: "Move-ins, renewals and what leaving costs" },
       { to: "/at-risk", label: "Residents at risk", note: "Who is behind and who is sliding" },
+      {
+        to: "/scenario",
+        label: "Renewal scenario",
+        note: "What a rent increase is worth, and what it risks",
+      },
     ],
   },
   {

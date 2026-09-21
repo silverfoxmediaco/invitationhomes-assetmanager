@@ -1501,3 +1501,52 @@ CORRECTION TO MY OWN ADVICE
   absent, which is why two impacts are unquantified. The model reporting the
   limits of its own input is what makes the five suggestions above it worth
   reading.
+
+================================================================================
+2026-09-21  Renewal scenario — what-if, modelled honestly
+================================================================================
+  James: "if a CEO wants to see the net effect of raising all rents by 2.5% on
+  upcoming lease renewals?"
+
+BUILT
+  dashboard/src/data/useScenario.ts
+  dashboard/src/pages/Scenario.tsx + .module.css
+  route /scenario; added to the menu under Revenue
+
+  Two inputs, both in the URL so a scenario is a link: a rent-increase slider
+  paired with a number field (drag to explore, type to test the 2.5% already in
+  the board paper), and a horizon of 90 / 180 / 365 days.
+
+WHAT IT REFUSES TO DO, AND WHY THAT MAKES IT BETTER
+  It does not predict how residents react. There is no elasticity in this data
+  and there cannot be — residents who left have no recorded offer, so nothing
+  says what increase they walked away from. Answering "2.5% costs you four
+  points of retention" would invent the single number the question turns on.
+
+  So it runs the other way: what the increase is WORTH, what a departure
+  COSTS, and the BREAK-EVEN between them. At 2.5% on the 386 leases expiring
+  in 90 days it adds $290,729 a year, wiped out by 43 extra departures — 11%
+  of that cohort. The executive brings the judgement about whether the market
+  bears it; the tool does the arithmetic correctly and narrows the decision to
+  one number.
+
+WHAT A TURN COSTS IS DERIVED, NOT ASSUMED — $6,782
+    rent forgone while empty  $2,991   1.15 vacant months x avg rent
+    turn work                 $2,619   Turn expense / turn event
+    marketing                 $  936
+    utilities while empty     $  235
+  Vacancy is MEASURABLE because utilities bill only while a home is empty —
+  residents pay their own — so utility rows per turn are the vacant months.
+  That makes rent forgone the largest single component, and it is the one a
+  napkin calculation always leaves out.
+
+THE SECOND FINDING ON THE PAGE
+  At 2.5%, 146 of the 386 would sit above market afterwards (78 already do) —
+  but the rest are still BELOW their median, with headroom left. The page says
+  so: the risk in a 2.5% scenario may be that it is too timid, not too bold.
+
+  Retention is shown for reference only and is deliberately NOT an input.
+  Applying a portfolio-wide 46% to a specific cohort facing a specific
+  increase would be the same invention the page refuses to make.
+
+  Queries run once; moving a control re-runs only the arithmetic.
