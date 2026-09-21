@@ -55,12 +55,17 @@
   color: var(--ih-primary);
 }
 
+/* Dividers are drawn by each cell's own right and bottom border, not by a
+   1px grid gap over a tinted container. The gap trick is neater until the row
+   does not divide evenly — five figures wrapping to four-plus-one leave the
+   container colour showing through as a grey slab where the sixth cell would
+   be. Borders on the cells themselves simply stop where the cells stop. */
 .figures {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 1px;
-  background: var(--ih-n1);
-  border: 1px solid var(--ih-n1);
+  background: var(--ih-white);
+  border-top: 1px solid var(--ih-n1);
+  border-left: 1px solid var(--ih-n1);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -68,6 +73,8 @@
 .figure {
   background: var(--ih-white);
   padding: var(--ih-space-md);
+  border-right: 1px solid var(--ih-n1);
+  border-bottom: 1px solid var(--ih-n1);
 }
 
 .figureLabel {

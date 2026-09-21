@@ -64,6 +64,9 @@ export interface PropertyDetail {
   workOrderCount: number;
   neglectCount: number;
   expenses12m: number;
+  /** Episodic capital spend, split out: it is most of the expense line and it
+   *  is not a run rate. The community pages split it the same way. */
+  capex12m: number;
   taxAnnual: number;
   taxLatest: number | null;
   taxChangePct: number | null;
@@ -210,7 +213,13 @@ export function useProperty(propertyId: string | undefined): {
 
         const maintenanceLandlord = recent(landlordWos, "openedDate").reduce((s, w) => s + w.cost, 0);
         const maintenanceResident = recent(residentWos, "openedDate").reduce((s, w) => s + w.cost, 0);
-        const expenses12m = recent(myExpenses, "date").reduce((s, e) => s + e.amount, 0);
+        const recentExpenses = recent(myExpenses, "date");
+        const capex12m = recentExpenses
+          .filter((e) => e.category === "CapEx")
+          .reduce((s, e) => s + e.amount, 0);
+        const expenses12m = recentExpenses
+          .filter((e) => e.category !== "CapEx")
+          .reduce((s, e) => s + e.amount, 0);
 
         const myAssessments = [...assessments].sort((a, b) => b.taxYear - a.taxYear);
         const latestAssessment = myAssessments[0] ?? null;
@@ -245,7 +254,7 @@ export function useProperty(propertyId: string | undefined): {
         const taxAnnual = latestBill?.amountDue ?? 0;
 
         const annualRent = active ? active.monthlyRent * 12 : null;
-        const annualCost = maintenanceLandlord + expenses12m + taxAnnual;
+        const annualCost = maintenanceLandlord + capex12m + expenses12m + taxAnnual;
 
         setData({
           property: {
@@ -279,6 +288,7 @@ export function useProperty(propertyId: string | undefined): {
           workOrderCount: myWos.length,
           neglectCount: myWos.filter((w) => w.contributingNeglect).length,
           expenses12m,
+          capex12m,
           taxAnnual,
           taxLatest: latestAssessment?.assessedValue ?? null,
           taxChangePct: latestAssessment?.changePct ?? null,

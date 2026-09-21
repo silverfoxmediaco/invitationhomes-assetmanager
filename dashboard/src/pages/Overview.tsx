@@ -120,6 +120,14 @@ function Overview(): React.ReactElement {
           scored on arrears, payment trend and how close the lease is to expiry
         </span>
       </p>
+      <p className={css.jumpTo}>
+        <Link to="/communities" className={css.rowLink}>
+          Communities &rarr;
+        </Link>{" "}
+        <span className={css.state}>
+          the same portfolio as 76 acquisitions rather than 3,001 houses
+        </span>
+      </p>
 
       <h2 className={css.sectionTitle}>Largest gaps to market</h2>
       <p className={css.sectionNote}>

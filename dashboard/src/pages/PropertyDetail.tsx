@@ -53,9 +53,16 @@ function PropertyDetail(): React.ReactElement {
       return "This home is at or above its local market rate.";
     }
     const heavyCost = data.annualCost > (data.annualRent ?? 0) * 0.45;
-    return heavyCost
-      ? "Under market AND carrying heavy costs. Raising rent at renewal closes part of the gap, but the cost side is the larger problem here."
-      : "Under market on rent, with costs in normal range. This is a pricing decision, not a cost problem.";
+    if (!heavyCost) {
+      return "Under market on rent, with costs in normal range. This is a pricing decision, not a cost problem.";
+    }
+    // Heavy cost means something different depending on what it is made of. A
+    // roof replaced once is not a home that is expensive to run, and treating
+    // the two alike would argue for selling a house that simply had a bad year.
+    const capexLed = data.capex12m > data.annualCost * 0.3;
+    return capexLed
+      ? "Under market, and the last twelve months carried a large capital item. Strip that out and the running costs are ordinary — the gap to market is the live problem, not the spend."
+      : "Under market AND expensive to run, with the cost in recurring items rather than one-off capital. Raising rent at renewal closes part of the gap, but the cost side needs its own answer.";
   })();
 
   return (
@@ -141,6 +148,10 @@ function PropertyDetail(): React.ReactElement {
           <dl className={own.facts}>
             <dt>Maintenance</dt>
             <dd>{usd0.format(data.maintenanceLandlord)}</dd>
+            <dt>CapEx</dt>
+            <dd>
+              {usd0.format(data.capex12m)} <span className={own.muted}>episodic</span>
+            </dd>
             <dt>Operating expenses</dt>
             <dd>{usd0.format(data.expenses12m)}</dd>
             <dt>Property tax</dt>

@@ -1012,3 +1012,70 @@ OPEN
     - Property detail figures grid wraps 4+1 at ~1500px and the empty cell
       shows the divider background as a grey block. Cosmetic, not reported.
     - Remaining pages: community view, rent collection, maintenance.
+
+================================================================================
+2026-09-21  Community view — the portfolio as 76 acquisitions
+================================================================================
+
+BUILT
+  dashboard/src/data/useCommunities.ts     76-community aggregate
+  dashboard/src/data/useCommunity.ts       one community, every home in it
+  dashboard/src/pages/CommunityList.tsx    + .module.css
+  dashboard/src/pages/CommunityDetail.tsx  reuses the list and detail CSS
+  router: /communities and /community/:slug;  Overview cross-links to both
+
+WHAT IT SAYS
+  33 of 76 communities have more than half their homes below market. Under-
+  market rent is not scattered across 1,281 houses, it collects in communities
+  where pricing was set at acquisition and never revisited — one decision each.
+  Totals reconcile to the overview exactly: 1,281 homes, $112,740/month.
+
+  52 homes are contracted BELOW the starting rent their own community
+  advertises today, across 17 communities. Shown only for the 73 communities
+  with a scraped rent; the 3 with an estimated anchor are excluded, because
+  comparing a real contract against a number we invented is a finding about
+  the invention.
+
+TWO THINGS THE FIRST DRAFT GOT WRONG, BOTH CAUGHT BY RENDERING IT
+  1. THIRTEEN MONTHS LABELLED AS A YEAR. Costs were summed over the same 13-
+     month window used to fetch, while every figure said "a year" — roughly 8%
+     high on every community. Now fetches 13 for boundary slack and counts 12.
+     Median cost per home went $20,747 -> $19,905, which matches local
+     validation exactly.
+
+  2. "COST IS MOSTLY GEOGRAPHY" WAS HALF TRUE AND I WROTE IT AS WHOLLY TRUE.
+     Checked it: of the $11,407 spread between the dearest and cheapest
+     community, property tax is 50% and episodic CapEx a further 26%. Routine
+     maintenance differs by $1,542. Insurance, which one would expect to be
+     geographic, is nearly flat — Tennessee slightly higher than Texas.
+     So CapEx now has its own column and the copy says half, not most.
+
+  CapEx is split out everywhere for the same reason: it is lumpy. Two roofs
+  inside the window in a 29-home community move cost-per-home by thousands;
+  the same spend across 75 homes vanishes. Blended into operating cost it
+  makes a small community look badly run.
+
+CARRIED BACK INTO PROPERTY DETAIL
+  The same split, because the same money was labelled two ways on two screens.
+  PROP-00978 read "Operating expenses $14,524" — $6,988 of which was capital.
+  The verdict now distinguishes: a home whose heavy year was one capital item
+  is not a home that is expensive to run, and treating them alike argues for
+  selling a house that simply had a bad year.
+
+FIXED: THE GREY SLAB
+  The figures grid drew its dividers as a 1px gap over a tinted container.
+  Neat until a row does not divide evenly — five figures wrapping to four-plus-
+  one left the container colour showing as a grey block where the sixth cell
+  would be. Dividers are now borders on the cells themselves, which stop where
+  the cells stop. Same fix on the delinquency ageing strip.
+
+VERIFIED
+  Silos reconciles to local validation to the dollar: $26,253 cost per home,
+  tax $8,308, CapEx $6,538, maintenance $4,074. Bexar County, reassessed
+  annually, mill rate 0.0225 — which is the explanation for the tax line and
+  the reason the county is fetched onto the page at all.
+
+OPEN
+  - Remaining pages: rent collection, maintenance.
+  - Resident display names collide (Rowan Ellis appears twice in Silos). The
+    generator draws from a small name pool; ids are distinct. Cosmetic.
