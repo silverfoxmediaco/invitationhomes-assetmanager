@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { signOut } from "@/client";
 import logo from "/invitation-homes-logo.svg";
 import css from "./AppHeader.module.css";
 
@@ -66,7 +67,9 @@ const GROUPS: { title: string; items: Item[] }[] = [
 
 function AppHeader(): React.ReactElement {
   const [open, setOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -119,6 +122,19 @@ function AppHeader(): React.ReactElement {
   }, [open]);
 
   const current = location.pathname;
+
+  // Land on the public door rather than a data route. Every other page reads
+  // the ontology on mount, so signing out and staying put would bounce the
+  // user straight back into the sign-in they just left.
+  const onSignOut = async (): Promise<void> => {
+    setSigningOut(true);
+    try {
+      await signOut();
+    } finally {
+      setOpen(false);
+      navigate("/", { replace: true });
+    }
+  };
 
   return (
     <header className={css.header}>
@@ -201,9 +217,19 @@ function AppHeader(): React.ReactElement {
           ))}
         </div>
 
-        <p className={css.drawerFoot}>
-          Prototype on Palantir Foundry &middot; synthetic data
-        </p>
+        <div className={css.drawerFoot}>
+          <button
+            type="button"
+            className={css.signOut}
+            onClick={onSignOut}
+            disabled={signingOut}
+          >
+            {signingOut ? "Signing out…" : "Sign out"}
+          </button>
+          <span className={css.drawerFootNote}>
+            Prototype on Palantir Foundry &middot; synthetic data
+          </span>
+        </div>
       </div>
 
     </header>

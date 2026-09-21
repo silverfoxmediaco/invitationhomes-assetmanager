@@ -98,6 +98,30 @@ export const auth: PublicOauthClient = Object.assign(
 );
 
 /**
+ * Sign out, and clear the half of the session the library leaves behind.
+ *
+ * `auth.signOut()` clears localStorage. It does NOT clear the sessionStorage
+ * entry holding the PKCE codeVerifier — the same omission documented at length
+ * above. Signing out and back in inside one tab is therefore the exact
+ * sequence that poisons it: the stale verifier makes the next signIn treat the
+ * current url as an auth callback, and it throws `response parameter "state"
+ * missing` on a url that has no state to find.
+ *
+ * The retry wrapper on `auth` would heal that on the second attempt, but a
+ * sign-out that knowingly leaves a landmine for sign-in is not a sign-out.
+ * Clear both.
+ */
+export async function signOut(): Promise<void> {
+  try {
+    await auth.signOut();
+  } finally {
+    // Runs even if signOut throws. A failed sign-out that left the token in
+    // place would be worse if it also left the session key.
+    clearOauthSession();
+  }
+}
+
+/**
  * Initialize the client to interact with the Ontology and Platform SDKs
  */
 export const client: Client = createClient(foundryUrl, ontologyRid, auth);

@@ -1550,3 +1550,24 @@ THE SECOND FINDING ON THE PAGE
   increase would be the same invention the page refuses to make.
 
   Queries run once; moving a control re-runs only the arithmetic.
+
+--------------------------------------------------------------------------------
+2026-09-21  Sign out in the drawer
+--------------------------------------------------------------------------------
+  client.ts now exports signOut(), and the drawer footer carries the button.
+
+  IT CLEARS BOTH STORES. auth.signOut() clears localStorage and leaves the PKCE
+  codeVerifier in sessionStorage — the omission documented at length in
+  client.ts. Signing out and back in inside one tab is the exact sequence that
+  poisons it: the stale verifier makes the next signIn treat the current url as
+  an auth callback and throw `response parameter "state" missing` on a url with
+  no state. The retry wrapper would heal it on the second attempt, but a
+  sign-out that leaves a landmine for sign-in is not a sign-out. Cleared in a
+  finally, so a failed sign-out still clears the session key.
+
+  Navigates to / rather than staying put: every other route reads the ontology
+  on mount, so signing out and standing still bounces the user straight back
+  into the sign-in they just left.
+
+  Outlined full-width button, red on hover — it is the one destructive thing in
+  a menu of places to go and should not read as another one.

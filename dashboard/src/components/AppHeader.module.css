@@ -300,9 +300,45 @@
 }
 
 .drawerFoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ih-space-sm);
   margin: 0;
   padding: var(--ih-space-md) var(--ih-space-lg);
   border-top: 1px solid var(--ih-n1);
+}
+
+/* Full width and outlined rather than a text link. Signing out is the one
+   destructive thing in this menu and it sits below a list of navigation
+   items — it needs to not read as another place to go. Outlined rather than
+   filled because it should be findable, not inviting. */
+.signOut {
+  width: 100%;
+  font-family: var(--ih-font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  border: 1px solid var(--ih-n2);
+  border-radius: 4px;
+  background: var(--ih-white);
+  color: var(--ih-text);
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.signOut:hover:not(:disabled) {
+  border-color: var(--ih-error);
+  color: var(--ih-error);
+}
+
+.signOut:disabled {
+  color: var(--ih-n5);
+  cursor: default;
+}
+
+.drawerFootNote {
   font-size: 11px;
   color: var(--ih-n6);
 }
