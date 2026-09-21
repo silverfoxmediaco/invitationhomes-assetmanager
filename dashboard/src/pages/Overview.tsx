@@ -197,7 +197,14 @@ function Overview(): React.ReactElement {
       </div>
       {data.rows.length > top.length && (
         <p className={css.sectionNote}>
-          Showing the 25 largest of {num.format(data.rows.length)}.
+          Showing the 25 largest of {num.format(data.rows.length)}.{" "}
+          <Link to="/properties?show=under" className={css.rowLink}>
+            See all {num.format(data.rows.length)} under market &rarr;
+          </Link>{" "}
+          or{" "}
+          <Link to="/properties" className={css.rowLink}>
+            browse every home &rarr;
+          </Link>
         </p>
       )}
     </div>

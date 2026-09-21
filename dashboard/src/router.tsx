@@ -7,6 +7,7 @@ import CommunityList from "@/pages/CommunityList";
 import AuthCallback from "@/AuthCallback";
 import Overview from "@/pages/Overview";
 import PropertyDetail from "@/pages/PropertyDetail";
+import PropertyList from "@/pages/PropertyList";
 import { createBrowserRouter } from "react-router-dom";
 
 export const router = createBrowserRouter(
@@ -38,6 +39,10 @@ export const router = createBrowserRouter(
     {
       path: "/collections",
       element: <Collections />,
+    },
+    {
+      path: "/properties",
+      element: <PropertyList />,
     },
     {
       path: "/property/:propertyId",

@@ -1,0 +1,160 @@
+.back {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ih-primary);
+  text-decoration: none;
+  margin-bottom: var(--ih-space-md);
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* --- Controls ------------------------------------------------------------- */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ih-space-sm);
+  margin: var(--ih-space-lg) 0 var(--ih-space-md);
+}
+
+.search {
+  flex: 1 1 320px;
+  min-width: 0;
+  font-family: var(--ih-font-body);
+  font-size: 14px;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  border: 1px solid var(--ih-n2);
+  border-radius: 4px;
+  color: var(--ih-text);
+  background: var(--ih-white);
+}
+
+.search:focus,
+.select:focus {
+  outline: 2px solid var(--ih-primary);
+  outline-offset: -1px;
+  border-color: var(--ih-primary);
+}
+
+.select {
+  font-family: var(--ih-font-body);
+  font-size: 14px;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  border: 1px solid var(--ih-n2);
+  border-radius: 4px;
+  background: var(--ih-white);
+  color: var(--ih-text);
+}
+
+/* --- Tabs ----------------------------------------------------------------- */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ih-space-xs);
+  margin-bottom: var(--ih-space-md);
+}
+
+.tab {
+  font-family: var(--ih-font-body);
+  font-size: 13px;
+  padding: var(--ih-space-xs) var(--ih-space-md);
+  border: 1px solid var(--ih-n2);
+  background: var(--ih-white);
+  color: var(--ih-text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  border-color: var(--ih-n4);
+}
+
+.tabActive,
+.tabActive:hover {
+  background: var(--ih-primary);
+  border-color: var(--ih-primary);
+  color: var(--ih-white);
+}
+
+.summary {
+  font-size: 13px;
+  color: var(--ih-n7);
+  margin: 0 0 var(--ih-space-md);
+}
+
+/* --- Table ---------------------------------------------------------------- */
+.place {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--ih-n6);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.sOccupied,
+.sVacant,
+.sTurn {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* Occupied is the normal state and gets the quietest treatment. The two that
+   earn nothing are the ones worth spotting in a list of three thousand. */
+.sOccupied {
+  background: var(--ih-n1);
+  color: var(--ih-n7);
+}
+
+.sTurn {
+  background: #fdf3cf;
+  color: #6b5d0f;
+}
+
+.sVacant {
+  background: #fadcde;
+  color: #8d2630;
+}
+
+/* --- Paging --------------------------------------------------------------- */
+.more {
+  display: flex;
+  align-items: center;
+  gap: var(--ih-space-md);
+  margin-top: var(--ih-space-md);
+}
+
+.moreButton {
+  font-family: var(--ih-font-body);
+  font-size: 13px;
+  padding: var(--ih-space-sm) var(--ih-space-lg);
+  border: 1px solid var(--ih-n2);
+  background: var(--ih-white);
+  color: var(--ih-primary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.moreButton:hover {
+  border-color: var(--ih-primary);
+}
+
+.moreNote {
+  font-size: 12px;
+  color: var(--ih-n6);
+}
+
+.method {
+  margin-top: var(--ih-space-2xl);
+  padding-top: var(--ih-space-md);
+  border-top: 1px solid var(--ih-n1);
+  font-size: 12px;
+  color: var(--ih-n6);
+  max-width: 82ch;
+  line-height: 1.5;
+}

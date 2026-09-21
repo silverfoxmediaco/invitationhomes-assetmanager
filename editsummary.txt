@@ -1230,3 +1230,41 @@ VERIFIED against the source CSVs, every figure exact:
 ALL SEVEN PAGES NOW LIVE
   / overview, /property/:id, /at-risk, /communities, /community/:slug,
   /leasing, /collections, /maintenance
+
+================================================================================
+2026-09-21  All homes — fixing a dead end James spotted
+================================================================================
+  "Showing the 25 largest of 1,281." — and no way to see the other 1,256, let
+  alone the 1,720 homes that are not under market at all. The overview answers
+  "where is the money" and cannot answer "what about this house".
+
+BUILT
+  dashboard/src/data/useProperties.ts
+  dashboard/src/pages/PropertyList.tsx + .module.css
+  route /properties;  overview footer now links to it both ways
+
+  Search across address, city, community, property id and ZIP. Market filter.
+  Six sorts. Four tabs with live counts: All 3,001 / Occupied 2,760 /
+  Vacant or in turn 241 / Under market 1,281. Pages 100 at a time.
+
+  FILTER STATE LIVES IN THE URL so a filtered list can be sent to somebody.
+  /properties?show=vacant&q=tampa is three homes in The Heights, and that link
+  survives being pasted into a message.
+
+VACANT HOMES ARE LISTED, NOT HIDDEN
+  They have no contract rent, so they carry no gap and drop out of every
+  under-market figure on this dashboard. Correct for those figures, wrong as a
+  picture of the portfolio: a home earning nothing is the most expensive kind
+  there is. A dash in the gap column means no lease OR no comp for that city
+  and bed count — it never means the home is at market, and the page says so.
+
+  Sorting by "lease ending" puts homes with no lease LAST. Ending soonest is
+  meaningless for an empty house and floating them to the top would bury the
+  answer.
+
+  Filtering and sorting run in the browser deliberately: 3,001 rows is a small
+  payload, the whole set is needed for the tab counts to be true, and a round
+  trip per keystroke would make the search worse.
+
+VERIFIED  totals reconcile to the overview: 1,281 under market, $112,740/mo,
+  $1,352,880/yr across the unfiltered list.
