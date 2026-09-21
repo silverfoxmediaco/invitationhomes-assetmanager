@@ -1,8 +1,11 @@
+/* Every screen uses this wrapper, so the measure is set once here. */
 .page {
   font-family: var(--ih-font-body);
   color: var(--ih-text);
   background: var(--ih-white);
   min-height: 100vh;
+  max-width: var(--ih-max);
+  margin: 0 auto;
   padding: var(--ih-space-xl) var(--ih-space-xl) var(--ih-space-2xl);
   box-sizing: border-box;
 }

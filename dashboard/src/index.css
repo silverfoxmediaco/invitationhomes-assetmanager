@@ -1,40 +1,55 @@
-/* Brand fonts. Nunito 700 for display and headings, Hind for body and UI.
-   Imported before Blueprint so Blueprint can still override its own
-   component internals, and our tokens in theme.css come last. */
-@import url("https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap");
-
-/* BlueprintJS */
 @import "normalize.css";
-@import "@blueprintjs/core/lib/css/blueprint.css";
-@import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 
-/* Invitation Homes design tokens. Last, so they win. */
+/* Invitation Homes design tokens. */
 @import "./theme.css";
 
+/* BlueprintJS is gone. It arrived with the scaffold and was only ever used by
+   the starter Header, NextSteps and Osdk components, which no longer exist.
+   It was not inert while it sat here: its own `body { font-family }` rule beat
+   the inherited brand face, so body copy rendered in the system stack on every
+   screen while the headings around it were correctly on Nunito. */
+
+/* The brand faces themselves are loaded from a <link> in index.html, not with
+   an @import here. An @import cannot be discovered until this file has been
+   fetched and parsed, so the fonts queue behind the stylesheet and the first
+   paint lands in a fallback face before reflowing. The link tag lets the
+   browser start both at once. */
+
+/* Hind is the default for everything, and Nunito is opted into by the display
+   tokens. The scaffold shipped a "Source Sans Pro" stack here, which meant any
+   element that did not explicitly name a font — the menu notes, for one — quietly
+   rendered in the system face while the headings around it were on brand. The
+   contrast between the two families IS the identity, so the body face belongs
+   at the root where everything inherits it. */
 :root {
-  font-family:
-    "Source Sans Pro", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--ih-font-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-#root-container {
-  align-items: center;
-  display: flex;
-  flex: 1;
-}
-
-#root {
-  margin: 0 auto;
-  max-width: 1280px;
-  padding: calc(var(--bp-surface-spacing) * 8);
+  color: var(--ih-text);
 }
 
 body {
-  display: flex;
-  flex-direction: column;
   margin: 0;
   min-height: 100vh;
+  background: var(--ih-white);
+  /* Declared on body as well as :root. Inheritance alone is not enough the
+     moment any stylesheet sets a body font of its own. */
+  font-family: var(--ih-font-body);
+  color: var(--ih-text);
+}
+
+/* The scaffold centred the app inside a 1,280px column with Blueprint's
+   surface padding around it. Both are removed: this is a desktop operations
+   tool and the tables want the screen. A ten-column table squeezed into 1,280px
+   on a 27-inch monitor scrolls sideways for no reason, and the page components
+   set their own padding. */
+#root-container,
+#root {
+  display: block;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  width: 100%;
 }

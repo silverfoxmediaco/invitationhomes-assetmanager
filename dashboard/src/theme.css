@@ -56,6 +56,11 @@
   --ih-font-body: "Hind", -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
 
+  /* How wide the content is allowed to get. Wide enough for a ten-column
+     table to breathe on a 27-inch monitor, capped so it does not sprawl across
+     an ultrawide with sixty-character measure on the prose. */
+  --ih-max: 1760px;
+
   /* Spacing, 8pt */
   --ih-space-xs: 4px;
   --ih-space-sm: 8px;

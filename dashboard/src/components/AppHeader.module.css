@@ -8,11 +8,15 @@
   border-bottom: 1px solid var(--ih-n1);
 }
 
+/* Matches the page wrapper's measure so the logo lines up with the h1 below
+   it rather than drifting out to the window edge on a wide screen. */
 .bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--ih-space-lg);
+  max-width: var(--ih-max);
+  margin: 0 auto;
   padding: var(--ih-space-md) var(--ih-space-xl);
 }
 

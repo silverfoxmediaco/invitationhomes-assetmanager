@@ -2,13 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/react.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Brand faces. preconnect opens the connections while the HTML is still
+         parsing, so the fonts are not waiting on a stylesheet to be parsed
+         before they are even discovered. Nunito 700 carries the headings and
+         Hind everything else. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="osdk-clientId" content="%VITE_FOUNDRY_CLIENT_ID%" />
     <meta name="osdk-redirectUrl" content="%VITE_FOUNDRY_REDIRECT_URL%" />
     <meta name="osdk-foundryUrl" content="%VITE_FOUNDRY_API_URL%" />
     <meta name="osdk-ontologyRid" content="%VITE_FOUNDRY_ONTOLOGY_RID%" />
-    <title>Ontology SDK + React</title>
+    <title>Invitation Homes — Asset Management Platform</title>
   </head>
   <body>
     <div id="root-container">

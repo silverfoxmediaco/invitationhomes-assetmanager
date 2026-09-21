@@ -1326,3 +1326,46 @@ ALSO
   Home.tsx, components/Header, NextSteps, Osdk, and public/palantir.svg +
   react.svg. The old starter header said "Build your React application with
   Foundry!" — not what should be one keystroke away in a client demo.
+
+================================================================================
+2026-09-21  Brand fonts loaded properly — and three things that surfaced
+================================================================================
+  Asked to load their fonts. The fonts were already being requested; loading
+  them properly turned up three faults that had been invisible.
+
+1. BODY COPY WAS NEVER IN HIND.
+   BlueprintJS ships its own `body { font-family }` rule, which beat the
+   inherited brand face. Headings were correctly Nunito, so the pages LOOKED
+   branded — but every paragraph, table cell and menu note on every screen was
+   rendering in the system stack. The contrast between the two families is the
+   identity per their own design system, and half of it was missing.
+
+   Blueprint turned out to be entirely unused: no components, no CSS vars. It
+   came with the scaffold and only ever served the starter Header / NextSteps /
+   Osdk, deleted earlier today. Dropped both packages and the three CSS
+   imports. Body font is now declared on :root AND body, because inheritance
+   alone stops working the moment any stylesheet sets a body font of its own.
+
+2. THE SCAFFOLD WAS CAPPING THE APP AT 1,280px.
+   `#root { max-width: 1280px }` with Blueprint surface padding, centred. On a
+   27-inch monitor a ten-column table was scrolling sideways inside a narrow
+   column for no reason, against CLAUDE.md's own "dense tables, real screen
+   width". Removed, and replaced with --ih-max: 1760px on the page wrapper and
+   the header bar, so content uses the screen without sprawling on an ultrawide.
+
+3. THE FAVICON POINTED AT A FILE I HAD DELETED.
+   /react.svg, removed in this morning's scaffold cleanup. Now their own brand
+   mark: the first ten paths of Logo.svg extracted into favicon.svg, 2.6KB,
+   viewBox cropped to the mark with the wordmark left out. Title was still
+   "Ontology SDK + React"; now the product name.
+
+LOADING
+  Moved from @import in index.css to <link> + preconnect in index.html. An
+  @import cannot be discovered until the importing stylesheet has been fetched
+  and parsed, so the faces queued behind it and first paint landed in a
+  fallback before reflowing. The link lets the browser open both connections
+  while the HTML is still parsing.
+
+VERIFIED in the browser, not assumed: document.fonts.ready then computed
+  styles — body Hind, h1 Nunito, section notes Hind, table cells Hind, and
+  Hind 400/500/600 + Nunito 700 all reporting loaded.
