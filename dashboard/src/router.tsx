@@ -1,5 +1,6 @@
 import AtRisk from "@/pages/AtRisk";
 import CommunityDetail from "@/pages/CommunityDetail";
+import Leasing from "@/pages/Leasing";
 import CommunityList from "@/pages/CommunityList";
 import AuthCallback from "@/AuthCallback";
 import Overview from "@/pages/Overview";
@@ -23,6 +24,10 @@ export const router = createBrowserRouter(
     {
       path: "/community/:slug",
       element: <CommunityDetail />,
+    },
+    {
+      path: "/leasing",
+      element: <Leasing />,
     },
     {
       path: "/property/:propertyId",

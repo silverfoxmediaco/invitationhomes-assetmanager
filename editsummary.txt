@@ -1079,3 +1079,53 @@ OPEN
   - Remaining pages: rent collection, maintenance.
   - Resident display names collide (Rowan Ellis appears twice in Silos). The
     generator draws from a small name pool; ids are distinct. Cosmetic.
+
+================================================================================
+2026-09-21  Leasing — the good news, with its counterweight on the same page
+================================================================================
+  James: "I feel like we need to display some good news along with the doom
+  and gloom." Fair. Every other screen reports a problem, which is what ops
+  dashboards are for and also how they end up unread.
+
+BUILT
+  dashboard/src/data/useLeasing.ts
+  dashboard/src/pages/Leasing.tsx + .module.css
+  route /leasing; Overview cross-links to it
+
+THE DATA SUPPORTS MORE THAN EXPECTED
+  60 pending move-ins ($158,395/mo, $1.9M/yr) — leases signed whose start date
+  has not arrived. 37 new, 23 renewing.
+  1,072 renewals signed in 12 months, adding $1,457,400 of annual rent.
+  Leasing seasonality is clean: Aug 25 peak 231, Feb 26 trough 120.
+
+THE COMPARISON THAT MAKES IT MEAN SOMETHING
+  Renewals went up +4.6% while the market moved +3.1%, so renewal pricing runs
+  +1.4% AHEAD of market. That directly answers the portfolio page: the
+  under-market gap is closing, not widening — slowly, because a 24-month lease
+  only reprices twice in four years.
+  Reporting +4.6% alone would be a number with no scale. +4% sounds strong and
+  is weak in a market that moved 6%.
+
+THE COUNTERWEIGHT, ON THE SAME PAGE
+  Retention is 46% — 955 of 2,072 expiring leases re-signed. Churn cost
+  $8,725,532 in 12 months: $6,030,014 across 2,302 turns, $2,155,452 marketing,
+  $540,066 utilities on empty homes (the landlord only pays while vacant, which
+  is what makes that line a direct read on vacancy).
+  Set against $1,457,400 of renewal uplift, that is the trade worth arguing.
+
+  STATED EXPLICITLY ON THE PAGE: this data CANNOT show the two are connected.
+  Residents who left have no recorded offer to compare against. Both numbers
+  are real; the causal link is not in the ontology. The page says so rather
+  than letting the layout imply it.
+
+FIXED WHILE RENDERING
+  The last chart bar is the month in progress, counted to today, and it read
+  as a collapse (135 against a 165 average). Now drawn faint and labelled
+  "so far".
+
+OPEN — A GENUINE DATA REALISM QUESTION FOR JAMES
+  46% retention is low for SFR; real operators run 65-80%. Also every one of
+  the 2,698 renewals raised rent — none flat, none cut — which no real
+  portfolio does. Both are generator artefacts that someone who knows the
+  industry would notice. Tuning them means regenerating and re-uploading all
+  twelve datasets, so it is his call, not a silent fix.

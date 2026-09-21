@@ -1,0 +1,143 @@
+.back {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ih-primary);
+  text-decoration: none;
+  margin-bottom: var(--ih-space-md);
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* The one place in this dashboard a figure is allowed to be green.
+   Everywhere else green means interactive; here the number genuinely is the
+   good news, and the page exists to say so. */
+.good {
+  color: var(--ih-primary);
+}
+
+/* --- Leases signed, 18 months --------------------------------------------
+   A chart rather than a table because the only thing being read is a shape:
+   the summer peak against the February trough. Bars are stacked new-on-top-of
+   renewal so the total height stays comparable month to month. */
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ih-space-xs);
+  height: 190px;
+  padding: var(--ih-space-md) 0 0;
+  border-bottom: 1px solid var(--ih-n1);
+  overflow-x: auto;
+}
+
+.bar {
+  flex: 1 1 0;
+  min-width: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.barStack {
+  width: 100%;
+  max-width: 40px;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.barNew {
+  background: var(--ih-primary);
+  border-radius: 2px 2px 0 0;
+}
+
+.barRenewal {
+  background: var(--ih-accent-light);
+}
+
+.barValue {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ih-n7);
+  margin-top: var(--ih-space-xs);
+}
+
+.barLabel {
+  font-size: 10px;
+  color: var(--ih-n6);
+  white-space: nowrap;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--ih-space-xs);
+  font-size: 12px;
+  color: var(--ih-n6);
+  margin: var(--ih-space-sm) 0 0;
+}
+
+.keyNew,
+.keyRenewal {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.keyNew {
+  background: var(--ih-primary);
+}
+
+.keyRenewal {
+  background: var(--ih-accent-light);
+  margin-left: var(--ih-space-md);
+}
+
+/* --- Move-in table -------------------------------------------------------- */
+.date {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tagNew,
+.tagRenewal {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* A renewal and a new lease are both good, and they are not the same good: one
+   keeps a resident, the other replaced one that left. Distinct, neither red. */
+.tagNew {
+  background: #e7f2e2;
+  color: #1f5410;
+}
+
+.tagRenewal {
+  background: var(--ih-banner-blue);
+  color: #17445c;
+}
+
+/* The month in progress. Counted to today, so the bar is short for calendar
+   reasons — drawn faint and labelled rather than left to read as a collapse. */
+.barPartial .barNew,
+.barPartial .barRenewal {
+  opacity: 0.45;
+}
+
+.partialMark {
+  display: block;
+  font-size: 9px;
+  font-style: italic;
+  color: var(--ih-n5);
+}
