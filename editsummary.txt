@@ -1627,3 +1627,33 @@ THE SECOND FINDING ON THE PAGE
   Recorded as CLAUDE.md gotcha 12 so the default is not walked into later.
 
   Verified after cancelling: 0.4.2 still deployed, nothing created.
+
+--------------------------------------------------------------------------------
+2026-09-21  Sign-in appeared to fail — it was landing on the front door
+--------------------------------------------------------------------------------
+  James: signing in redirected back to the sign-in page. He WAS being
+  authenticated; he was being dropped back on the landing page, which looks
+  identical to failing.
+
+  CAUSE, MINE. AuthCallback ended with navigate("/", { replace: true }). That
+  was correct while "/" was the overview, and wrong the moment the landing page
+  took that route. Missed when the routes moved because I grepped for `to="/"`
+  — the JSX prop form, 22 of which I did fix — and this is the imperative form.
+
+  DID NOT simply repoint it at /dashboard. The OAuth client already stashes the
+  page that triggered sign-in as `oldUrl` and restores it, which is what lets a
+  shared deep link survive the round trip: someone sent /at-risk should land on
+  /at-risk. Hardcoding /dashboard would have thrown that away to fix a symptom.
+
+  The subtlety: how the client restores depends on its useHistory setting. With
+  history it calls replaceState, which changes the address bar WITHOUT telling
+  React Router to re-render — the url would read /dashboard while AuthCallback
+  stayed mounted over it. So the fix reads where the client left us and routes
+  there through React Router, falling back to /dashboard only if it left us on
+  the callback path. Correct whichever way the library jumps.
+
+  Checked for other imperative navigations to "/": only the sign-out in
+  AppHeader, where landing on the front door is right.
+
+  Deployed 0.4.3 — built clean, and the bundle was grepped for the new logic
+  and for the absence of the old BEFORE uploading, per gotcha 11.
