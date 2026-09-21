@@ -166,6 +166,20 @@ than it saves.
    loop and replaces a confidently wrong page with a message naming the file
    to re-upload. `useAtRisk.ts` has the pattern.
 
+10. **An app's OAuth client only reaches resources explicitly granted to it.**
+    This application is marked *Resource restrictions: Restricted*, so a
+    published AIP Logic function returns `PERMISSION_DENIED` /
+    `FunctionRegistry:ReadOntologyFunctionPermissionDenied` to the app even
+    while it executes perfectly from a personal token. The grant lives at
+    **Ontology SDK → Resources → Functions → Add function**, and it is a
+    permission step, not a types convenience — the same screen that adds
+    object types and action types.
+
+    The general rule: **never test an app's permissions with a user token.**
+    A `jti` token from Settings → Tokens carries your own broad access and
+    will succeed where the restricted client fails, which reads as "it works"
+    right up until it reaches the browser.
+
 ## Foundry credentials
 
 - `FOUNDRY_TOKEN` lives in `~/.zshenv`, never just `export`ed — an export-only
