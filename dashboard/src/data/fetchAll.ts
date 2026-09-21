@@ -57,3 +57,41 @@ export async function fetchAll<T>(
 
   return out;
 }
+
+/**
+ * Fetch every row of an object type MATCHING a filter, following pagination.
+ *
+ * Use this, not fetchAll, whenever the screen is about one thing. A property
+ * detail page that reads all 95,467 rent payments to find the twelve belonging
+ * to one lease works, looks fine in development against a warm cache, and is
+ * indefensible. The filter runs in Foundry; fetchAll pulls the object type
+ * across the wire and filters in the browser.
+ */
+export async function fetchWhere<T>(
+  client: Client,
+  objectType: ObjectTypeDefinition,
+  where: Record<string, unknown>,
+  options: { select?: readonly string[]; pageSize?: number; maxRows?: number } = {}
+): Promise<T[]> {
+  const { select, pageSize = 1000, maxRows = 50_000 } = options;
+
+  const out: T[] = [];
+  let nextPageToken: string | undefined = undefined;
+
+  do {
+    const args: Record<string, unknown> = { $pageSize: pageSize };
+    if (select) {args.$select = select;}
+    if (nextPageToken) {args.$nextPageToken = nextPageToken;}
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const page = await (client(objectType) as any).where(where).fetchPage(args);
+    out.push(...(page.data as T[]));
+    nextPageToken = page.nextPageToken;
+
+    if (out.length >= maxRows) {
+      throw new Error(`fetchWhere exceeded maxRows (${maxRows}) — narrow the filter.`);
+    }
+  } while (nextPageToken);
+
+  return out;
+}

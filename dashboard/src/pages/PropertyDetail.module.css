@@ -1,0 +1,71 @@
+.back {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ih-primary);
+  text-decoration: none;
+  margin-bottom: var(--ih-space-md);
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+.verdict {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.4;
+  margin: var(--ih-space-lg) 0;
+  max-width: 72ch;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--ih-space-xl);
+  margin-bottom: var(--ih-space-md);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--ih-space-sm) var(--ih-space-md);
+  margin: 0;
+  font-size: 13px;
+}
+
+.facts dt {
+  color: var(--ih-n6);
+}
+
+.facts dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  color: var(--ih-n6);
+}
+
+/* Red for a gap the owner is losing money on. Green is reserved for
+   interactive elements, never for "good", so a positive number here is simply
+   not red rather than green. */
+.bad {
+  color: var(--ih-error);
+}
+
+.good {
+  color: var(--ih-text);
+}
+
+.flag {
+  display: inline-block;
+  margin-left: var(--ih-space-sm);
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: #fceeef;
+  color: #571e22;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

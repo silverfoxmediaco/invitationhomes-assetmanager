@@ -177,3 +177,14 @@
   color: #571e22;
   font-size: 13px;
 }
+
+/* Drilling in is the navigation. There is no nav bar by design: an executive
+   starts at the portfolio verdict and clicks into the home that caused it. */
+.rowLink {
+  color: var(--ih-primary);
+  text-decoration: none;
+}
+
+.rowLink:hover {
+  text-decoration: underline;
+}

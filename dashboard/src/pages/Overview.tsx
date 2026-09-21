@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { usePortfolio } from "@/data/usePortfolio";
 import css from "./Overview.module.css";
 
@@ -129,7 +130,11 @@ function Overview(): React.ReactElement {
           <tbody>
             {top.map((r) => (
               <tr key={r.propertyId}>
-                <td className={css.address}>{r.streetAddress}</td>
+                <td className={css.address}>
+                  <Link to={`/property/${r.propertyId}`} className={css.rowLink}>
+                    {r.streetAddress}
+                  </Link>
+                </td>
                 <td>
                   {r.city} <span className={css.state}>{r.state}</span>
                 </td>
