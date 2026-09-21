@@ -19,10 +19,12 @@ function getMetaTagContent(tagName: string): string {
   return value;
 }
 
-const foundryUrl = getMetaTagContent("osdk-foundryUrl");
+/** Exported because the aggregation endpoint has no OSDK wrapper in 2.70 and
+ *  has to be addressed by URL. See data/aggregate.ts. */
+export const foundryUrl = getMetaTagContent("osdk-foundryUrl");
 const clientId = getMetaTagContent("osdk-clientId");
 const redirectUrl = getMetaTagContent("osdk-redirectUrl");
-const ontologyRid = getMetaTagContent("osdk-ontologyRid");
+export const ontologyRid = getMetaTagContent("osdk-ontologyRid");
 
 const scopes = [
   "api:use-ontologies-read",

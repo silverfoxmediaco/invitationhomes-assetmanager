@@ -1,0 +1,122 @@
+.back {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ih-primary);
+  text-decoration: none;
+  margin-bottom: var(--ih-space-md);
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* --- Collected against on-time -------------------------------------------
+   Two dots a month with the gap between them drawn in. The gap IS the finding:
+   where the dots sit close the rent arrived on time, and where they pull apart
+   the same money arrived only after chasing. A pair of separate line charts
+   would make the reader hold two shapes in their head to see one thing. */
+.chart {
+  display: flex;
+  align-items: stretch;
+  gap: var(--ih-space-xs);
+  height: 210px;
+  padding-top: var(--ih-space-md);
+}
+
+.col {
+  flex: 1 1 0;
+  min-width: 36px;
+  display: flex;
+  flex-direction: column;
+}
+
+.track {
+  position: relative;
+  flex: 1 1 auto;
+  border-left: 1px solid var(--ih-n1);
+}
+
+.col:last-child .track {
+  border-right: 1px solid var(--ih-n1);
+}
+
+.dotCollected,
+.dotOnTime {
+  position: absolute;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  margin-top: -4.5px;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.dotCollected {
+  background: var(--ih-corporate);
+}
+
+.dotOnTime {
+  background: var(--ih-primary);
+}
+
+/* The distance between the two measures, drawn so the eye reads it as one
+   quantity rather than two positions. */
+.span {
+  position: absolute;
+  left: 50%;
+  width: 3px;
+  margin-left: -1.5px;
+  background: var(--ih-n2);
+  z-index: 1;
+}
+
+.colLabel {
+  font-size: 10px;
+  color: var(--ih-n6);
+  text-align: center;
+  margin-top: var(--ih-space-xs);
+}
+
+.colValue {
+  font-size: 10px;
+  color: var(--ih-n7);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--ih-space-xs);
+  font-size: 12px;
+  color: var(--ih-n6);
+  margin: var(--ih-space-sm) 0 0;
+}
+
+.keyCollected,
+.keyOnTime {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.keyCollected {
+  background: var(--ih-corporate);
+}
+
+.keyOnTime {
+  background: var(--ih-primary);
+  margin-left: var(--ih-space-md);
+}
+
+.method {
+  margin-top: var(--ih-space-2xl);
+  padding-top: var(--ih-space-md);
+  border-top: 1px solid var(--ih-n1);
+  font-size: 12px;
+  color: var(--ih-n6);
+  max-width: 82ch;
+  line-height: 1.5;
+}

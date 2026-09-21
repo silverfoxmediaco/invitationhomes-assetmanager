@@ -1,4 +1,5 @@
 import AtRisk from "@/pages/AtRisk";
+import Collections from "@/pages/Collections";
 import CommunityDetail from "@/pages/CommunityDetail";
 import Leasing from "@/pages/Leasing";
 import Maintenance from "@/pages/Maintenance";
@@ -33,6 +34,10 @@ export const router = createBrowserRouter(
     {
       path: "/maintenance",
       element: <Maintenance />,
+    },
+    {
+      path: "/collections",
+      element: <Collections />,
     },
     {
       path: "/property/:propertyId",

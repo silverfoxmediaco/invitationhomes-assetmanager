@@ -1177,3 +1177,56 @@ OTHER NUMBERS
   113 open, none emergency (emergencies close in 0.3d on average).
   Fixed: CSS used --ih-corporate-special (the name from the source site) but
   theme.css defines --ih-corporate. Would have rendered transparent.
+
+================================================================================
+2026-09-21  Rent collection — and the first server-side aggregation
+================================================================================
+  CORRECTION TO MY OWN STATUS: I told James maintenance was the last page on
+  his list. It was not — rent collection was still outstanding. Built now.
+
+BUILT
+  dashboard/src/data/aggregate.ts       server-side aggregation helper
+  dashboard/src/data/useCollections.ts
+  dashboard/src/pages/Collections.tsx + .module.css
+  route /collections; Overview cross-links to it
+  client.ts now exports foundryUrl and ontologyRid
+
+THE FINDING
+  January is not expensive, it is laborious. Rent EVENTUALLY collected moves
+  only 2.1% across the year (95.3% Jan to 97.4% Apr). Rent paid ON TIME moves
+  7.5% (84.1% to 91.6%) — three times as far. Almost the same money arrives;
+  in winter it arrives after somebody has chased it.
+
+  Both measures are plotted and never blended. A single "collections" number
+  shows a flat healthy portfolio and hides the whole staffing problem, which
+  is that the January book needs half again the chasing hours of April's for
+  the same revenue. Drawn as a dumbbell: two dots a month with the gap between
+  them filled, because the GAP is the finding.
+
+  The spec predicted "a January dip to ~84%". That turns out to be the on-time
+  rate, not the dollar collection rate — worth recording, because the two get
+  conflated and they mean opposite things operationally.
+
+FIRST SERVER-SIDE AGGREGATION IN THIS PROJECT
+  95,663 payments exceed fetchAll's 50,000-row guard, and should — monthly
+  totals are three numbers a month and Foundry can compute them where the data
+  sits. One POST to /objects/RentPayments/aggregate returns 165 groups (36
+  months x 5 statuses) instead of megabytes of rows.
+
+  Addressed by URL because @osdk/client 2.70 ships NO aggregation wrapper —
+  the generated SDK exposes fetchPage and where and nothing else. It borrows
+  the OSDK's own auth client for the token rather than holding credentials.
+
+  The response carries an `accuracy` field and Foundry will quietly return
+  APPROXIMATE on large or high-cardinality groupings. The helper THROWS on
+  anything but ACCURATE: a collection rate shown to a decimal place must not
+  be an estimate. Same discipline as the totalCount lesson.
+
+VERIFIED against the source CSVs, every figure exact:
+  collected 96.6%, billed $85,430,350, paid $82,548,501,
+  outstanding $2,881,849, on time 88.7%, spreads 7.5% and 2.1%,
+  worst month January 84.1%.
+
+ALL SEVEN PAGES NOW LIVE
+  / overview, /property/:id, /at-risk, /communities, /community/:slug,
+  /leasing, /collections, /maintenance

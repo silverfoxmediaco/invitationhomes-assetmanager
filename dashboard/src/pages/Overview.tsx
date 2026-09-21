@@ -129,6 +129,14 @@ function Overview(): React.ReactElement {
         </span>
       </p>
       <p className={css.jumpTo}>
+        <Link to="/collections" className={css.rowLink}>
+          Rent collection &rarr;
+        </Link>{" "}
+        <span className={css.state}>
+          why winter costs chasing hours rather than revenue
+        </span>
+      </p>
+      <p className={css.jumpTo}>
         <Link to="/maintenance" className={css.rowLink}>
           Maintenance &rarr;
         </Link>{" "}
