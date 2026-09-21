@@ -1,7 +1,7 @@
 {
   "name": "dashboard",
   "private": true,
-  "version": "0.4.1",
+  "version": "0.4.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,8 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "preview": "vite preview",
-    "deploy": "npm run build && osdk site deploy",
-    "deploy:snapshot": "npm run build && osdk site deploy --snapshot",
+    "deploy": "rm -rf dist && npm run build && osdk site deploy",
+    "deploy:snapshot": "rm -rf dist && npm run build && osdk site deploy --snapshot",
     "site:versions": "osdk site version list"
   },
   "dependencies": {

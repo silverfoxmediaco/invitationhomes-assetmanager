@@ -180,6 +180,20 @@ than it saves.
     will succeed where the restricted client fails, which reads as "it works"
     right up until it reaches the browser.
 
+11. **`osdk site deploy` uploads `./dist`. It does not build.** Calling the CLI
+    directly rather than through `npm run deploy` ships whatever stale bundle
+    happens to be sitting there, and the CLI reports success because it did
+    exactly what it was asked. Four consecutive deploys once went out carrying
+    the same month-old bundle under four new version numbers — a renamed
+    heading, a spacing fix, a sign-out and an entire new page never reached
+    the server, and nothing anywhere said so.
+
+    `npm run deploy` now starts with `rm -rf dist`, so a stale bundle cannot
+    survive to be uploaded. **Use the script, never the bare CLI.** And when a
+    deploy is meant to carry a specific visible change, grep the built bundle
+    for a string from that change BEFORE uploading — `grep -r "New Heading"
+    dist/assets/`. Verifying after the fact means finding out from the client.
+
 ## Foundry credentials
 
 - `FOUNDRY_TOKEN` lives in `~/.zshenv`, never just `export`ed — an export-only

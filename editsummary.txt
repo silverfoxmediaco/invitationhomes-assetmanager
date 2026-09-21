@@ -1571,3 +1571,35 @@ THE SECOND FINDING ON THE PAGE
 
   Outlined full-width button, red on hover — it is the one destructive thing in
   a menu of places to go and should not read as another one.
+
+================================================================================
+2026-09-21  FOUR DEPLOYS SHIPPED A STALE BUNDLE — my error, caught by James
+================================================================================
+  James: "For some reason its not showing." The deployed dashboard was still
+  headed "What to do about it", a title renamed four versions earlier.
+
+  CAUSE. `osdk site deploy` uploads ./dist. It does not build. The `deploy`
+  npm script was written as `npm run build && osdk site deploy`, but I kept
+  invoking `npx osdk site deploy` directly so I could grep its output for a
+  tidy log line — which skips the build entirely. dist/ was frozen at the
+  17:54 build.
+
+  So 0.3.1, 0.3.2, 0.4.0 and 0.4.1 all uploaded the SAME 0.3.0 bundle under
+  four new version numbers. The CLI reported success every time, truthfully:
+  it deployed exactly what it was handed. Nothing failed, nothing warned.
+
+  NEVER REACHED THE SERVER until now:
+    - the "Recommended actions" rename
+    - the table-footer spacing
+    - sign out in the drawer
+    - the ENTIRE renewal scenario page
+
+  FIXED. Clean rebuild, verified the bundle contained "Recommended actions",
+  "Renewal scenario", "Sign out" and "Raise renewals by" and no longer
+  contained the old title, THEN deployed as 0.4.2 and confirmed /scenario live.
+
+  MADE UNREPEATABLE. `npm run deploy` now begins `rm -rf dist`, so a stale
+  bundle cannot survive to be uploaded. CLAUDE.md gotcha 11 records it: use
+  the script, never the bare CLI, and when a deploy carries a specific visible
+  change, grep dist/assets for a string from that change BEFORE uploading.
+  Verifying afterwards means finding out from the client.
