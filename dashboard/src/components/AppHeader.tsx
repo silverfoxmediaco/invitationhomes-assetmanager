@@ -118,7 +118,7 @@ function AppHeader(): React.ReactElement {
   return (
     <header className={css.header}>
       <div className={css.bar}>
-        <Link to="/" className={css.brand} aria-label="Invitation Homes, portfolio overview">
+        <Link to="/dashboard" className={css.brand} aria-label="Invitation Homes, portfolio overview">
           <img src={logo} alt="Invitation Homes" className={css.logo} />
           <span className={css.product}>Asset Management Platform</span>
         </Link>

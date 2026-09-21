@@ -19,7 +19,7 @@ function Collections(): React.ReactElement {
   if (error) {
     return (
       <div className={css.page}>
-        <Link to="/" className={own.back}>
+        <Link to="/dashboard" className={own.back}>
           &larr; Portfolio overview
         </Link>
         <div className={css.error}>
@@ -32,7 +32,7 @@ function Collections(): React.ReactElement {
   if (loading || !data) {
     return (
       <div className={css.page}>
-        <Link to="/" className={own.back}>
+        <Link to="/dashboard" className={own.back}>
           &larr; Portfolio overview
         </Link>
         <div className={css.status}>Aggregating payments in Foundry…</div>
@@ -48,7 +48,7 @@ function Collections(): React.ReactElement {
 
   return (
     <div className={css.page}>
-      <Link to="/" className={own.back}>
+      <Link to="/dashboard" className={own.back}>
         &larr; Portfolio overview
       </Link>
 

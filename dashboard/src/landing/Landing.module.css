@@ -1,0 +1,305 @@
+/* Sign-in screen.
+   Same tokens as the dashboard so the two read as one system, but composed as
+   a front door: one action, plenty of air, nothing to scan.
+
+   Light where Target Air's door was dark. Their identity is a white ground
+   with green on it, and a deep panel under this logo would read as somebody
+   else's product wearing their mark. */
+
+.ihDoorShell {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--ih-white);
+  color: var(--ih-text);
+  font-family: var(--ih-font-body);
+  overflow: hidden;
+  /* Their own gradient token, opened out across the page. Daylight from the
+     upper left, the way their site lights a front elevation. */
+  background-image: radial-gradient(
+      64rem 42rem at 10% -16%,
+      rgba(103, 189, 71, 0.13),
+      transparent 66%
+    ),
+    radial-gradient(48rem 34rem at 96% 8%, rgba(39, 86, 91, 0.07), transparent 70%);
+}
+
+/* Oversized mark bled off the bottom-right. Barely there on purpose. */
+.ihDoorWatermark {
+  position: absolute;
+  right: -13rem;
+  bottom: -12rem;
+  width: 44rem;
+  height: auto;
+  opacity: 0.05;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ihDoorGrid {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: 4rem;
+}
+
+/* ---- Brand pane ------------------------------------------------------- */
+
+.ihDoorBrandPane {
+  min-width: 0;
+}
+
+.ihDoorLockup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-bottom: 3rem;
+}
+
+.ihDoorLogo {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.ihDoorProduct {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ih-corporate);
+}
+
+.ihDoorTitle {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: clamp(2.2rem, 4.6vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.1rem;
+  text-wrap: balance;
+}
+
+.ihDoorLede {
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  color: var(--ih-text-secondary);
+  max-width: 46ch;
+  margin: 0 0 2.75rem;
+}
+
+/* What is behind the door. Orientation, not a feature list — an executive
+   should recognise their own questions here, phrased the way they would ask
+   them rather than the way the schema stores them. */
+.ihInsideList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--ih-n1);
+  max-width: 36rem;
+}
+
+.ihInsideItem {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.82rem 0;
+  border-bottom: 1px solid var(--ih-n1);
+}
+
+.ihInsideLabel {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--ih-text);
+  white-space: nowrap;
+}
+
+.ihInsideNote {
+  font-size: 0.8125rem;
+  color: var(--ih-n6);
+  text-align: right;
+}
+
+/* ---- Card pane -------------------------------------------------------- */
+
+.ihDoorCardPane {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.15rem;
+}
+
+.ihDoorCard {
+  background: var(--ih-white);
+  border: 1px solid var(--ih-n1);
+  border-radius: 8px;
+  padding: 2.25rem;
+  /* Lifted off the ground so it reads as the thing to act on. Softer and
+     wider than a dark theme needs, because on white a hard shadow reads as a
+     mistake rather than as elevation. */
+  box-shadow:
+    0 1px 2px rgba(33, 33, 33, 0.04),
+    0 24px 56px -28px rgba(33, 33, 33, 0.22);
+}
+
+.ihDoorEyebrow {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ih-corporate);
+  margin-bottom: 0.9rem;
+}
+
+.ihDoorCardTitle {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 1.4375rem;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.75rem;
+}
+
+.ihDoorCardBody {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--ih-text-secondary);
+  margin: 0 0 1.75rem;
+}
+
+/* The single action on the page, in the green they put on Pay Rent. This is
+   the one place the primary green gets a full-width surface — everywhere else
+   in this product it is reserved for small interactive elements. */
+.ihDoorButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-family: var(--ih-font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 0.85rem 1.25rem;
+  border-radius: 4px;
+  border: 1px solid var(--ih-primary);
+  background: var(--ih-primary);
+  color: var(--ih-white);
+  text-decoration: none;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
+}
+
+.ihDoorButton:hover {
+  background: var(--ih-primary-dark);
+  border-color: var(--ih-primary-dark);
+}
+
+.ihDoorNotice {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--ih-n6);
+  margin: 1.5rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ih-n1);
+}
+
+/* Outside the card, not inside it. Inside, it would read as part of the
+   sign-in terms and get skimmed with them; outside, it is the page talking. */
+.ihDoorSynthetic {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--ih-text-secondary);
+  background: var(--ih-banner-blue);
+  border-radius: 6px;
+  padding: 0.9rem 1.1rem;
+  margin: 0;
+}
+
+/* ---- Footer ----------------------------------------------------------- */
+
+.ihDoorFooter {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 2rem;
+  font-size: 0.8125rem;
+  color: var(--ih-n6);
+  flex-wrap: wrap;
+}
+
+/* Credit line sits in the footer rather than the card, because the fiction is
+   an internal Invitation Homes system — the byline belongs where a real
+   product puts its colophon, not next to the sign-in action. */
+.ihDoorCredit {
+  color: var(--ih-n6);
+}
+
+.ihDoorColophon {
+  color: var(--ih-n6);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ih-n2);
+}
+
+.ihDoorColophon:hover {
+  color: var(--ih-primary);
+  border-bottom-color: var(--ih-primary);
+}
+
+/* ---- Responsive ------------------------------------------------------- */
+
+@media (max-width: 940px) {
+  .ihDoorGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+    padding: 2.5rem 1.5rem;
+    align-items: start;
+  }
+
+  .ihDoorCardPane {
+    max-width: 32rem;
+  }
+
+  .ihDoorWatermark {
+    right: -17rem;
+    bottom: -17rem;
+    opacity: 0.04;
+  }
+
+  .ihDoorFooter {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .ihDoorLockup {
+    margin-bottom: 2rem;
+  }
+
+  .ihDoorCard {
+    padding: 1.6rem;
+  }
+
+  .ihInsideItem {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .ihInsideNote {
+    text-align: left;
+  }
+}

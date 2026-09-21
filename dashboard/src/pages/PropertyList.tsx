@@ -109,7 +109,7 @@ function PropertyList(): React.ReactElement {
   if (error) {
     return (
       <div className={css.page}>
-        <Link to="/" className={own.back}>
+        <Link to="/dashboard" className={own.back}>
           &larr; Portfolio overview
         </Link>
         <div className={css.error}>
@@ -122,7 +122,7 @@ function PropertyList(): React.ReactElement {
   if (loading || !data) {
     return (
       <div className={css.page}>
-        <Link to="/" className={own.back}>
+        <Link to="/dashboard" className={own.back}>
           &larr; Portfolio overview
         </Link>
         <div className={css.status}>Loading every home…</div>
@@ -135,7 +135,7 @@ function PropertyList(): React.ReactElement {
 
   return (
     <div className={css.page}>
-      <Link to="/" className={own.back}>
+      <Link to="/dashboard" className={own.back}>
         &larr; Portfolio overview
       </Link>
 

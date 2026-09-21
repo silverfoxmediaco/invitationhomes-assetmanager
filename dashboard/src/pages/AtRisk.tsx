@@ -42,7 +42,7 @@ function AtRisk(): React.ReactElement {
   if (error) {
     return (
       <div className={css.page}>
-        <Link to="/" className={own.back}>
+        <Link to="/dashboard" className={own.back}>
           &larr; Portfolio overview
         </Link>
         <div className={css.error}>
@@ -55,7 +55,7 @@ function AtRisk(): React.ReactElement {
   if (loading || !data) {
     return (
       <div className={css.page}>
-        <Link to="/" className={own.back}>
+        <Link to="/dashboard" className={own.back}>
           &larr; Portfolio overview
         </Link>
         <div className={css.status}>
@@ -70,7 +70,7 @@ function AtRisk(): React.ReactElement {
 
   return (
     <div className={css.page}>
-      <Link to="/" className={own.back}>
+      <Link to="/dashboard" className={own.back}>
         &larr; Portfolio overview
       </Link>
 

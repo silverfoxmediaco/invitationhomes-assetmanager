@@ -1369,3 +1369,52 @@ LOADING
 VERIFIED in the browser, not assumed: document.fonts.ready then computed
   styles — body Hind, h1 Nunito, section notes Hind, table cells Hind, and
   Hind 400/500/600 + Nunito 700 all reporting loaded.
+
+================================================================================
+2026-09-21  Deployed to Foundry, and a branded front door
+================================================================================
+
+DEPLOYED — 0.1.0 live at
+  https://invitationhomes-prototype-vrhmtpneox5dbsyg.apps.usw-23.palantirfoundry.com
+
+  The scaffold already shipped foundry.config.json with the application RID, so
+  `osdk site deploy` needed no configuration. Two things did need fixing:
+
+  1. AUTO-VERSIONING WOULD HAVE FAILED ON THE FIRST RUN. It was set to
+     git-describe with zero tags in the repo, and `git describe` errors outright
+     with "No names found, cannot describe anything". Switched to package-json
+     and set a real version — it was sitting at 0.0.0. Each deploy is now a
+     deliberate bump rather than a string derived from commit distance.
+
+  2. VERIFIED THE BUILD INLINED THE PRODUCTION REDIRECT URL. Vite bakes VITE_*
+     at build time, and a redirect mismatch does not fail at build or deploy —
+     it fails at sign-in, on the live site, with an OAuth error and nothing in
+     the console. Checked dist/index.html: production URL present, zero
+     localhost anywhere in the bundle.
+
+  Added scripts: deploy, deploy:snapshot, site:versions.
+  Registered subdomain + OAuth redirect URL were James's clicks.
+
+FRONT DOOR — the Target Air landing pattern, rebranded
+  src/landing/Landing.tsx + .module.css
+  Router: / is now the public Landing; the overview moved to /dashboard, and
+  every "Portfolio overview" back-link and the header brand were repointed
+  (22 links across 9 files).
+
+  WHY IT EXISTS: every other route reads the ontology on mount, so opening the
+  bare URL bounced a first-time visitor straight to a Foundry consent dialog
+  before they knew what they were consenting to. This page touches no data and
+  triggers no authentication, so signing in is a deliberate act. Verified: it
+  renders without redirecting.
+
+  SAME COMPOSITION AS TARGET AIR, OPPOSITE ATMOSPHERE. Two-pane grid, oversized
+  mark bled off the corner at 5% opacity, an orientation list rather than a
+  feature list, colophon in the footer. But light instead of dark: their
+  identity is a white ground with green on it, and a deep aerospace panel under
+  this logo would read as somebody else's product wearing their mark. Daylight
+  gradient from the upper left using their own accent green, corporate teal on
+  the eyebrow, and the primary green gets its one full-width surface in the
+  whole product on the single action.
+
+  The synthetic-data notice sits OUTSIDE the sign-in card, not in it. Inside it
+  would read as part of the sign-in terms and be skimmed with them.
