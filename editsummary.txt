@@ -848,3 +848,45 @@ NEXT — OSDK generation, then the React front end. Carried forward from Target 
     throws "does not provide an export named X" while tsc passes.
   - The generated SDK will contain Target Air's and Top Stock's object types too,
     since they share this ontology and our API names carry no prefix.
+
+
+[2026-09-21] The dashboard rendered and immediately exposed a generator bug
+--------------------------------------------------------------------------------
+First run of the overview against live Foundry data: auth, CORS and the join all
+worked, and the screen said 2,512 of 2,761 occupied homes were under market. 91%.
+That is not a finding, it is a flat line, and a CFO would spot it in seconds.
+
+DIAGNOSIS — gap to market by lease start year:
+  2024  +8.8%   2025  +8.0%   2026  +7.8%
+Every cohort under by the same amount, INCLUDING leases signed this year. A
+lease signed last month is by definition at market, so a constant offset meant
+the gap was an artifact rather than a fact about the portfolio.
+
+CAUSE. Leases were priced off a single fixed property.marketRent while comps
+were generated separately AT THE END with a 6-13% upward drift. The gap was
+therefore the drift itself, applied uniformly, and had nothing to do with when a
+lease was signed.
+
+FIX. One market curve per (city, state, beds), monthly across the window, built
+BEFORE properties. Everything now prices off it:
+  - a home's asking rent = curve at AS_OF x a per-home size premium
+  - a lease's rent      = curve at ITS OWN START MONTH x that same size factor
+  - the published comps = the curve itself
+So a home's rent and its benchmark cannot drift apart by construction.
+Renewals rise 1-5% and may close part of the gap, capped so they cannot leap to
+market or exceed +12% year on year — which is what leaves long-tenured residents
+genuinely under-rented, the population the dashboard exists to surface.
+
+RESULT  46.3% of active leases under market, and the gap now RISES with age:
+  2024 median +5.3% (90% under)  2025 +1.6% (63%)  2026 -2.4% (28%)
+That is a cohort effect a CFO can act on, not a constant.
+
+SECOND BUG, CAUGHT BY validate.py NOT BY EYE. The curve covered 2-7 bedrooms;
+nine homes in Crandall TX have ONE bedroom, from a community whose scraped range
+starts at 1. They ended up with no benchmark at all. The check "every property
+has a comp for its city+beds" failed and named them. Widened to 1-7.
+
+This is the third time the same discipline has paid: build the thing that
+renders the data, then look at it. Nothing errored in either case.
+
+RE-UPLOAD NEEDED: properties.csv, leases.csv, market_rate_comps.csv all changed.

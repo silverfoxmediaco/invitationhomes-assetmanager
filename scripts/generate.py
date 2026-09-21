@@ -184,6 +184,59 @@ for c in communities:
 for c in communities:
     c["_countyId"] = counties.get((c["_county"], c["state"]), {}).get("countyId", "")
 
+# --------------------------------------------------------------- market curve
+
+# ONE rent curve per (city, state, beds), monthly across the window. Everything
+# prices off it: a home's asking rent, a lease's contracted rent at the month it
+# was signed, and the published comps.
+#
+# The first version priced every lease off a single fixed property.marketRent
+# while generating comps separately at the end with an upward drift. That made
+# the gap to market a CONSTANT rather than a function of when the lease was
+# signed: leases from 2024, 2025 and 2026 all came out ~8% under market, and 91%
+# of the portfolio looked under-rented. A CFO would spot that in seconds, and it
+# says nothing, because a lease signed last month is by definition at market.
+#
+# Pricing a lease at the curve value for its OWN start month produces the real
+# shape: recent leases sit at market, older ones have fallen behind by however
+# far the market moved since, and the under-market population is the cohort
+# whose renewals are worth acting on.
+MONTHS = list(month_iter(START, AS_OF))
+MONTH_IX = {m.isoformat()[:7]: i for i, m in enumerate(MONTHS)}
+
+def _season(m):
+    return 1 + .035 * math.sin((m.month - 3) / 12 * 2 * math.pi)
+
+_city_anchor = defaultdict(list)
+for c in communities:
+    _city_anchor[(c["city"], c["state"])].append((c["_rent"], c["_beds_min"]))
+
+market_curve = {}
+for (_city, _st), _anchors in _city_anchor.items():
+    _vals = sorted(a[0] for a in _anchors)
+    _base = _vals[len(_vals) // 2]
+    _minbeds = min(a[1] for a in _anchors)
+    _growth = rng.uniform(.06, .13)          # across the whole 36 months
+    # 1 through 7. Crandall TX has a community whose scraped range starts at
+    # one bedroom, and a curve starting at two left those nine homes with no
+    # benchmark at all — caught by validate.py, not by reading the output.
+    for _beds in range(1, 8):
+        _b0 = _base * (1 + (_beds - _minbeds) * .085)
+        market_curve[(_city, _st, _beds)] = [
+            _b0 * (1 + _growth * i / max(1, len(MONTHS) - 1)) * _season(m)
+            for i, m in enumerate(MONTHS)
+        ]
+
+def curve_at(city, state, beds, when):
+    """Market rent for this city/beds at a given date, clamped to the window."""
+    c = market_curve.get((city, state, beds))
+    if c is None:
+        return None
+    i = MONTH_IX.get(when.isoformat()[:7])
+    if i is None:
+        i = 0 if when < START else len(c) - 1
+    return c[i]
+
 # ------------------------------------------------------------------ properties
 
 STREETS = ["Cypress", "Hawthorn", "Magnolia", "Sable", "Windrose", "Juniper",
@@ -215,10 +268,14 @@ for c in communities:
         acq = date(built, rng.randint(1, 12), rng.randint(1, 28))
         if acq > AS_OF - timedelta(days=200):
             acq = AS_OF - timedelta(days=rng.randint(220, 900))
-        # Rent: the community figure is "starting at", so it is a FLOOR.
-        # Scale up with beds and size, never below the anchor.
-        f = 1.0 + (beds - c["_beds_min"]) * .085 + max(0, (sqft - 1600)) / 1600 * .10
-        rent = int(round(c["_rent"] * f * rng.uniform(.99, 1.09) / 5) * 5)
+        # Asking rent = today's market for this city and bed count, times a
+        # per-home size premium. Bed count is already in the curve, so the
+        # factor carries square footage only. The same factor prices this
+        # home's leases, so a home stays consistently above or below its
+        # city median instead of jumping about lease to lease.
+        f = 1.0 + max(0, (sqft - 1600)) / 1600 * .10
+        mkt_now = curve_at(c["city"], c["state"], beds, AS_OF) or c["_rent"]
+        rent = int(round(mkt_now * f * rng.uniform(.98, 1.04) / 5) * 5)
         # "Starting at $X" is a FLOOR, so nothing may fall below it. The 0.99
         # tail of the jitter pushed 17 of 2,997 under the anchor on the first
         # run: smallest-bed, smallest-sqft homes where f was exactly 1.0.
@@ -230,7 +287,7 @@ for c in communities:
                                         rng.choice(STREETS), rng.choice(SUFFIX)),
             city=c["city"], state=c["state"], zip=c["_zip"],
             countyId=c["_countyId"], beds=beds, baths=baths, sqft=sqft,
-            yearBuilt=built, acquisitionDate=acq.isoformat(),
+            yearBuilt=built, acquisitionDate=acq.isoformat(), _sizeFactor=f,
             acquisitionPrice=int(rent * rng.uniform(140, 190) / 100) * 100,
             marketRent=rent, status="occupied"))
 
@@ -311,9 +368,27 @@ for p in properties:
         # May-Aug peak to 37%. Their published range is "12 to 24 months" and
         # whole-year terms dominate in practice, so 18 is rare rather than 1-in-6.
         term = rng.choice([12, 12, 12, 12, 24, 24, 24, 18])
-        rent = int(p["marketRent"] * rng.uniform(.94, 1.02) / 5) * 5
+
+        # Priced at the market for THIS home's city and bed count in the month
+        # the lease was signed, not at today's asking rent. That is the whole
+        # point: a lease signed two years ago should have fallen behind by
+        # however far the market moved since, and one signed last month should
+        # sit at market.
+        at_signing = curve_at(p["city"], p["state"], p["beds"], cursor)
+        at_signing = (at_signing or p["marketRent"]) * p["_sizeFactor"]
+        rent = int(round(at_signing * rng.uniform(.96, 1.02) / 5) * 5)
+
         if renewal:
-            rent = int(prev_lease["monthlyRent"] * rng.uniform(1.01, 1.07) / 5) * 5
+            # Renewals rise, but landlords rarely reset a sitting resident all
+            # the way to market: a modest increase, allowed to close part of the
+            # gap, capped so a renewal cannot leap past market or exceed a
+            # plausible year-on-year rise. This is what leaves long-tenured
+            # residents genuinely under-rented, which is the population the
+            # dashboard exists to surface.
+            floor = prev_lease["monthlyRent"] * rng.uniform(1.01, 1.05)
+            catchup = min(at_signing * rng.uniform(.93, 1.00),
+                          prev_lease["monthlyRent"] * 1.12)
+            rent = int(round(max(floor, catchup) / 5) * 5)
         end = add_months(cursor, term)
 
         L = dict(leaseId="LSE-%06d" % lid, propertyId=p["propertyId"],
@@ -577,27 +652,27 @@ for p in properties:
 
 # ------------------------------------------------------------ market rate comps
 
-# Keyed on CITY, not market: the tampa market spans $1,759-$2,919 because it
-# covers Fort Myers and Port Charlotte as well as Tampa proper.
-city_rent = defaultdict(list)
+# The published comps ARE the curve everything else was priced from, so a home's
+# rent and its benchmark cannot drift apart by construction. Only (city, state,
+# beds) combinations that actually have homes are emitted: the curve covers 2-7
+# beds for every city, and comps for combinations nobody owns would be noise.
+present = {}
 for p in properties:
-    city_rent[(p["city"], p["state"], p["beds"])].append(p["marketRent"])
+    present[(p["city"], p["state"], p["beds"])] = present.get(
+        (p["city"], p["state"], p["beds"]), 0) + 1
 
 comps = []; cid = 0
-months = list(month_iter(START, AS_OF))
-for (city, st, beds), rents in sorted(city_rent.items()):
-    base = sorted(rents)[len(rents) // 2]
-    for i, m in enumerate(months):
-        # mild upward drift over 3 years, plus a spring/summer bump, so
-        # "trending rental rates" actually has a trend to show
-        trend = 1 + (i / len(months)) * rng.uniform(.06, .13)
-        season = 1 + .035 * math.sin((m.month - 3) / 12 * 2 * math.pi)
+for (city, st, beds), n in sorted(present.items()):
+    curve = market_curve.get((city, st, beds))
+    if curve is None:
+        continue
+    for i, m in enumerate(MONTHS):
         cid += 1
         comps.append(dict(
             compId="CMP-%06d" % cid, city=city, state=st, beds=beds,
             month=m.isoformat()[:7],
-            medianRent=int(base * trend * season * rng.uniform(.985, 1.015) / 5) * 5,
-            sampleSize=max(4, int(len(rents) * rng.uniform(1.5, 4.0))),
+            medianRent=int(round(curve[i] / 5) * 5),
+            sampleSize=max(4, int(n * rng.uniform(1.5, 4.0))),
             source="synthetic"))
 
 # ------------------------------------------------------------------- write out
