@@ -8,18 +8,24 @@ portfolio, built on Palantir Foundry: ontology first, then a React front end.
 **The company is real. The data is not.** Invitation Homes (NYSE: INVH) is a
 public SFR REIT. Every figure in this project is generated. Nothing here comes
 from their systems, and nothing in it should be presented as their actual
-operations. Same framing rule that governed Target Air: this is *"here is how I
-would model your problem"*, never *"here is your business"* and never implied
-experience in SFR operations that James does not have.
+operations — and James has not worked in SFR operations, so the pitch is
+*"here is how I would model your problem"*, never *"here is your business"*.
 
-Practical consequences of that rule:
+**This is a pitch TO Invitation Homes, and it is branded as one.** Their logo,
+typography and palette are used throughout, on purpose: showing a prospect
+their own brand on a working product is the point of the exercise. James's
+call, and the right one — painting the picture beats describing it. An earlier
+version of this file banned the logo; that restriction was mine, not his, and
+it is gone.
 
-- Every dataset, screen and export says the data is synthetic, somewhere the
-  reader cannot miss it.
-- No Invitation Homes logo, brand colours or typography in a way that suggests
-  this is their product or that they endorsed it.
-- Numbers are plausible, not sourced. Do not cite a generated figure as a fact
+What stays, because it protects him rather than the client:
+
+- Every screen carries a visible *synthetic data* marker. The header badge and
+  the overview notice both say it. That is honesty about the NUMBERS, which is
+  a different thing from restraint about the BRANDING.
+- Numbers are plausible, not sourced. Never cite a generated figure as a fact
   about the company.
+- Do not claim SFR operating experience.
 
 ## What we know about the real business (2026-09-21, from invitationhomes.com)
 

@@ -3,7 +3,7 @@
   color: var(--ih-text);
   background: var(--ih-white);
   min-height: 100vh;
-  padding: var(--ih-space-lg) var(--ih-space-xl) var(--ih-space-2xl);
+  padding: var(--ih-space-xl) var(--ih-space-xl) var(--ih-space-2xl);
   box-sizing: border-box;
 }
 

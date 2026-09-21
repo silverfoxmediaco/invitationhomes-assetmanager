@@ -1,0 +1,324 @@
+/* Sticky because the pages are long and the way out should not require
+   scrolling back to the top to find it. */
+.header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 50;
+  background: var(--ih-white);
+  border-bottom: 1px solid var(--ih-n1);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ih-space-lg);
+  padding: var(--ih-space-md) var(--ih-space-xl);
+}
+
+/* Logo stacked over the product name: the mark is theirs and stays the loudest
+   thing in the corner, with what this actually is reading underneath it. */
+.brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.logo {
+  height: 30px;
+  width: auto;
+  display: block;
+}
+
+/* Hind, their UI face, against their corporate teal — the one non-green in the
+   brand set, so it sits under the logo without competing with it. */
+.product {
+  font-family: var(--ih-font-body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--ih-corporate);
+  white-space: nowrap;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--ih-space-md);
+}
+
+/* Present on every screen, deliberately. The numbers are generated and anyone
+   reading one should know that without having to ask. */
+.prototype {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ih-n6);
+  padding: 3px 10px;
+  border: 1px solid var(--ih-n1);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* --- Menu button ----------------------------------------------------------
+   Icon only. At this size the three bars are unambiguous and the word beside
+   them was doing nothing but widening the corner. */
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--ih-text);
+  background: var(--ih-white);
+  border: 1px solid var(--ih-n2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.menuButton:hover {
+  border-color: var(--ih-n4);
+}
+
+.menuButton[aria-expanded="true"] {
+  background: var(--ih-primary);
+  border-color: var(--ih-primary);
+  color: var(--ih-white);
+}
+
+.bun {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 17px;
+  height: 12px;
+}
+
+.bun span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: currentColor;
+  border-radius: 1px;
+  transition:
+    transform 180ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 120ms ease;
+}
+
+/* Three bars folding into a cross. The middle one fades rather than moving, so
+   the two that rotate meet in the centre. */
+.bunOpen span:nth-child(1) {
+  transform: translateY(5px) rotate(45deg);
+}
+
+.bunOpen span:nth-child(2) {
+  opacity: 0;
+}
+
+.bunOpen span:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+/* --- Drawer ---------------------------------------------------------------
+   Slides in from the right over a dimmed page rather than expanding the
+   header. Expanding would reflow everything below it, so the figure someone
+   was reading jumps down the screen the moment they reach for the menu.
+
+   It stays mounted so it can animate. `visibility: hidden` while closed is
+   what keeps it out of the tab order — display:none would kill the
+   transition, and opacity alone would leave the links focusable behind the
+   page. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(33, 33, 33, 0.38);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+  z-index: 60;
+}
+
+.backdropOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, 88vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--ih-white);
+  border-left: 1px solid var(--ih-n1);
+  box-shadow: -18px 0 48px rgba(33, 33, 33, 0.12);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition:
+    transform 280ms cubic-bezier(0.32, 0.72, 0, 1),
+    visibility 280ms;
+  z-index: 61;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.drawerOpen {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+/* The one place the deep corporate teal gets a full surface. It is the only
+   non-green in their palette, so the drawer reads as chrome rather than as
+   another green thing competing with the logo. */
+.drawerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ih-space-md);
+  padding: var(--ih-space-md) var(--ih-space-lg);
+  background: var(--ih-corporate);
+  color: var(--ih-white);
+}
+
+.drawerTitle {
+  font-family: var(--ih-font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ih-white);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.drawerBody {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--ih-space-lg);
+}
+
+.group {
+  min-width: 0;
+}
+
+.group + .group {
+  margin-top: var(--ih-space-lg);
+  padding-top: var(--ih-space-lg);
+  border-top: 1px solid var(--ih-n1);
+}
+
+.groupTitle {
+  font-family: var(--ih-font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--ih-n5);
+  margin: 0 0 var(--ih-space-sm);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: block;
+  position: relative;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--ih-text);
+  transition: background 120ms ease;
+}
+
+.item:hover {
+  background: #f4f8f1;
+}
+
+.itemActive {
+  background: #f4f8f1;
+}
+
+/* The page you are on, marked by a filled dot rather than a colour swap, so it
+   reads at a glance without turning a menu item into a button. */
+.itemActive .itemLabel::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ih-primary);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.itemLabel {
+  display: block;
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.itemNote {
+  display: block;
+  font-size: 12px;
+  color: var(--ih-n6);
+  line-height: 1.4;
+  margin-top: 1px;
+}
+
+.drawerFoot {
+  margin: 0;
+  padding: var(--ih-space-md) var(--ih-space-lg);
+  border-top: 1px solid var(--ih-n1);
+  font-size: 11px;
+  color: var(--ih-n6);
+}
+
+@media (max-width: 720px) {
+  .bar {
+    padding: var(--ih-space-md);
+  }
+
+  .prototype {
+    display: none;
+  }
+}
+
+/* Respect a stated preference for less motion: the drawer still arrives, it
+   just stops sliding. */
+@media (prefers-reduced-motion: reduce) {
+  .drawer,
+  .backdrop,
+  .bun span {
+    transition-duration: 1ms;
+  }
+}

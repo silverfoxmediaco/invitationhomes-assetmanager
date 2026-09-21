@@ -110,47 +110,10 @@ function Overview(): React.ReactElement {
       <p className={css.sectionNote}>
         Rent forgone is one exposure. Rent owed is the other, and it is a different
         population: some of the homes below are also occupied by residents falling behind,
-        and most are not.
-      </p>
-      <p className={css.jumpTo}>
+        and most are not.{" "}
         <Link to="/at-risk" className={css.rowLink}>
           Residents at risk &rarr;
-        </Link>{" "}
-        <span className={css.state}>
-          scored on arrears, payment trend and how close the lease is to expiry
-        </span>
-      </p>
-      <p className={css.jumpTo}>
-        <Link to="/leasing" className={css.rowLink}>
-          Leasing &rarr;
-        </Link>{" "}
-        <span className={css.state}>
-          what is coming in, what is re-signing, and what leaving costs
-        </span>
-      </p>
-      <p className={css.jumpTo}>
-        <Link to="/collections" className={css.rowLink}>
-          Rent collection &rarr;
-        </Link>{" "}
-        <span className={css.state}>
-          why winter costs chasing hours rather than revenue
-        </span>
-      </p>
-      <p className={css.jumpTo}>
-        <Link to="/maintenance" className={css.rowLink}>
-          Maintenance &rarr;
-        </Link>{" "}
-        <span className={css.state}>
-          who pays for what, and where resident duty turns into landlord cost
-        </span>
-      </p>
-      <p className={css.jumpTo}>
-        <Link to="/communities" className={css.rowLink}>
-          Communities &rarr;
-        </Link>{" "}
-        <span className={css.state}>
-          the same portfolio as 76 acquisitions rather than 3,001 houses
-        </span>
+        </Link>
       </p>
 
       <h2 className={css.sectionTitle}>Largest gaps to market</h2>
