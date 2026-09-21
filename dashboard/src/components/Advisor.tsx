@@ -5,7 +5,7 @@ import { useAdvisor, type Suggestion } from "@/data/useAdvisor";
 import css from "./Advisor.module.css";
 
 /**
- * "What to do about it" — an AIP Logic function reading the same figures the
+ * Recommended actions — an AIP Logic function reading the same figures the
  * page above it shows.
  *
  * Loads independently of the page it sits on. Assembling the snapshot costs
@@ -181,7 +181,7 @@ function Advisor(): React.ReactElement {
     <section className={css.ihAdvPanel}>
       <div className={css.ihAdvBar}>
         <div>
-          <h2 className={css.ihAdvHeading}>What to do about it</h2>
+          <h2 className={css.ihAdvHeading}>Recommended actions</h2>
           <p className={css.ihAdvSub}>
             AIP Logic, reading the same figures shown on this dashboard
           </p>
