@@ -971,3 +971,44 @@ ALSO FIXED
 OPEN
   - Re-upload all seven stale CSVs TOGETHER, then re-verify this page.
   - Remaining pages: community view, rent collection, maintenance.
+
+--------------------------------------------------------------------------------
+2026-09-21 (later)  Re-upload verified — all twelve datasets current
+--------------------------------------------------------------------------------
+  James re-imported the seven stale CSVs per dataset (Import > Replace, Keep
+  existing schema) rather than through the folder-level upload dialog, which
+  creates NEW datasets — that path is what produced the `properties (0)` and
+  `market_rate_comps (0)` orphans still sitting in the folder.
+
+  "Keep existing schema" mattered: the datasets' first column is named
+  `residentid` / `propertyid` in lower case, while the CSV headers are
+  camelCase. Re-inferring the schema would have renamed those columns and
+  broken the object types' property mappings.
+
+  VERIFIED
+    All 12 object row counts match their CSV exactly.
+    Payments vs leases: 95,663 in term, 0 out of term, 0 orphans,
+    0 rent mismatches, 0 resident mismatches — 100% consistent.
+    Tax: all 3,001 properties covered, no orphaned assessments.
+
+  CORRECTION: my first pass called TaxAssessments and TaxBills stale on a
+  count of 8,991 against 9,003. `totalCount` on the search endpoint is an
+  APPROXIMATE index figure, not an exact count. Counted by pagination both
+  are exactly 9,003 with nothing missing. Do not verify row counts with
+  totalCount.
+
+  THE PAGE, against real data
+    165 of 2,760 residents at risk or critical (6%), holding $794,055 of
+    $1,673,783 outstanding — 47% of the arrears.
+    Ageing: 1-30 $128,475 / 31-60 $136,059 / 61-90 $138,122 / 90+ $1,271,127.
+    Independently recomputed the $1,673,783 straight from the API: exact match.
+    Spot-checked the top row — LSE-005050, $6,906 on $2,475 rent = 2.8 months.
+
+  Figures differ slightly from the local test run (157 flagged, $1,609,156)
+  because the test ages arrears against the newest payment in the data while
+  the page ages against today, 20 days later. Expected, not drift.
+
+  OPEN
+    - Property detail figures grid wraps 4+1 at ~1500px and the empty cell
+      shows the divider background as a grey block. Cosmetic, not reported.
+    - Remaining pages: community view, rent collection, maintenance.
