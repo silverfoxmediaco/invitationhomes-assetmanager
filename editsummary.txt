@@ -1,0 +1,850 @@
+Invitation Homes — Property Operations Platform
+Edit Summary
+================================================================================
+
+Append new entries AT THE BOTTOM of this file, never the top.
+
+Each entry records what changed and WHY, what was verified and how, and what
+was left open. An entry that only lists files touched is not worth writing:
+the git log already does that. What the code cannot say is why a decision went
+one way, what was tried and abandoned, and what is known to be still broken.
+
+
+[2026-09-21] Project created
+--------------------------------------------------------------------------------
+~/Documents/InvitationHomes/invitationhomes-foundry, with CLAUDE.md and this
+file as the first two.
+
+WHAT THIS IS
+  A management and C-suite operations platform for a single-family rental
+  portfolio, on Palantir Foundry. Ontology first, React front end later,
+  developed locally in VS Code against the OSDK.
+
+  Five domains: inventory management; rental payment tracking; maintenance;
+  property tax tracking; and expenses, rental history and market rate comps
+  with trending rates.
+
+THE COMPANY IS REAL, THE DATA IS NOT
+  Invitation Homes (NYSE: INVH) is a public single-family rental REIT. Every
+  figure in this project is generated. The framing rule carried over from
+  Target Air: present it as "here is how I would model your problem", never as
+  their actual operations and never as SFR experience James does not have.
+  Synthetic data gets labelled as synthetic everywhere a reader will see it.
+
+THE THESIS — THE JOIN
+  Property -> Lease -> RentPayment -> Expense / MaintenanceWorkOrder / TaxBill,
+  with MarketRateComp hanging off the property's submarket.
+
+  It answers: which homes are underperforming their market rate, what is that
+  costing, and is it a pricing problem or a cost problem. A property management
+  system knows the lease says $2,150. A market feed knows comparable homes now
+  go for $2,480. The ledger knows this home absorbed $6,400 of maintenance and
+  a 12% reassessment. None of them alone distinguishes "raise rent at renewal"
+  from "this asset is a problem". Everything else is supporting cast, and
+  ambiguous modelling decisions get resolved in favour of keeping that chain
+  traversable.
+
+GROUNDING PULLED FROM invitationhomes.com (2026-09-21)
+  19 markets, named in CLAUDE.md. Leases 12-24 months. ProCare maintenance with
+  24/7 emergency service. Lease Easy bundle (smart-home tech, air filter
+  delivery, utility management). Up to 3 pets. Online applications and payments.
+
+  CORRECTION WORTH KEEPING: the per-market counts on their site (Atlanta 810,
+  Tampa 598, Phoenix 508 and so on) are homes CURRENTLY AVAILABLE TO LEASE, not
+  homes owned. The real portfolio is on the order of 80,000. Sizing the
+  synthetic set off the availability numbers would model a company roughly two
+  orders of magnitude too small.
+
+CARRIED FORWARD FROM TARGET AIR
+  The Foundry gotchas are in CLAUDE.md rather than being rediscovered: action
+  types absent from the SDK until registered and regenerated; Vite's dependency
+  pre-bundle cache; LocalDate vs instants on action parameters; "Allow edits"
+  before any write action; bulk ontology deletes being a trap; v1 vs v2 CSV
+  upload and the schema-less raw upload serving stale data.
+
+  Also the data-generation discipline: deterministic seed, shape the data so
+  the interesting case is genuinely there, reconcile derived values after
+  generation rather than during, and re-check the data once pages render it.
+  Both Target Air data bugs were invisible in the CSVs and obvious on screen,
+  because nothing errors on data that is valid and wrong.
+
+OPEN
+  - Portfolio scale for the synthetic set: how many properties, across how many
+    of the 19 markets.
+  - Whether this has a real audience (pitch, interview, client) or is a
+    portfolio piece. Decides how much front-end polish is warranted.
+  - Whether market comps need a plausible external source modelled, or a
+    generated submarket rate curve is enough.
+
+NEXT
+  Settle scale and the object list, then write the generator.
+
+
+[2026-09-21] Brand palette and typography captured from the client site
+--------------------------------------------------------------------------------
+Read from invitationhomes.com's own CSS custom properties in the browser, not
+sampled off a screenshot, so these are the real token values rather than an
+approximation.
+
+TYPOGRAPHY — two families, cleanly split
+  Nunito 700 for display and section headings (hero 60px, section 36px).
+  Hind for body, navigation and sub-headings (body 14-16px at 400, larger
+  sub-headings 32px at 500). Inter is also loaded but unused on the homepage.
+  The contrast between the two IS the identity. Headings in Hind or body in
+  Nunito would read as off-brand even with the colors right.
+
+COLOR — full ramp recorded in CLAUDE.md. The load-bearing ones:
+  --color-primary #206f06 (deep green, Pay Rent and primary actions)
+  --color-primary-light #67bd47, --color-primary-dark #195f02
+  --color-accent #67bd47 / dark #63a72f / light #9fcd3c
+  --color-corporate-special #27565b (deep teal — the only non-green brand color)
+  --color-text #212121, --color-secondary #4d4d4d
+  neutrals 1-8: #e8e8e8 #d4d4d4 #bdbdbd #a6a6a6 #8f8f8f #7a7a7a #636363 #4d4d4d
+  success #23a46e, warning #ebcb28, error #dd4b55
+  banner blue #def0fc, banner green #c1eb65
+
+NOTED FOR THE BUILD, not just recorded
+  Their site is a consumer leasing funnel: white ground, big photography, green
+  CTAs. This is a dense internal operations dashboard, so the palette carries
+  over but the proportions do not.
+  - success #23a46e and primary #206f06 are BOTH green and will read as the same
+    thing in a dense table. One job per green: primary = interactive, success =
+    status column only, never adjacent.
+  - The neutral ramp does the real work for tables, borders and secondary text.
+  - #27565b is the one deep serious color available and is the natural choice
+    for dark dashboard chrome, on-brand without being a third green.
+  - Do not invent colors. If a hue is needed that the tokens lack, raise it.
+
+Browser note: the extension's "Browser 1" / "Browser 2" labels are assigned by
+connection order and swapped between sessions, so they are not a stable address.
+Resolved by using switch_browser and letting James connect and name the window
+("jmcewenpl"). Use that name from now on.
+
+
+[2026-09-21] Brand assets saved to brand/
+--------------------------------------------------------------------------------
+brand/invitation-homes-logo.png    full horizontal lockup, 1218 x 256, white ground
+brand/favicons/favicon.ico         multi-size ICO
+brand/favicons/favicon.png
+brand/favicons/ih-icon-32.png      from their manifest
+brand/favicons/ih-icon-64.png
+brand/favicons/ih-icon-128.png
+brand/favicons/manifest.json       theme_color #000000, background_color #ffffff
+brand/README.md                    provenance, usage limits, logo colors
+
+THE LOGO IS A RASTER CAPTURE, NOT THE VECTOR — and the reason matters
+  Their header logo is an INLINE SVG (viewBox "0 0 517.21 100.89", 29 paths).
+  There is no hosted .svg to download; the only logo-named URLs on the page are
+  OneTrust cookie-consent assets. Reading the live SVG markup out through the
+  browser tool was repeatedly refused by a content filter — first on outerHTML,
+  then on anything returning resource URLs with query strings.
+  Worked around by temporarily scaling the SVG to 1200px in the page, capturing
+  the region, then RESTORING the page (verified back to 233,56,226x56 — the
+  page was left exactly as found). Cropped and trimmed with magick.
+  256px tall covers any UI use at normal density. A true vector, if ever needed
+  for print, is a manual devtools copy of the <svg> from their homepage.
+
+LOGO'S OWN FILLS (read from the SVG, not sampled from the PNG — these differ
+slightly from the site design tokens, so use tokens for UI and these only when
+reproducing the mark)
+  #9fcc3b light green outer diamond, #65bc46 mid green (10 paths), #3cae49,
+  #04a54f, #0c9347, #168241, #0b763c deepest, #231f20 near-black wordmark.
+  The wordmark splits: "invitation" near-black, "homes" green, with a TM.
+
+USAGE RULE recorded in brand/README.md: these are the client's assets, captured
+for reference so the prototype matches their system rather than an invented one.
+No screen carrying this logo may be presented as Invitation Homes' software or
+imply endorsement. Same rule as the synthetic data.
+
+
+[2026-09-21] All 76 communities captured to data/reference/
+--------------------------------------------------------------------------------
+data/reference/invitation-homes-communities.csv
+  slug, market, community_name, city, state — 76 rows, 60 distinct cities.
+
+CORRECTION TO MYSELF: I argued the business runs by market, not state, and that
+state and market do not nest. James pointed at the communities page and he was
+right. Their own search form is State -> Location(market) -> City -> Community,
+State is the FIRST filter, and in this dataset every market sits inside exactly
+one state. It nests cleanly. The CFO hierarchy is State -> Market -> City ->
+Community -> Property.
+
+DISTRIBUTION (real, counted from their page, not estimated)
+  FL 31  TX 19  NC 8  GA 7  TN 3  CO 3  AZ 3  UT 1  CA 1
+  tampa 18, carolinas 8, houston 7, dallas 7, atlanta 7, orlando 6,
+  jacksonville 6, san-antonio 5, phoenix 3, nashville 3, denver 3,
+  southern-california 1, south-florida 1, salt-lake-city 1
+  Florida alone is 41% of communities; Tampa alone is nearly a quarter of
+  everything. FL + TX together are two thirds.
+
+THREE THINGS THE DATA REVEALED — all of them affect the model
+
+1. "MARKET" IS AN OPERATING REGION, NOT A METRO. The tampa market contains Fort
+   Myers, Cape Coral, Port Charlotte, Venice, Lake Alfred and Haines City —
+   Southwest and Central Florida, some of it 100+ miles from Tampa. So market is
+   too coarse a key for rental comps: a Fort Myers comp is not a Tampa comp.
+   Comps must key on city or ZIP/submarket, NOT on market, or the comp engine
+   will quietly compare homes in different housing economies.
+
+2. CITY NAMES COLLIDE ACROSS STATES. "The Reserve" sits in Dallas, GEORGIA
+   (atlanta market) while a separate dallas market exists in Texas. Any join
+   keyed on city name alone silently merges a Georgia community into the Texas
+   market. City must always be qualified by state. This is the same shape as the
+   Target Air BOM bug: valid data, wrong data, nothing errors.
+
+3. THEIR SOURCE DATA HAS DEFECTS, which is worth knowing when the synthetic set
+   claims to mirror it. "Clarksvile" is misspelled on their page (normalized to
+   Clarksville here). Vineland Reserve is written "Osteen, Florida" where every
+   other row uses a two-letter code, which is why it was the one row that failed
+   state extraction (normalized to FL).
+
+EXTRACTION NOTE: innerText returns '' for elements that are not rendered, so an
+innerText-based scrape found all 76 links but no city/state for 68 of them.
+textContent works on hidden nodes but concatenates without separators, running
+name and city together. Fix was to take the SHORTEST descendant whose text ends
+in ", XX" as the location and subtract it from the anchor's full text.
+
+OPEN: this is the communities portfolio (build-to-rent), not the whole company.
+The scattered single-family portfolio is ~80,000 homes across 19 markets and
+includes Chicago, Minneapolis, Seattle, Las Vegas, Northern California and
+Austin, none of which appear here. Decision still needed on whether the
+synthetic set models communities only or the full business.
+
+
+[2026-09-21] Community detail scraped — 76/76, rent anchors captured
+--------------------------------------------------------------------------------
+data/reference/invitation-homes-community-details.csv
+  slug, market, community_name, city, state, starting_rent, beds_min, beds_max,
+  feature_count, features, zip_candidates, page_location, fetch_status
+  76 rows, all fetch_status ok. Scraper at scratchpad/scrape_communities.py,
+  one request at a time with a 0.7s delay.
+
+COVERAGE
+  starting_rent  73/76   missing: charlottes-ridge, addenbrook, westport-townhouses
+  bed range      71/76   missing: + hanley-mill, murphy-creek, magnolia-springs
+  features       76/76
+  Verified the gaps are REAL, not a parser miss: westport-townhouses (465KB) and
+  addenbrook (389KB) return full pages with no "starting at" string anywhere.
+  Likely fully leased or not yet released. Do not synthesize a rent for these
+  three as if it were observed — leave them explicitly unanchored.
+
+STARTING RENT — the anchor for all synthetic rent generation
+  n=73  min $1,270  median $2,210  max $3,762
+  BY STATE   FL n=30 median $2,269 ($1,759-$2,919) | TX n=19 median $1,923
+             ($1,270-$2,694) | NC n=8 $2,337 | GA n=6 $2,414 | CO n=3 $2,704
+             | TN n=3 $2,194 | AZ n=3 $2,220 | CA n=1 $3,762
+  BY MARKET  southern-california $3,762 | denver $2,704 | atlanta $2,414 |
+             orlando $2,344 | carolinas $2,337 | phoenix $2,220 | tampa $2,220 |
+             jacksonville $2,212 | nashville $2,194 | south-florida $2,144 |
+             dallas $2,053 | houston $2,049 | san-antonio $1,594
+
+  NOTE the spread CONFIRMS the earlier structural finding: tampa runs
+  $1,759-$2,919, a 66% band, because that market covers Fort Myers, Cape Coral,
+  Port Charlotte and Venice as well as Tampa proper. Market is too coarse a key
+  for comps. Generate and compare rents at CITY level, not market level.
+
+DELIBERATELY NOT CAPTURED
+  COORDINATES. Pages embed a lat/lng, but Higley Park's reads 33.4483771,
+  -112.0740373 — downtown Phoenix, not Gilbert. It is a default map centre, not
+  the community location. Capturing it would have produced 76 plausible-looking
+  but wrong coordinates, the exact Target Air BOM failure mode. County (needed
+  for property tax) will have to come from a real geocode of the ZIP instead.
+  A SINGLE ZIP. Each page carries the community's ZIP and the leasing office's
+  (Higley Park shows 85296 Gilbert and 85224 Chandler). All candidates kept in
+  zip_candidates rather than guessing; resolve deliberately before use.
+
+PER-PROPERTY DATA IS NOT AVAILABLE AND THIS IS NOT A GAP TO CLOSE
+  "Available Homes" is a link into the JS search app, which returns only homes
+  CURRENTLY LISTED FOR LEASE — a handful per community, nothing about occupied
+  homes. Wrong shape for an inventory system, which tracks what is owned.
+  Properties will be synthesized beneath each community, with rent derived from
+  that community's real starting_rent.
+
+DECIDED: model the COMMUNITIES portfolio only, not the full ~80,000-home
+scattered business.
+
+
+[2026-09-21] ontology-spec.md written — 12 objects, 12 links, AIP section
+--------------------------------------------------------------------------------
+DECISIONS TAKEN: communities portfolio only, 3 years of history, ~3,000
+synthetic properties, seasonality required, renter history required so at-risk
+and behind-on-rent are visible.
+
+ANSWERING "how many properties do we have data on": ZERO. We have 76
+COMMUNITIES. The pages publish no home counts either (checked). Everything below
+the Community line is generated, and that line stays visible in the build.
+
+TWELVE OBJECTS  Community (76, real) and County; Property (~3,000); Resident
+(~4,000), Lease (~4,500), RentPayment (~108,000); MaintenanceWorkOrder
+(~27,000), Vendor, Expense (~30,000); TaxAssessment and TaxBill (~9,000 each);
+MarketRateComp (~13,000).
+
+THREE MODELLING DECISIONS THAT CARRY WEIGHT
+  Residents persist ACROSS leases. A renewal is a second lease for the same
+  resident. A resident whose history lives inside one lease cannot be "at risk"
+  in any useful sense, and a renewal must not reset a record to clean.
+  Comps key on CITY, not market — tampa spans $1,759-$2,919 because it covers
+  Fort Myers and Port Charlotte. Market-level comps would report under-market
+  gaps that are only geography.
+  Delinquency buckets computed at READ time from daysLate, so thresholds can
+  change without regenerating 108,000 rows.
+  Accepted denormalisation: Property carries city/state/countyId although all
+  three are reachable via Community, because the comp join and tax rollup run
+  per property on every render. Cost: those fields must stay consistent with the
+  community. Raise it unprompted rather than waiting to be asked.
+
+AT-RISK COHORT SHAPED, NOT SPRINKLED  ~8% of residents DEGRADE (on-time -> late
+-> partial -> missed) rather than being uniformly bad; a flat random sprinkle
+makes everyone look alike and leaves nothing to find. ~1.5% progress to
+terminated-early or evicted so the chain from behaviour to lease outcome to turn
+cost is traceable. Some at-risk residents sit in under-market homes and some do
+not — if the two problems always coincided the dashboard could not show they are
+different questions, which is the thesis.
+
+AIP SECTION ADDED after James asked whether AIP needs all this data. Two things
+travel under that name with opposite requirements:
+  AIP Logic / agents / NL questions reason at query time, do NOT learn from the
+  data and do NOT need volume. They need an ontology that DESCRIBES ITSELF.
+  Build rule recorded: every object type, property and link gets a written
+  description AS IT IS CREATED, saying what a field means and its units rather
+  than restating its name. Retrofitting descriptions across 12 object types is
+  the kind of job that never gets done.
+  Trained models need volume, history and labels — which the spec supports — but
+  A MODEL TRAINED ON SYNTHETIC DATA CANNOT BE VALIDATED BY IT. The generator
+  creates the at-risk cohort with an explicit rule; any model will recover that
+  rule and score beautifully. The accuracy figure measures how well it
+  reverse-engineered our own generator. NEVER present a model accuracy number
+  from this data — anyone with ML experience sees the circularity at once and it
+  would discredit the parts of the prototype that are real. What IS honest to
+  demonstrate is the PIPELINE: ontology supports feature engineering, model
+  trains, predictions write back to objects, UI surfaces them, user acts.
+  AT-RISK SCORE SHIPS RULES-BASED, not ML: arrears bucket 40, recent trend 25,
+  direction 15, payment ratio 10, lease stage 10; bands healthy / watch / at
+  risk / critical. Transparent, works day one, explainable in a sentence, and
+  what property managers actually use. Direction is its own signal because a
+  resident who always pays on day 3 is not the same risk as one who paid on time
+  for a year and has now missed twice.
+  AIP Logic then sits ON TOP for narrative — summarise why a resident is flagged
+  and what the exposure is — reading the score rather than computing it, which
+  keeps the number auditable and the explanation fluent.
+
+OPEN: confirm ~3,000 properties; whether Vendor and Expense are v1 or follow the
+first dashboard; county assignment needs a real ZIP -> county geocode because the
+page coordinates are a default map centre and unusable.
+
+
+[2026-09-21] Generator + validator written; 12 datasets generated and checked
+--------------------------------------------------------------------------------
+scripts/generate.py   deterministic, seed 1947, runs in ~3s
+scripts/validate.py   20 integrity checks, non-zero exit so it can gate an upload
+data/generated/       12 CSVs, 30MB total
+
+CONFIRMED BY OWNER: ~3,000 properties, 3 years, Vendor and Expense both in v1.
+
+ROW COUNTS  communities 76 | counties 43 | properties 2,997 | residents 5,646 |
+leases 8,375 | rent_payments 95,467 | vendors 67 | maintenance_work_orders
+26,514 | expenses 303,405 | tax_assessments 8,991 | tax_bills 8,991 |
+market_rate_comps 4,212.
+
+THREE BUGS FOUND BY LOOKING AT THE OUTPUT, NOT BY READING THE CODE
+1. 17 of 2,997 properties priced BELOW their community's "starting at" floor.
+   The 0.99 tail of the rent jitter pushed smallest-bed/smallest-sqft homes
+   under the anchor, where the size factor was exactly 1.0. Caught by
+   validate.py. Fixed with an explicit max() against the anchor — "starting at"
+   is a floor and nothing may sit beneath it.
+2. LEASE SEASONALITY WAS INVERTED. October held 30.8% of all lease starts and
+   May-Aug only 15.7%, the exact opposite of the spec. Cause: every property
+   began its lease history at START (2023-10-01) and the nudge loop meant to
+   scatter them could only step 10-40 days at a time, so it never escaped the
+   pile-up. Fixed by choosing each property's FIRST lease start from a
+   season-weighted window reaching up to two years BEFORE our reporting window —
+   a real portfolio is already mid-tenancy when reporting opens. Payments are
+   still only emitted from START. October fell to 11.1%, May-Aug rose to 36.6%.
+3. That fix introduced a NEW failure: leases starting before property
+   acquisition, because month_iter yields month STARTS which can precede the
+   window's own lower bound. Caught by validate.py on the very next run. Fixed
+   by clamping the cursor to `earliest`.
+
+Then May-Aug still sat at 37% against a 45% target. Two further changes:
+  - turn gap now samples 4 realistic vacancy lengths (5-75 days) and prefers the
+    one landing in a better leasing month. Snapping straight to the next peak
+    month would have invented months-long vacancies instead.
+  - 18-month terms made rare rather than 1-in-6. 12 and 24 preserve the start
+    month; 18 shifts it by six, walking a summer lease into winter on every
+    renewal. Their published range is "12 to 24 months" and whole-year terms
+    dominate in practice.
+  Result: May-Aug 41.0%. The residual gap is genuine drift from turnover, which
+  is realistic — forcing it to exactly 45% would mean faking the turn cycle.
+
+SEASONALITY VERIFIED IN THE OUTPUT, not assumed
+  on-time rate   Jan 83.7% (lowest), Dec 86.7%, Sep 86.8%, Apr peak 91.9%
+  HVAC hot states (FL/TX/AZ)  Jun-Sep 518-591/mo against a ~280 baseline
+  freeze plumbing (TX/CO/TN/NC)  Dec-Feb 350-387/mo against a ~130 baseline
+  market rents   +11.7% over 36 months with a spring/summer bump
+  at-risk cohort  10.2% of residents; lease outcomes include 42 evicted and
+                  94 terminated-early, so behaviour traces through to outcome.
+
+VALIDATOR COVERS  8 referential-integrity checks, 5 temporal (no lease before
+acquisition, no payment before its lease month, none paid before due, work
+orders closed >= opened, tax bills inside their tax year), 6 business rules
+(occupied implies a current lease, currentLeaseId is actually active, rent >=
+community floor, no double active lease, property city/state matches its
+community, every property has a comp for its city+beds). All pass.
+
+FLAG — expenses.csv is 303,405 rows / 16MB, TEN TIMES the ~30,000 the spec
+estimated. My estimate was wrong, not the generator: HOA, insurance and
+utilities are genuinely monthly, so 3 recurring categories x 36 months x 2,997
+properties is ~324k before the one-off categories. It is realistic but it is
+half the total row count and most of the upload weight. Options if it bites:
+aggregate the recurring three to quarterly, or drop them to community level.
+Not changed without a decision.
+
+OPEN  Upload to Foundry is James's step, not the agent's. Then object types
+(with descriptions written AS THEY ARE CREATED — see the AIP section of
+ontology-spec.md), then links, then actions, then the React front end.
+
+
+[2026-09-21] Maintenance reworked to Invitation Homes' PUBLISHED responsibility split
+--------------------------------------------------------------------------------
+SOURCE: invitationhomes.com/resident-responsibilities, read 2026-09-21. Their
+own words: "we handle the big stuff like appliances, fences, and heating/cooling
+issues. The smaller items - such as air filters and pest control - are your
+responsibility."
+
+  RESIDENT pays: lawn maintenance, sprinkler maintenance, pool maintenance, pest
+    control, air filters, light bulbs, foundation protection, trash disposal,
+    minor toilet and drain clogs.
+  LANDLORD pays: AC not cooling, furnace not heating, fences, garage door,
+    roofing, garbage disposal, major drain clogs, plumbing leaks, plumbing
+    hardware, water heater.
+
+A NEAR MISS WORTH RECORDING. James asked whether yard maintenance was included.
+It was, but only as 4,261 reactive work orders — 0.47 per property per YEAR,
+which is far too few for FL/TX/AZ where grass grows year round. My proposed fix
+was to add landlord-paid recurring lawn service at roughly $1,170 per property
+per year: about $10.5M over three years, larger than the entire existing
+maintenance spend. Then James pointed at this page and the premise collapsed —
+the RESIDENT pays for lawn care. I had also suggested adding pest control and
+pool service, and both of those are resident-side too. The page turned an
+invented $10.5M cost line into a deletion.
+
+WHAT CHANGED IN scripts/generate.py
+  - MAINT replaces the old flat category list: 19 categories, each carrying
+    (responsibility, cost_lo, cost_hi, vendor_family) drawn from the published
+    lists rather than invented.
+  - Work orders gain `responsibility` (landlord|resident), `chargedToResident`,
+    and `contributingNeglect`.
+  - Resident-responsibility requests are STILL LOGGED rather than deleted:
+    residents do submit them, the company triages them, and the cost is charged
+    back. That is what lets a dashboard separate "what we spend" from "what we
+    handle" — deleting them would have hidden 8,098 real operational events.
+  - HVAC split into "not cooling" (hot-state summer spike) and "not heating"
+    (winter, heavier in freeze states). Plumbing split into leak / water heater /
+    major clog (landlord) and minor clog (resident), matching the page exactly.
+  - Vendor families now derive from MAINT rather than a hand-kept parallel list,
+    so a new category cannot silently lose its vendor pool.
+
+THE CHAIN WORTH SURFACING TO A CFO. `contributingNeglect` marks HVAC failures
+where the resident skipped their own air-filter duty and the LANDLORD paid for
+the result: 562 work orders, $932,682. Resident responsibility becoming landlord
+cost is exactly the kind of link an ontology shows and a spreadsheet cannot, and
+it is now traceable Resident -> Lease -> Property -> WorkOrder.
+
+RESULT over 3 years, 2,997 properties
+  LANDLORD 18,379 orders  $26,553,731
+  RESIDENT  8,098 orders   $1,980,145  (charged back, NOT a landlord expense)
+  Largest landlord lines: Turn $6.1M, HVAC-not-cooling $5.2M, Plumbing-leak
+  $2.9M, Roof $2.8M, HVAC-not-heating $2.6M — which is their published "big
+  stuff" list, arrived at from their rules rather than from my guesses.
+
+All 20 validation checks still pass.
+
+OPEN  Common-area landscaping is a genuine community-level cost funded through
+HOA, and is NOT modelled per property. Expenses volume decision still outstanding
+(HOA + Insurance + Utilities are 89.4% of expense ROWS but only 30% of DOLLARS;
+CapEx and Turn are 4% of rows and 57% of the money).
+
+
+[2026-09-21] Expenses reworked to real billing cadence; common-area landscaping added
+--------------------------------------------------------------------------------
+303,565 rows -> 81,548. Dataset 30MB -> 19MB. Dollars barely moved
+($98.7M -> $94.0M), because the old file was heavy exactly where each row
+carried least meaning.
+
+ANOTHER RESPONSIBILITY ERROR CAUGHT BY THE SAME PAGE. Residents pay their own
+utilities (the Lease Easy bundle sells "utility management" as a convenience,
+not as the landlord absorbing the bill). The generator was charging the landlord
+monthly utilities on every property for three years — an invented cost on
+occupied homes. Utilities now bill ONLY during vacancy: $12.1M -> $1.24M.
+
+CADENCE NOW MATCHES HOW THINGS ARE ACTUALLY BILLED, rather than a uniform
+"N per year" loop:
+  HOA         quarterly     34,680 rows  $9.2M
+  Insurance   annual         8,643 rows  $14.4M  (a policy premium is ONE
+                                          transaction, not twelve)
+  Utilities   monthly, vacancy only  6,114 rows  $1.2M
+  CapEx / Turn / Legal / Marketing stay episodic and per-transaction — 4% of
+  rows, 57% of the money, and what a CFO actually drills into.
+
+COMMON-AREA LANDSCAPING added as a COMMUNITY-scope cost funded through HOA:
+912 rows, $1.78M. Expense gains `scope` (property|community) and `communitySlug`;
+community rows carry no propertyId. This is the correct home for the landscaping
+spend that was wrongly heading for per-property landlord lines.
+
+THE VALIDATOR EARNED ITS KEEP AGAIN. My first version of the utilities check was
+a lazy ratio threshold with a dead loop in it — it passed. Rewritten to actually
+assert what it claimed (every utilities row must fall outside every lease term
+for its own property), it immediately failed 5,052 rows. Cause: month_iter
+yields month STARTS, and the first one falls on or before the vacancy's own
+start, i.e. inside the previous lease. Fixed by requiring the month's 1st to
+land strictly inside the gap. A weak check is worse than no check, because it
+buys false confidence.
+
+FINAL DATASET  76 communities | 43 counties | 2,997 properties | 5,646 residents
+| 8,375 leases | 95,467 rent payments | 92 vendors | 26,477 work orders | 81,548
+expenses | 8,991 assessments | 8,991 tax bills | 4,212 comps. 19MB, ~3s to
+regenerate, 25 validation checks all passing.
+
+Expense total $94.0M over 3 years = $10,460 per property per year.
+
+
+[2026-09-21] residents.paymentProfile renamed to syntheticProfileGroundTruth
+--------------------------------------------------------------------------------
+The column held the generator's answer key — the label used to DECIDE who pays
+late, not anything observed about a resident — under a name ("paymentProfile")
+that reads like an ordinary business field. Shipped as-is it would have been the
+exact circularity recorded in the AIP section: any model that sees it scores
+perfectly by reading the answer, and the rules-based risk score becomes
+pointless because the label it exists to infer is sitting next to it.
+
+Renamed so it cannot be mistaken, and documented in ontology-spec.md under
+Resident: validation only, never a model feature, never a dashboard column,
+never a user-facing filter. Its ONE legitimate use is checking whether the
+rules-based score actually finds the degrading cohort.
+
+The Foundry object-type description must repeat this when the type is created.
+A name alone will not stop someone dragging the field into a training set, and
+the description discipline in the AIP section exists for cases like this.
+
+generate.py and validate.py both updated; all 25 checks pass.
+
+
+[2026-09-21] Spec synced to the generated data; CSVs uploaded to Foundry
+--------------------------------------------------------------------------------
+ontology-spec.md had drifted from the generator across the maintenance and
+expense reworks, and it is the document object types get built FROM — so drift
+there becomes drift in the ontology. Synced before upload.
+
+  - New CSV -> object type -> row count table at the top of Objects.
+  - Every column list now matches the generated files. Biggest corrections:
+    MaintenanceWorkOrder 7 categories -> 19 with responsibility /
+    chargedToResident / contributingNeglect; Expense gained scope +
+    communitySlug + a real billing-cadence table; Lease has NO `renewed` status
+    because a renewal is a new lease pointing back via renewalOfLeaseId.
+  - Row estimates replaced with actuals: Lease 8,375 (was ~4,500), RentPayment
+    95,467 (was ~108,000), Expense 81,548 (was ~30,000).
+  - Links table now names the JOIN KEY per link, plus the two denormalised
+    links on RentPayment.
+  - Seasonality: landscaping removed as a landlord line; leasing figure is the
+    honest 41% rather than the 45% target.
+
+VERIFIED the sync mechanically rather than by eye: a script compared every
+column named in the spec against the actual CSV headers for all 12 objects. Two
+apparent mismatches (Lease.status, MarketRateComp `synthetic`) were artifacts of
+the checking regex — status sits after "(self-link)," on a continuation line,
+and `synthetic` is the VALUE of source, not a column. No real drift.
+
+residents.paymentProfile -> syntheticProfileGroundTruth landed before upload.
+
+UPLOAD COMPLETED by James. 12 CSVs, 19MB.
+
+NEW object-type-checklist.md — exact values per screen for creating all 12
+object types: primary key, title property, an object-level description, and a
+per-property description table. Written because the AIP section requires
+descriptions AS TYPES ARE CREATED, and because James clicking with exact values
+in front of him is faster than driving Foundry's UI by screenshot (the approach
+that cost time twice on Target Air).
+
+Three things flagged in it for the creation pass:
+  - Verify row counts after each type indexes; a raw upload carries no schema so
+    the ontology can silently serve stale data. Diagnose with readTable.
+  - Check date parsing on properties.acquisitionDate before trusting it across
+    the other eleven.
+  - Do NOT enable "Allow edits" yet — that is needed before actions can modify a
+    type, and actions come after links are stable.
+
+NEXT  12 object types, then links starting with Community -> Property, then
+actions, then the React front end.
+
+
+[2026-09-21] Target Air branding was enrollment-wide; fixed
+--------------------------------------------------------------------------------
+James spotted that Target Air branding sat above EVERY project, including this
+one: a top banner reading "TARGET AIR LIMITED - TA-7 PROGRAM — PROPRIETARY -
+AUTHORIZED PERSONNEL ONLY", the Target Air logo, tab titles reading "Target
+Air", and the home page pointing at the Target Air narrative.
+
+Why it mattered beyond tidiness: screen-sharing the Foundry WORKSPACE to
+Invitation Homes would have put another company's name and a classification-
+style restriction notice over their own data model. "AUTHORIZED PERSONNEL ONLY"
+above a prospect's data invites a question about who else is in this environment.
+(A deployed APP is unaffected — it runs on its own *.apps.usw-23 hostname and
+carries its own chrome, not the workspace banner.)
+
+WHERE IT LIVES: Control Panel -> Platform experience. Not Markings (checked,
+empty) and not user Settings. That one tab holds the static banner (position
+top/bottom/both, Markdown, disabled by default — so it had been deliberately
+switched on), the platform logo in four sizes, the platform title, and the home
+page URL. Logo and title are ENROLLMENT-level (Enrollment administrator role);
+the banner and the rest are ORGANIZATION-level (Organization administrator or
+User experience administrator).
+Docs: palantir.com/docs/foundry/administration/configure-platform-experience
+
+Also worth knowing: Home page URL has a GROUP OVERRIDE, so different groups can
+get different homepages rather than one replacing the other.
+
+FIXED by James.
+
+Unrelated, confirmed again: the enrollment really is spelled silverformedia, not
+silverfoxmedia. Fixed at provisioning, not renameable. Already recorded during
+the Target Air build.
+
+
+[2026-09-21] All 12 object types created in Foundry
+--------------------------------------------------------------------------------
+Ontology Manager lives at /workspace/ontology (NOT /workspace/ontology-manager,
+which 404s — cost several wrong guesses). Sidebar "Ontology" goes to Object
+Explorer (/workspace/hubble), which BROWSES objects and does not create types.
+
+Object types 44 -> 56. Every count matches source exactly:
+  Communities 76 | Counties 43 | Properties 3K | Residents 5.6K | Leases 8.4K
+  Rent Payments 95K | Vendors 92 | Maintenance Work Orders 26K | Expenses 82K
+  Tax Assessments 9K | Tax Bills 9K | Market Rate Comps 4.2K
+
+Counties briefly showed 0 objects. That was INDEXING LAG, not the missing-schema
+problem — it resolved to 43 on its own. Worth remembering before chasing it.
+
+ONE CORRECTION CAUGHT MID-WIZARD: Communities was defaulting to Community Name
+as primary key. Changed to Slug. Both are unique across the 76 so Foundry would
+not have complained, but properties.csv and expenses.csv both reference
+communitySlug — the Community -> Property and Community -> Expense links would
+have had nothing to join on.
+
+DECISIONS TAKEN DURING CREATION
+  - Actions skipped on all 12. Auto-generated Create/Modify/Delete exposes every
+    property including scraped facts; Target Air's rule was that an action maps
+    ONLY decision properties so the ontology refuses to let anyone rewrite a
+    fact. Actions get built deliberately later on the four types with real
+    decision surfaces: Lease, RentPayment, MaintenanceWorkOrder, TaxAssessment.
+  - "Allow edits" deliberately left off until links are stable.
+  - Display names came out PLURAL (Communities, Properties, Rent Payments).
+  - API names have NO Ih prefix, so all 12 share a namespace with Target Air's
+    Aircraft / Part / Station and the [OFT] training set. Raised before links
+    were built; James chose to move on. Consequence to remember: a generated
+    OSDK for the React front end will contain Target Air's types too. Renaming
+    later means rebuilding every link that references the type.
+  - Only one ontology exists ("Silverformedia Ontology"); Ontology Manager
+    offers no option to create a second, so separation by ontology was never
+    available.
+
+PROCESS NOTE ON MY OWN OUTPUT: I was handing over full per-property description
+blocks at the create-wizard stage, where there is no field to put them in —
+descriptions are edited afterwards on each object type's Properties tab. James
+said plainly it was confusing, and he was right. Switched to a compact table of
+just the four values the wizard actually asks for (dataset, name, primary key,
+title). Give the right information at the moment it can be used, not everything
+that is true.
+
+Link types already stands at 50 before any of ours (Target Air + training), so
+filtering to the Invitation Homes ones will matter.
+
+
+[2026-09-21] Link types: a name collision, and a Foundry gotcha worth keeping
+--------------------------------------------------------------------------------
+Building Communities -> Counties, the link API name `county` came back INVALID.
+Cause: Communities already has a PROPERTY whose API name is `county` (the county
+name string). A link type's API name shares a namespace with the object type's
+property API names, so they collide.
+
+ATTEMPTED FIX THAT DID NOT WORK, and the lesson in it:
+  Renamed the property's DISPLAY name from "County" to "County Name" — which is
+  more accurate anyway, since the field holds a name. Foundry then warned:
+  "This edit leaves the display name no longer matching the API name. The API
+  name was not updated automatically, because renaming one is a breaking change
+  for existing consumers."
+  So DISPLAY NAME AND API NAME ARE INDEPENDENT. Renaming the display name does
+  NOT free up the API name, and I told James it would. It did not.
+  The icon beside that warning is "ask AIP Assist", not a quick-fix.
+  Could not find anywhere in the property editor to edit the API name directly:
+  General tab has name/description/base type/value type/status; the "..." menu
+  offers only Details and Advanced, and Advanced is schema migrations. It may
+  not be editable in the UI at all, consistent with Foundry treating it as a
+  breaking change.
+
+RESOLUTION: keep the display-name fix (it was worth making on its own terms) and
+name the LINK `countyRecord` instead. Reads fine as community.countyRecord.get().
+The only link of the fifteen with a clash — Properties has only `countyId`, no
+`county` name column, so Properties -> Counties takes plain `county`.
+
+FOR NEXT TIME: check for property/link API name collisions BEFORE creating object
+types, not while building links. Any object type carrying both a `<thing>` name
+string and a link to `<Thing>` will hit this.
+
+Link types 50 -> 52 so far (Properties -> Communities, Properties -> Counties).
+
+
+[2026-09-21] All 15 link types built. Ontology complete.
+--------------------------------------------------------------------------------
+12 object types, 15 link types, every foreign key resolving. Foundry side of the
+build is done.
+
+LINKS AS BUILT
+  Properties -> Community | Properties -> County | Communities -> County Record
+  Leases -> Home | Leases -> Resident | Leases -> Lease (renewal self-link)
+  Rent Payments -> Lease | Rent Payments -> Resident | Rent Payments -> Home
+  Maintenance Work Orders -> Home | Maintenance Work Orders -> Vendor
+  Expenses -> Home | Expenses -> Community
+  Tax Assessments -> Home | Tax Bills -> Tax Assessment
+
+THREE THINGS THAT COST TIME, ALL WORTH REMEMBERING
+
+1. `property` IS RESERVED IN THE OSDK. A link named "Property" silently becomes
+   API name `property_` with a trailing underscore, because an object already
+   exposes its own properties. Foundry escapes rather than rejects, so it is easy
+   to miss. Renamed to "Home" on all five links into Properties — natural, and it
+   is the word Invitation Homes themselves use ("houses for rent"). Leases was
+   missed on the first pass and fixed after; James spotted it.
+   NOTE THE ASYMMETRY: renaming a LINK's display name DID update its API name
+   cleanly (leases.home). Renaming a PROPERTY's display name did NOT — Foundry
+   warned "the API name was not updated automatically, because renaming one is a
+   breaking change for existing consumers", and there is no visible way to edit a
+   property API name in the UI. Different rules for links and properties.
+
+2. LINK API NAMES SHARE A NAMESPACE WITH PROPERTY API NAMES. Communities already
+   had a property `county` (the county name string), so a link named `county`
+   came back invalid. Renaming the property's display name to "County Name" did
+   NOT free it up, per the asymmetry above — I said it would and was wrong. Link
+   named `countyRecord` instead. Check for these collisions BEFORE creating
+   object types: any type carrying both a `<thing>` name string and a link to
+   `<Thing>` will hit it.
+
+3. ONE-TO-MANY LINK TYPE QUOTA IS 60 PER ONTOLOGY, and this ontology carries FOUR
+   projects: Target Air, Top Stock, the [OFT]/[Example] training set, and now
+   Invitation Homes. Hit the ceiling at 61 with "OntologyMetadata:
+   TooManyOneToManyLinkTypesInOntology". Reclaimed 13 slots by deleting the
+   [Example] links — training data, nothing depends on them. Left Target Air and
+   Top Stock intact. 10 [OFT] "Active" links remain as a reserve if needed.
+   Now at 50 of 60.
+   James noted the Shield AI job is dead, so Target Air is a portfolio artifact
+   rather than an active pursuit — but its app is still live and its repo public,
+   so deleting its ontology would break a working demo. Not done.
+
+STILL OPEN
+  - syntheticProfileGroundTruth description on Resident (the answer-key warning).
+  - Property descriptions across all 12 types; only Communities.countyName has
+    one so far. The AIP section requires these and retrofitting is the job that
+    never gets done.
+  - Object type display names are PLURAL and API names carry no Ih prefix, so a
+    generated OSDK will include Target Air's and Top Stock's types too.
+  - Actions: none built, by design. The four with real decision surfaces are
+    Lease, RentPayment, MaintenanceWorkOrder, TaxAssessment.
+
+NEXT  Actions, then the React front end in VS Code against the OSDK.
+
+
+[2026-09-21] Four action types built. Foundry build complete.
+--------------------------------------------------------------------------------
+12 object types | 15 link types | 4 action types | 3 property descriptions.
+
+ACTIONS, each mapping ONLY decision properties so the ontology physically
+refuses to let a user rewrite a fact (Target Air's rule, carried over):
+  File Tax Appeal      Tax Assessments        appealStatus, appealSavings
+  Close Work Order     Maintenance Work Orders closedDate, cost
+  Charge To Resident   Maintenance Work Orders chargedToResident, responsibility
+  Waive Rent Payment   Rent Payments          status, amountPaid
+
+NOT BUILT: Record Lease Outcome on Leases. A lease's status is mostly a
+consequence of what happened rather than a decision someone makes in a
+dashboard, and the decision you would actually want — setting a renewal rent —
+CREATES a new lease rather than editing the old one, so it is a Create action
+not a Modify. Edits are enabled on Leases, so it can be added if the demo wants it.
+
+"ALLOW EDITS" IS THE GATE. Object types cannot be the target of a Modify action
+until edits are enabled on their datasource (object type -> Datasources tab).
+They were deliberately left off until links were stable, so the action wizard
+showed every object type greyed out. Enabled on exactly four: Tax Assessments,
+Maintenance Work Orders, Rent Payments, Leases. Left DISABLED on Properties,
+Communities, Counties, Residents, Vendors, Tax Bills, Market Rate Comps and
+Expenses — those hold facts, and a disabled datasource is a stronger guarantee
+than a carefully written action, because it survives someone later writing a
+careless one.
+
+PROPERTY DESCRIPTIONS — SCOPE CUT, and James was right to ask. I handed over 118
+of them; he asked whether they were needed for a client demo. Mostly they are
+not: property descriptions are invisible in a demo you drive and narrate, and
+the twelve OBJECT TYPE descriptions (already written at creation) are what shows
+when someone browses the ontology. Did the three that prevent a wrong NUMBER
+rather than merely describing a field:
+  Residents.syntheticProfileGroundTruth  the answer-key warning
+  MaintenanceWorkOrders.chargedToResident landlord cost must exclude 8,098
+                                          orders worth $2.0M
+  Expenses.scope                          community-scope rows double count if
+                                          summed per home
+The other 115 are in property-descriptions.md, worth doing only if AIP gets
+demoed (and then only for the fields those questions touch) or if someone else
+inherits this.
+
+ACTION DESCRIPTIONS were written for all four — unlike property descriptions
+these DO earn their keep at four items, because AIP reads them to decide which
+action applies to a request, and they are the only place the CONSTRAINT is
+recorded (what each action deliberately cannot change).
+
+NEXT  Generate the OSDK and start the React front end in VS Code. Reminder from
+the Target Air build: action types are NOT in the SDK until added in Developer
+Console -> Ontology SDK -> Resources -> Action types, and a new SDK version
+generated. And the generated SDK will contain Target Air's and Top Stock's object
+types too, since they share this ontology and our API names carry no prefix.
+
+
+[2026-09-21] Developer Console application created
+--------------------------------------------------------------------------------
+Name: Invitation Homes Asset Management
+Location: the Invitation Homes PROJECT, so the app sits inside the permission
+boundary rather than loose in the space.
+Type: Client-facing application -> Public client, no client secret. Authorization
+code grant with user permissions, i.e. the app reads and writes as whoever is
+signed in, not as a service user. Same PKCE shape as Target Air.
+Redirect URL: http://localhost:8080/auth/callback (Foundry suggested it and
+autofilled; :8080 is what @osdk/create-app scaffolds).
+
+Description had to come in under 500 characters. Final at 470 — dropped the
+React/OSDK sentence (that is how it is built, not what it does) and kept both
+the thesis and the synthetic-data disclosure, which are the two lines worth the
+space.
+
+TWO THINGS FLAGGED ON THAT SCREEN, BOTH LEARNED THE HARD WAY BEFORE
+  1. CORS. Developer Console says plainly that an administrator must allowlist
+     the local dev origin in CORS settings, or the browser blocks calls to the
+     Foundry API even with auth working. Top Stock hit exactly this.
+  2. A SECOND REDIRECT URL is needed before the first deploy:
+     https://<subdomain>.apps.usw-23.palantirfoundry.com/auth/callback
+     It cannot be added yet because the subdomain is not assigned until the
+     hosted site is created. Sign-in will work locally and fail on the deployed
+     site if this is forgotten.
+
+NEXT — OSDK generation, then the React front end. Carried forward from Target Air:
+  - Action types are NOT in the SDK until added in Developer Console -> Ontology
+    SDK -> Resources -> Action types, then a NEW SDK version generated. Our four
+    actions exist in the ontology but are not callable from React until this.
+  - The OSDK REGISTRY URL is the awkward one to find. It is NOT on the SDK
+    versions page and that page masks the repo RID as ***. It IS on
+    "Start developing -> Bootstrap in a local development environment".
+  - @osdk/create-app needs --osdkRegistryUrl and --ontology passed explicitly;
+    prompting dies with ERR_TTY_INIT_FAILED under an agent shell.
+  - .npmrc should scope ONLY the project's package to Foundry so public packages
+    still resolve from npmjs (Target Air's shape; Top Stock set a GLOBAL registry,
+    which is a different and worse shape).
+  - After installing a new SDK version, rm -rf node_modules/.vite or the browser
+    throws "does not provide an export named X" while tsc passes.
+  - The generated SDK will contain Target Air's and Top Stock's object types too,
+    since they share this ontology and our API names carry no prefix.

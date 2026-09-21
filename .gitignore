@@ -1,0 +1,21 @@
+# Node / Vite
+node_modules/
+dist/
+.vite/
+*.log
+
+# Local env. The OSDK client id is not secret, but the Foundry token is.
+.env
+.env.local
+.env.*.local
+
+# OSDK generated client, reinstalled from the Foundry registry
+.osdk/
+
+# macOS
+.DS_Store
+
+# Generated data is NOT ignored. It is 19MB and deterministic (seed 1947), so it
+# could be regenerated instead — but committing it pins the exact rows that were
+# uploaded to Foundry. If generate.py changes later, a regeneration would no
+# longer match what the ontology is serving, and there would be no way back.

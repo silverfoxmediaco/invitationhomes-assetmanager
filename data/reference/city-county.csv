@@ -1,0 +1,61 @@
+city,state,county,primary_zip,counties_in_city,method
+Arlington,TX,Tarrant,76006,1,city-match
+Aurora,CO,Arapahoe,80010,2,city-match
+Bethlehem,GA,Barrow,30620,1,city-match
+Buckeye,AZ,Maricopa,85326,1,city-match
+Canton,GA,Cherokee,30114,1,city-match
+Cape Coral,FL,Lee,33909,1,zip
+Charlotte,NC,Mecklenburg,28202,1,city-match
+Clarksville,TN,Montgomery,37040,1,city-match
+Clermont,FL,Lake,34711,1,city-match
+Colorado Springs,CO,El Paso,80903,1,city-match
+Conroe,TX,Montgomery,77301,1,city-match
+Covington,GA,Newton,30016,1,zip
+Crandall,TX,Kaufman,75114,1,city-match
+Dallas,GA,Paulding,30132,1,city-match
+Forney,TX,Kaufman,75126,1,city-match
+Fort Myers,FL,Lee,33901,1,city-match
+Fort Worth,TX,Tarrant,76102,1,city-match
+Gibsonton,FL,Hillsborough,33534,1,city-match
+Gilbert,AZ,Maricopa,85233,1,city-match
+Haines City,FL,Polk,33844,1,zip
+Haw River,NC,Alamance,27258,1,city-match
+Hockley,TX,Harris,77447,1,city-match
+Holly Springs,GA,Cherokee,30115,1,inferred-adjacent
+Houston,TX,Harris,77002,2,city-match
+Jacksonville,FL,Duval,32202,2,city-match
+Kissimmee,FL,Osceola,34741,1,city-match
+Lake Alfred,FL,Polk,33850,1,city-match
+Lebanon,TN,Wilson,37087,1,city-match
+Litchfield Park,AZ,Maricopa,85340,1,city-match
+Loganville,GA,Walton,30052,1,zip
+Magnolia,TX,Montgomery,77355,1,city-match
+Maiden,NC,Catawba,28650,1,city-match
+Melbourne,FL,Brevard,32901,1,city-match
+Menifee,CA,Riverside,92584,1,city-match
+Monroe,NC,Union,28110,1,city-match
+Montgomery,TX,Montgomery,77356,1,city-match
+New Braunfels,TX,Comal,78130,1,zip
+New Caney,TX,Montgomery,77357,1,city-match
+New Port Richey,FL,Pasco,34652,1,city-match
+Orange Park,FL,Clay,32065,1,city-match
+Osteen,FL,Volusia,32764,1,city-match
+Palmetto,FL,Manatee,34221,1,city-match
+Parrish,FL,Manatee,34219,1,city-match
+Port Charlotte,FL,Charlotte,33948,1,city-match
+Princeton,TX,Collin,75407,1,city-match
+Ruskin,FL,Hillsborough,33570,1,city-match
+San Antonio,TX,Bexar,78202,1,city-match
+Smyrna,TN,Rutherford,37167,1,city-match
+Spring Hill,FL,Hernando,34606,1,city-match
+St. Cloud,FL,Osceola,34772,1,variant
+Stafford,TX,Fort Bend,77477,1,city-match
+Sun City Center,FL,Hillsborough,33573,1,city-match
+Tampa,FL,Hillsborough,33602,1,city-match
+Troutman,NC,Iredell,28166,1,city-match
+Venice,FL,Sarasota,34285,1,city-match
+Vero Beach,FL,Indian River,32960,1,city-match
+Wendell,NC,Wake,27591,1,city-match
+Wesley Chapel,FL,Pasco,33543,1,city-match
+West Jordan,UT,Salt Lake,84084,1,city-match
+Winter Garden,FL,Orange,34787,1,city-match

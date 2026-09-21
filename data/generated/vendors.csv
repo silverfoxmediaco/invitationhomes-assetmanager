@@ -1,0 +1,93 @@
+vendorId,vendorName,category,market,avgTurnaroundDays,onTimePct
+VEN-0001,Evergreen Appliance,Appliance,atlanta,8.8,0.738
+VEN-0002,Evergreen Electrical,Electrical,atlanta,3.3,0.918
+VEN-0003,Delta HVAC,HVAC,atlanta,8.4,0.803
+VEN-0004,Evergreen Landscaping,Landscaping,atlanta,8.2,0.918
+VEN-0005,Pinnacle Plumbing,Plumbing,atlanta,7.5,0.89
+VEN-0006,Blue Ridge Roof,Roof,atlanta,8.8,0.822
+VEN-0007,Meridian Appliance,Appliance,carolinas,1.7,0.647
+VEN-0008,Northstar Electrical,Electrical,carolinas,2.9,0.894
+VEN-0009,Frontier General,General,carolinas,8.2,0.927
+VEN-0010,Lone Star HVAC,HVAC,carolinas,1.6,0.914
+VEN-0011,Evergreen Landscaping,Landscaping,carolinas,6.7,0.9
+VEN-0012,Blue Ridge Plumbing,Plumbing,carolinas,5.6,0.744
+VEN-0013,Quantum Roof,Roof,carolinas,5.0,0.671
+VEN-0014,Juniper Turn,Turn,carolinas,2.7,0.7
+VEN-0015,Apex Appliance,Appliance,dallas,6.3,0.848
+VEN-0016,Pinnacle Electrical,Electrical,dallas,5.7,0.664
+VEN-0017,Cardinal General,General,dallas,7.3,0.778
+VEN-0018,Keystone HVAC,HVAC,dallas,9.5,0.869
+VEN-0019,Optima Landscaping,Landscaping,dallas,6.3,0.961
+VEN-0020,Optima Plumbing,Plumbing,dallas,5.5,0.971
+VEN-0021,Delta Roof,Roof,dallas,3.3,0.954
+VEN-0022,Rampart Appliance,Appliance,denver,6.6,0.655
+VEN-0023,Juniper General,General,denver,1.8,0.76
+VEN-0024,Lone Star HVAC,HVAC,denver,3.3,0.952
+VEN-0025,Quantum Landscaping,Landscaping,denver,4.9,0.873
+VEN-0026,Gulfstream Plumbing,Plumbing,denver,8.6,0.737
+VEN-0027,Rampart Roof,Roof,denver,6.1,0.959
+VEN-0028,Heritage Turn,Turn,denver,1.2,0.967
+VEN-0029,Lone Star Appliance,Appliance,houston,8.5,0.698
+VEN-0030,Optima Electrical,Electrical,houston,2.7,0.778
+VEN-0031,Gulfstream General,General,houston,5.8,0.765
+VEN-0032,Keystone HVAC,HVAC,houston,6.7,0.774
+VEN-0033,Cardinal Landscaping,Landscaping,houston,1.8,0.797
+VEN-0034,Delta Plumbing,Plumbing,houston,3.9,0.91
+VEN-0035,Cardinal Roof,Roof,houston,2.3,0.927
+VEN-0036,Optima Turn,Turn,houston,6.7,0.716
+VEN-0037,Heritage Appliance,Appliance,jacksonville,2.6,0.92
+VEN-0038,Apex Electrical,Electrical,jacksonville,2.6,0.881
+VEN-0039,Pinnacle HVAC,HVAC,jacksonville,3.7,0.884
+VEN-0040,Meridian Roof,Roof,jacksonville,9.2,0.768
+VEN-0041,Meridian Turn,Turn,jacksonville,5.4,0.815
+VEN-0042,Evergreen Appliance,Appliance,nashville,7.2,0.623
+VEN-0043,Blue Ridge Electrical,Electrical,nashville,6.4,0.878
+VEN-0044,Optima General,General,nashville,8.1,0.933
+VEN-0045,Evergreen HVAC,HVAC,nashville,6.4,0.841
+VEN-0046,Lone Star Landscaping,Landscaping,nashville,7.2,0.843
+VEN-0047,Heritage Plumbing,Plumbing,nashville,6.2,0.812
+VEN-0048,Northstar Roof,Roof,nashville,7.7,0.677
+VEN-0049,Delta Turn,Turn,nashville,8.6,0.75
+VEN-0050,Frontier Electrical,Electrical,orlando,2.7,0.736
+VEN-0051,Quantum General,General,orlando,4.2,0.977
+VEN-0052,Optima HVAC,HVAC,orlando,2.8,0.665
+VEN-0053,Blue Ridge Landscaping,Landscaping,orlando,3.9,0.712
+VEN-0054,Pinnacle Plumbing,Plumbing,orlando,2.1,0.967
+VEN-0055,Rampart Turn,Turn,orlando,1.5,0.777
+VEN-0056,Lone Star Appliance,Appliance,phoenix,8.0,0.849
+VEN-0057,Pinnacle Electrical,Electrical,phoenix,4.3,0.792
+VEN-0058,Keystone General,General,phoenix,3.1,0.779
+VEN-0059,Ironclad HVAC,HVAC,phoenix,4.5,0.764
+VEN-0060,Quantum Plumbing,Plumbing,phoenix,7.7,0.828
+VEN-0061,Juniper Roof,Roof,phoenix,8.7,0.965
+VEN-0062,Pinnacle Turn,Turn,phoenix,5.8,0.717
+VEN-0063,Ironclad Electrical,Electrical,salt-lake-city,1.8,0.908
+VEN-0064,Quantum General,General,salt-lake-city,8.1,0.759
+VEN-0065,Keystone Landscaping,Landscaping,salt-lake-city,3.5,0.757
+VEN-0066,Juniper Plumbing,Plumbing,salt-lake-city,8.7,0.946
+VEN-0067,Juniper Roof,Roof,salt-lake-city,6.3,0.777
+VEN-0068,Gulfstream Turn,Turn,salt-lake-city,7.8,0.938
+VEN-0069,Frontier Appliance,Appliance,san-antonio,8.7,0.785
+VEN-0070,Pinnacle Electrical,Electrical,san-antonio,3.2,0.735
+VEN-0071,Gulfstream General,General,san-antonio,7.5,0.949
+VEN-0072,Northstar HVAC,HVAC,san-antonio,5.5,0.701
+VEN-0073,Apex Landscaping,Landscaping,san-antonio,3.8,0.783
+VEN-0074,Cardinal Plumbing,Plumbing,san-antonio,7.8,0.638
+VEN-0075,Blue Ridge Appliance,Appliance,south-florida,1.6,0.753
+VEN-0076,Ironclad Electrical,Electrical,south-florida,1.4,0.92
+VEN-0077,Keystone General,General,south-florida,7.2,0.679
+VEN-0078,Heritage HVAC,HVAC,south-florida,6.0,0.629
+VEN-0079,Rampart Turn,Turn,south-florida,2.4,0.731
+VEN-0080,Heritage Appliance,Appliance,southern-california,6.1,0.899
+VEN-0081,Cardinal General,General,southern-california,3.4,0.731
+VEN-0082,Blue Ridge HVAC,HVAC,southern-california,1.8,0.868
+VEN-0083,Blue Ridge Landscaping,Landscaping,southern-california,7.6,0.927
+VEN-0084,Delta Plumbing,Plumbing,southern-california,4.5,0.643
+VEN-0085,Lone Star Roof,Roof,southern-california,5.5,0.91
+VEN-0086,Gulfstream Turn,Turn,southern-california,2.9,0.978
+VEN-0087,Meridian Electrical,Electrical,tampa,9.0,0.843
+VEN-0088,Gulfstream General,General,tampa,3.7,0.847
+VEN-0089,Frontier HVAC,HVAC,tampa,6.9,0.693
+VEN-0090,Juniper Landscaping,Landscaping,tampa,1.5,0.914
+VEN-0091,Blue Ridge Plumbing,Plumbing,tampa,7.3,0.915
+VEN-0092,Optima Roof,Roof,tampa,1.8,0.68

@@ -1,0 +1,44 @@
+countyId,countyName,state,millRate,assessmentDrift,reassessmentCycle,appealWindowDays
+CTY-001,Cherokee,GA,0.01078,0.0559,annual,30
+CTY-002,Walton,GA,0.01051,0.0546,annual,45
+CTY-003,Newton,GA,0.01056,0.0468,annual,30
+CTY-004,Barrow,GA,0.01049,0.053,annual,60
+CTY-005,Paulding,GA,0.01102,0.0496,annual,45
+CTY-006,Union,NC,0.00875,0.0303,octennial,60
+CTY-007,Mecklenburg,NC,0.00848,0.0363,octennial,30
+CTY-008,Alamance,NC,0.00818,0.0361,octennial,60
+CTY-009,Iredell,NC,0.00816,0.0388,octennial,60
+CTY-010,Catawba,NC,0.00818,0.0395,octennial,30
+CTY-011,Wake,NC,0.00827,0.0396,octennial,60
+CTY-012,Kaufman,TX,0.02134,0.0873,annual,45
+CTY-013,Tarrant,TX,0.02103,0.0855,annual,60
+CTY-014,Collin,TX,0.02103,0.0962,annual,30
+CTY-015,Arapahoe,CO,0.00511,0.0442,biennial,30
+CTY-016,El Paso,CO,0.0059,0.0476,biennial,45
+CTY-017,Harris,TX,0.0222,0.0777,annual,45
+CTY-018,Montgomery,TX,0.02185,0.0897,annual,30
+CTY-019,Fort Bend,TX,0.02122,0.0976,annual,45
+CTY-020,Duval,FL,0.01036,0.0689,annual,30
+CTY-021,Clay,FL,0.00998,0.0705,annual,60
+CTY-022,Rutherford,TN,0.00714,0.0407,quadrennial,60
+CTY-023,Wilson,TN,0.00745,0.0441,quadrennial,45
+CTY-024,Montgomery,TN,0.00666,0.0434,quadrennial,30
+CTY-025,Osceola,FL,0.01042,0.0622,annual,45
+CTY-026,Lake,FL,0.01015,0.0641,annual,30
+CTY-027,Orange,FL,0.01051,0.0576,annual,60
+CTY-028,Brevard,FL,0.01117,0.0602,annual,60
+CTY-029,Volusia,FL,0.01014,0.0572,annual,30
+CTY-030,Maricopa,AZ,0.00603,0.0505,annual,45
+CTY-031,Salt Lake,UT,0.00615,0.0456,annual,60
+CTY-032,Bexar,TX,0.02251,0.0817,annual,30
+CTY-033,Comal,TX,0.02065,0.0861,annual,45
+CTY-034,Indian River,FL,0.00994,0.0639,annual,45
+CTY-035,Riverside,CA,0.0075,0.018,capped-prop13,60
+CTY-036,Pasco,FL,0.01099,0.0626,annual,60
+CTY-037,Lee,FL,0.01054,0.0535,annual,60
+CTY-038,Hernando,FL,0.01,0.0611,annual,30
+CTY-039,Hillsborough,FL,0.00995,0.0545,annual,60
+CTY-040,Polk,FL,0.01064,0.0635,annual,30
+CTY-041,Manatee,FL,0.01142,0.0672,annual,60
+CTY-042,Sarasota,FL,0.01156,0.068,annual,60
+CTY-043,Charlotte,FL,0.01141,0.0557,annual,60
