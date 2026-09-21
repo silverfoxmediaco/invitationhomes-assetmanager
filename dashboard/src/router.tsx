@@ -1,6 +1,7 @@
 import AtRisk from "@/pages/AtRisk";
 import CommunityDetail from "@/pages/CommunityDetail";
 import Leasing from "@/pages/Leasing";
+import Maintenance from "@/pages/Maintenance";
 import CommunityList from "@/pages/CommunityList";
 import AuthCallback from "@/AuthCallback";
 import Overview from "@/pages/Overview";
@@ -28,6 +29,10 @@ export const router = createBrowserRouter(
     {
       path: "/leasing",
       element: <Leasing />,
+    },
+    {
+      path: "/maintenance",
+      element: <Maintenance />,
     },
     {
       path: "/property/:propertyId",

@@ -1129,3 +1129,51 @@ OPEN — A GENUINE DATA REALISM QUESTION FOR JAMES
   portfolio does. Both are generator artefacts that someone who knows the
   industry would notice. Tuning them means regenerating and re-uploading all
   twelve datasets, so it is his call, not a silent fix.
+
+================================================================================
+2026-09-21  Maintenance — the neglect chain, and one finding NOT made
+================================================================================
+BUILT
+  dashboard/src/data/useMaintenance.ts
+  dashboard/src/pages/Maintenance.tsx + .module.css
+  route /maintenance; Overview cross-links to it
+
+THE CHAIN THAT NEEDS AN ONTOLOGY
+  538 heating and cooling failures — 12% of every HVAC call — had a skipped
+  air filter as a contributing factor. The filter is the resident's duty and
+  Lease Easy posts it to them; the $894,480 repair bill was the landlord's.
+  A maintenance system knows the unit failed. The lease terms know whose job
+  the filter was. Only the join says the second caused the first.
+
+THE NUANCE THAT CHANGES THE RECOMMENDATION
+  A neglect-contributed HVAC failure costs $1,663. Every other one costs
+  $1,666. Identical — a skipped filter does not make the repair worse, it makes
+  the repair HAPPEN. So there is nothing to save per call, only calls to avoid,
+  and the return on getting filters changed is the whole ~$298,160 a year
+  rather than a margin on it. Nearly wrote "neglect makes repairs more
+  expensive" before checking; it does not.
+
+SEASONALITY IS REAL AND CORRECT
+  Three years of HVAC calls folded into twelve calendar months: cooling peaks
+  Jun-Sep (368-405/mo), heating peaks Nov-Feb (255-300/mo). Drawn side by side
+  rather than stacked because the point is that the peaks are six months apart
+  and the same height — one crew moving between them, not two half idle.
+
+A FINDING DELIBERATELY NOT MADE
+  The obvious angle was vendor SLA: does avgTurnaroundDays match what the work
+  orders show? Checked it — NOT ONE of the 96 vendors is slower than it claims,
+  mean gap -0.7 days. That is not vendor discipline, it is the generator: the
+  stated average is what produced the close dates, so the comparison is
+  circular. Turnaround is reported as description only, no vendor is ranked or
+  blamed, and the page says on its face why. Against real data the same join
+  is worth making and is exactly what the ontology is for.
+
+  Also nearly built a "measured on-time vs claimed onTimePct" comparison before
+  realising it was arithmetically rigged: half of any job set falls slower than
+  its own mean.
+
+OTHER NUMBERS
+  9,479 work orders in 12 months. Landlord $9,453,381, charged back $713,152.
+  113 open, none emergency (emergencies close in 0.3d on average).
+  Fixed: CSS used --ih-corporate-special (the name from the source site) but
+  theme.css defines --ih-corporate. Would have rendered transparent.

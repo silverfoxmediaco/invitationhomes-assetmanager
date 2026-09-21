@@ -1,0 +1,132 @@
+.back {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ih-primary);
+  text-decoration: none;
+  margin-bottom: var(--ih-space-md);
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* --- HVAC seasonality -----------------------------------------------------
+   Twelve calendar months with three years of calls folded into each, so the
+   shape is a pattern rather than one hot summer. Cooling and heating sit side
+   by side in each month because the point is that the two peaks are six
+   months apart, which a stacked bar would hide. */
+.season {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ih-space-sm);
+  height: 170px;
+  padding-top: var(--ih-space-md);
+  border-bottom: 1px solid var(--ih-n1);
+  overflow-x: auto;
+}
+
+.month {
+  flex: 1 1 0;
+  min-width: 44px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.cooling,
+.heating {
+  width: 42%;
+  border-radius: 2px 2px 0 0;
+  min-height: 1px;
+}
+
+/* Two hues from the brand set, not invented: the deep corporate teal reads as
+   cold and the accent green as warm enough to tell them apart at a glance. */
+.cooling {
+  background: var(--ih-corporate);
+}
+
+.heating {
+  background: var(--ih-accent-light);
+}
+
+.monthLabel {
+  font-size: 10px;
+  color: var(--ih-n6);
+  text-align: center;
+  margin-top: var(--ih-space-xs);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--ih-space-xs);
+  font-size: 12px;
+  color: var(--ih-n6);
+  margin: var(--ih-space-sm) 0 0;
+}
+
+.keyCooling,
+.keyHeating {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.keyCooling {
+  background: var(--ih-corporate);
+}
+
+.keyHeating {
+  background: var(--ih-accent-light);
+  margin-left: var(--ih-space-md);
+}
+
+/* --- Priority tags -------------------------------------------------------- */
+.pEmergency,
+.pUrgent,
+.pRoutine {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.pEmergency {
+  background: var(--ih-error-dark);
+  color: var(--ih-white);
+}
+
+.pUrgent {
+  background: #fdf3cf;
+  color: #6b5d0f;
+}
+
+.pRoutine {
+  background: var(--ih-n1);
+  color: var(--ih-n7);
+}
+
+.method {
+  margin-top: var(--ih-space-2xl);
+  padding-top: var(--ih-space-md);
+  border-top: 1px solid var(--ih-n1);
+  font-size: 12px;
+  color: var(--ih-n6);
+  max-width: 82ch;
+  line-height: 1.5;
+}
