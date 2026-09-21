@@ -225,7 +225,7 @@ function AtRisk(): React.ReactElement {
       </div>
 
       {visible.length > shown.length && (
-        <p className={css.sectionNote}>
+        <p className={`${css.sectionNote} ${css.tableFooter}`}>
           Showing the {num.format(shown.length)} highest-scoring of {num.format(visible.length)}.
         </p>
       )}

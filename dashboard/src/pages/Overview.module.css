@@ -115,6 +115,14 @@
   max-width: 78ch;
 }
 
+/* The "showing N of M" line that follows a table.
+   sectionNote on its own has no top margin, which is right where it sits under
+   a heading and wrong here — flush against the table's bottom border it reads
+   as another row rather than as a footnote about the table. */
+.tableFooter {
+  margin-top: var(--ih-space-lg);
+}
+
 /* Tables are the one thing allowed to scroll sideways on a narrow screen. */
 .tableWrap {
   overflow-x: auto;

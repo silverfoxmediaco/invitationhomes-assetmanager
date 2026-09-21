@@ -247,7 +247,7 @@ function Maintenance(): React.ReactElement {
         </table>
       </div>
       {data.openCount > data.open.length && (
-        <p className={css.sectionNote}>
+        <p className={`${css.sectionNote} ${css.tableFooter}`}>
           Showing the {num.format(data.open.length)} oldest of {num.format(data.openCount)}.
         </p>
       )}

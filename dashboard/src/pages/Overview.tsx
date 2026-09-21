@@ -160,7 +160,7 @@ function Overview(): React.ReactElement {
         </table>
       </div>
       {data.rows.length > top.length && (
-        <p className={css.sectionNote}>
+        <p className={`${css.sectionNote} ${css.tableFooter}`}>
           Showing the 25 largest of {num.format(data.rows.length)}.{" "}
           <Link to="/properties?show=under" className={css.rowLink}>
             See all {num.format(data.rows.length)} under market &rarr;
