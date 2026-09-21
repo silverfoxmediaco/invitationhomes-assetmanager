@@ -138,6 +138,28 @@ than it saves.
    serve stale data. `csv.writer` emits CRLF and `recordDelimiter` must say so.
    Diagnose with `readTable`.
 
+8. **A LocalDate read filter must not carry a timezone**, and the SDK will not
+   warn you. `dueDate` is typed `$PropType['datetime']` in the generated SDK
+   while the ontology's base type is `LocalDate`; filtering `$gte` with
+   `2025-08-01T00:00:00Z` is rejected with `InvalidPropertyValue`, naming
+   `propertyBaseType: LocalDate`. Pass the bare `2025-08-01`. Gotcha 3 recorded
+   this for action parameters; it is true of read filters too, and the SDK's
+   TypeScript type is not the authority — the ontology is.
+
+9. **A PARTIAL re-upload is the worst failure mode in this project.** Uploading
+   some datasets and not others leaves the ontology internally inconsistent,
+   and nothing anywhere errors. Screens that read only the fresh datasets keep
+   producing exactly correct numbers, which is what makes it so hard to catch:
+   the portfolio overview reconciled to the row against local validation while
+   the rent ledger it sat beside was a generation old and 66% of payments fell
+   outside the term of their own lease.
+
+   Two rules follow. **Re-upload every dataset together, or none.** And any
+   screen that joins two object types should assert the join holds — a cheap
+   count of rows that fail the relationship, thrown as an error, costs one
+   loop and replaces a confidently wrong page with a message naming the file
+   to re-upload. `useAtRisk.ts` has the pattern.
+
 ## Foundry credentials
 
 - `FOUNDRY_TOKEN` lives in `~/.zshenv`, never just `export`ed — an export-only

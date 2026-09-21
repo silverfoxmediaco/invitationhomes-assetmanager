@@ -106,6 +106,21 @@ function Overview(): React.ReactElement {
         </div>
       </div>
 
+      <h2 className={css.sectionTitle}>The other question</h2>
+      <p className={css.sectionNote}>
+        Rent forgone is one exposure. Rent owed is the other, and it is a different
+        population: some of the homes below are also occupied by residents falling behind,
+        and most are not.
+      </p>
+      <p className={css.jumpTo}>
+        <Link to="/at-risk" className={css.rowLink}>
+          Residents at risk &rarr;
+        </Link>{" "}
+        <span className={css.state}>
+          scored on arrears, payment trend and how close the lease is to expiry
+        </span>
+      </p>
+
       <h2 className={css.sectionTitle}>Largest gaps to market</h2>
       <p className={css.sectionNote}>
         Contract rent on the active lease against the median for that home&rsquo;s city

@@ -33,7 +33,8 @@ traversable.
 
 ## Objects
 
-Synced to `data/generated/` on 2026-09-21. Row counts and column lists below are
+Synced to `data/generated/` on 2026-09-21 (re-synced after the regeneration that
+the first upload predates). Row counts and column lists below are
 what the generator ACTUALLY produces, not estimates. Re-sync after any generator
 change: the spec is what object types get built from, so drift here becomes
 drift in the ontology.
@@ -42,15 +43,15 @@ drift in the ontology.
 |---|---|---|
 | `communities.csv` | Community | 76 |
 | `counties.csv` | County | 43 |
-| `properties.csv` | Property | 2,997 |
-| `residents.csv` | Resident | 5,646 |
-| `leases.csv` | Lease | 8,375 |
-| `rent_payments.csv` | RentPayment | 95,467 |
-| `vendors.csv` | Vendor | 92 |
-| `maintenance_work_orders.csv` | MaintenanceWorkOrder | 26,477 |
-| `expenses.csv` | Expense | 81,548 |
-| `tax_assessments.csv` | TaxAssessment | 8,991 |
-| `tax_bills.csv` | TaxBill | 8,991 |
+| `properties.csv` | Property | 3,001 |
+| `residents.csv` | Resident | 5,601 |
+| `leases.csv` | Lease | 8,299 |
+| `rent_payments.csv` | RentPayment | 95,663 |
+| `vendors.csv` | Vendor | 96 |
+| `maintenance_work_orders.csv` | MaintenanceWorkOrder | 26,476 |
+| `expenses.csv` | Expense | 81,400 |
+| `tax_assessments.csv` | TaxAssessment | 9,003 |
+| `tax_bills.csv` | TaxBill | 9,003 |
 | `market_rate_comps.csv` | MarketRateComp | 4,212 |
 
 ### Reference / location
@@ -76,7 +77,7 @@ because tax is assessed and appealed there — Hillsborough and Pasco are both
 
 ### Portfolio
 
-**Property** — 2,997 rows, SYNTHETIC.
+**Property** — 3,001 rows, SYNTHETIC.
 `propertyId` (pk), `communitySlug`, `streetAddress`, `city`, `state`, `zip`,
 `countyId`, `beds`, `baths`, `sqft`, `yearBuilt`, `acquisitionDate`,
 `acquisitionPrice`, `marketRent`, `status`, `currentLeaseId`.
@@ -86,7 +87,7 @@ community's `startingRent`, because "starting at $X" is a floor.
 
 ### People and tenancy
 
-**Resident** — 5,646 rows.
+**Resident** — 5,601 rows.
 `residentId` (pk), `displayName`, `creditTierAtApplication`, `householdSize`,
 `hasPets`, `syntheticProfileGroundTruth`.
 
@@ -106,7 +107,7 @@ renewal is a second lease for the same resident, and a resident who moves to a
 different home in the portfolio keeps their payment record. A resident whose
 history lives only inside one lease cannot be "at risk" in any useful sense.
 
-**Lease** — 8,375 rows.
+**Lease** — 8,299 rows.
 `leaseId` (pk), `propertyId`, `residentId`, `startDate`, `endDate`,
 `termMonths`, `monthlyRent`, `deposit`, `concessionMonths`, `renewalOfLeaseId`
 (self-link), `status`.
@@ -117,7 +118,7 @@ which is what keeps the resident's history continuous. `termMonths` is 12, 18 or
 24; 18 is deliberately rare because it shifts a start month by six and walks
 summer leases into winter on every renewal.
 
-**RentPayment** — 95,467 rows.
+**RentPayment** — 95,663 rows.
 `paymentId` (pk), `leaseId`, `propertyId`, `residentId`, `dueDate`, `amountDue`,
 `amountPaid`, `paidDate`, `daysLate`, `status`.
 
@@ -131,7 +132,7 @@ computed at READ time, not stored, so thresholds can change without regenerating
 
 ### Cost
 
-**MaintenanceWorkOrder** — 26,477 rows.
+**MaintenanceWorkOrder** — 26,476 rows.
 `workOrderId` (pk), `propertyId`, `category`, `responsibility`,
 `chargedToResident`, `contributingNeglect`, `priority`, `isEmergency`,
 `openedDate`, `closedDate`, `cost`, `vendorId`, `residentReported`.
@@ -156,11 +157,11 @@ air-filter duty and the landlord paid for the result — 562 orders, $932,682.
 Resident responsibility becoming landlord cost is the kind of chain an ontology
 shows and a spreadsheet cannot.
 
-**Vendor** — 92 rows.
+**Vendor** — 96 rows.
 `vendorId` (pk), `vendorName`, `category`, `market`, `avgTurnaroundDays`,
 `onTimePct`.
 
-**Expense** — 81,548 rows.
+**Expense** — 81,400 rows.
 `expenseId` (pk), `propertyId`, `communitySlug`, `scope`, `category`, `date`,
 `amount`, `glCode`.
 
@@ -191,14 +192,14 @@ Total $94.0M over 3 years, $10,460 per property per year.
 
 ### Tax
 
-**TaxAssessment** — 8,991 rows (one per property per year, 2024–2026).
+**TaxAssessment** — 9,003 rows (one per property per year, 2024–2026).
 `assessmentId` (pk), `propertyId`, `countyId`, `taxYear`, `assessedValue`,
 `priorAssessedValue`, `changePct`, `appealStatus`, `appealSavings`.
 
 `appealStatus` is `none`, `filed`, `won` or `lost`. Appeals only appear where
 `changePct` exceeded ~9%, which is where a real owner would contest.
 
-**TaxBill** — 8,991 rows.
+**TaxBill** — 9,003 rows.
 `billId` (pk), `assessmentId`, `propertyId`, `countyId`, `taxYear`, `amountDue`,
 `dueDate`, `paidDate`, `status`.
 
@@ -372,7 +373,7 @@ Deliberate choices worth defending:
 - **History spans leases, not the current lease.** A renewal must not reset
   someone's record to clean.
 - **Buckets computed at read time** from `daysLate`, so thresholds can change
-  without regenerating 108,000 payment rows.
+  without regenerating 95,663 payment rows.
 
 ### 4. AIP Logic on top, for narrative
 

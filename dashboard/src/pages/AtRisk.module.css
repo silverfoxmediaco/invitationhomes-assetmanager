@@ -1,0 +1,189 @@
+.back {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ih-primary);
+  text-decoration: none;
+  margin-bottom: var(--ih-space-md);
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* Shown only when the newest payment in the data is more than 45 days old.
+   Arrears age against today, so a stale ledger would silently push every
+   resident into 90+ and the page would look like a crisis. */
+.stale {
+  margin: var(--ih-space-md) 0 0;
+  padding: var(--ih-space-sm) var(--ih-space-md);
+  background: #fdf8e3;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #574d12;
+  max-width: 80ch;
+}
+
+/* --- Delinquency ageing ---------------------------------------------------
+   Four buckets side by side rather than a chart. The numbers are the point,
+   and at four values a chart adds decoration and subtracts precision. */
+.ageing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--ih-n1);
+  border: 1px solid var(--ih-n1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ageBucket {
+  background: var(--ih-white);
+  padding: var(--ih-space-md);
+}
+
+.ageLabel {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ih-n6);
+  margin-bottom: var(--ih-space-xs);
+}
+
+.ageValue {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.ageNote {
+  font-size: 12px;
+  color: var(--ih-n6);
+  margin-top: var(--ih-space-xs);
+}
+
+/* --- Filters -------------------------------------------------------------- */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ih-space-xs);
+  margin-bottom: var(--ih-space-md);
+}
+
+.filterButton {
+  font-family: var(--ih-font-body);
+  font-size: 13px;
+  padding: var(--ih-space-xs) var(--ih-space-md);
+  border: 1px solid var(--ih-n2);
+  background: var(--ih-white);
+  color: var(--ih-text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.filterButton:hover {
+  border-color: var(--ih-n4);
+}
+
+/* Green means interactive, which is exactly what an active filter is. It is
+   the one place on this page green is allowed — nothing in a risk table is
+   good news, so a green cell would be lying. */
+.filterActive,
+.filterActive:hover {
+  background: var(--ih-primary);
+  border-color: var(--ih-primary);
+  color: var(--ih-white);
+}
+
+/* --- Table ---------------------------------------------------------------- */
+.score {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.band {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* Four bands, and the ramp has to read in order at a glance in a dense table.
+   Neutral, amber, then two reds — severity by saturation rather than by hue,
+   so the jump from "watch" to "at risk" is visible without reading the word. */
+.bandHealthy {
+  background: var(--ih-n1);
+  color: var(--ih-n7);
+}
+
+.bandWatch {
+  background: #fdf3cf;
+  color: #6b5d0f;
+}
+
+.bandAtRisk {
+  background: #fadcde;
+  color: #8d2630;
+}
+
+.bandCritical {
+  background: var(--ih-error-dark);
+  color: var(--ih-white);
+}
+
+.name {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* The signal the score exists to surface. Called out on the row rather than
+   left inside the reasons text, because "worsening" is the difference between
+   a collections call and a renewal decision. */
+.trendFlag {
+  display: inline-block;
+  margin-left: var(--ih-space-sm);
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: #fceeef;
+  color: #571e22;
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bucket {
+  font-variant-numeric: tabular-nums;
+  color: var(--ih-n7);
+}
+
+.soon {
+  color: var(--ih-error);
+  font-weight: 600;
+}
+
+/* The only column allowed to wrap. Everything else is a figure or a label and
+   stays on one line; the reasons are a sentence and need the room. */
+.reasons {
+  white-space: normal !important;
+  min-width: 260px;
+  max-width: 420px;
+  font-size: 12px;
+  color: var(--ih-n7);
+  line-height: 1.4;
+}
+
+.method {
+  margin-top: var(--ih-space-2xl);
+  padding-top: var(--ih-space-md);
+  border-top: 1px solid var(--ih-n1);
+  font-size: 12px;
+  color: var(--ih-n6);
+  max-width: 82ch;
+  line-height: 1.5;
+}

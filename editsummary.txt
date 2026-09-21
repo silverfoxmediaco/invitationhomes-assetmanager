@@ -890,3 +890,84 @@ This is the third time the same discipline has paid: build the thing that
 renders the data, then look at it. Nothing errored in either case.
 
 RE-UPLOAD NEEDED: properties.csv, leases.csv, market_rate_comps.csv all changed.
+
+================================================================================
+2026-09-21  At-risk residents page, and the stale-upload bug it uncovered
+================================================================================
+
+BUILT
+  dashboard/src/data/riskScore.ts        the score, as a pure function
+  dashboard/src/data/riskScore.test.ts   15 tests, incl. 6 against the answer key
+  dashboard/src/data/useAtRisk.ts        the read path + an integrity guard
+  dashboard/src/pages/AtRisk.tsx         the page
+  dashboard/src/pages/AtRisk.module.css  its styles
+  router.tsx  /at-risk route;  Overview.tsx  cross-link to it
+  theme.css   added --ih-error-dark (#d33641, from their published tokens)
+
+THE SCORE
+  Rules-based per the spec: arrears 40, trend 25, direction 15, ratio 10,
+  lease stage 10; bands healthy / watch / at risk / critical.  Written as a
+  pure function so it can move into a Foundry transform later without a
+  rewrite, and so it can be tested against the generator's answer key.
+
+  Two weights changed after running it over the real data, neither for style:
+
+  1. ARREARS NOW SCALE BY SIZE, not just age.  The spec's bucket-only rule
+     scored a resident who short-paid one month by $400 identically to one
+     three whole months behind: both land in 90+.  Every false alarm came
+     from that.  Arrears are now read in MONTHS OF RENT, saturating at one.
+     Reliable residents wrongly flagged fell from 3.6% to 1.9%.
+
+  2. DIRECTION NEEDS A REAL MOVE, not any increase.  Firing whenever the last
+     3 payments were worse at all meant one payment three days late after a
+     clean year scored 15 points; it was firing on 14% of reliable residents.
+     Now needs a severity gap of 2 — a partial, a missed, or two lates.
+
+  Validated against syntheticProfileGroundTruth (read ONLY in the test, never
+  in the read path): 40 of the top 50 are genuinely troubled, the flagged 5.7%
+  hold 46% of all arrears, and the four generated profiles rank in order.
+  Direction is honestly weak — it catches ~20% of the degrading cohort inside
+  a 12-month window, because the generator slides them downhill over three
+  years.  Trend and arrears carry the score.  Said so on the page.
+
+THE BUG THAT MATTERED — SEVEN STALE DATASETS IN FOUNDRY
+  The page rendered "$2,940 outstanding across 2,760 homes".  The real figure
+  was over $1.2M.  Nothing errored.
+
+  Cause: Foundry holds an older generation of seven of the twelve datasets.
+  Of 95,467 payment ids shared with the current rent_payments.csv, only 46
+  have the same lease-and-resident pairing.  Against the leases sitting beside
+  them: 63,777 payments fall outside the term of their own lease, 856 point at
+  a lease that does not exist, 94,134 disagree with their lease's rent.
+
+  CURRENT: Communities, Counties, Properties, Leases, MarketRateComps
+  STALE:   Residents, RentPayments, Vendors, MaintenanceWorkOrders,
+           Expenses, TaxAssessments, TaxBills
+
+  This is why the overview reconciled to the row while this page did not: the
+  overview reads only fresh datasets.  A partial re-upload is silent.
+
+  THREE FIXES
+  a) The join no longer trusts the payment's denormalised residentId.  It
+     groups by leaseId and reads the resident off the Lease, which is the
+     object that owns that fact.  A denormalised key is only as good as the
+     last upload that wrote it, and this one was a generation old.
+  b) An integrity guard counts payments falling outside their lease's term and
+     THROWS below 90% agreement, naming the file to re-upload.  Verified: the
+     page now says so instead of rendering $2,940.
+  c) CLAUDE.md gotchas 8 and 9; ontology-spec.md row counts re-synced (the
+     spec was stale too — it said 8,375 leases against an actual 8,299).
+
+  PropertyDetail's cost and payment figures read four of the stale datasets,
+  so the PROP-00057 numbers verified earlier are from the older generation.
+  They will change on re-upload.
+
+ALSO FIXED
+  A LocalDate read filter must not carry a timezone.  dueDate is typed
+  datetime in the generated SDK but is LocalDate in the ontology; $gte with
+  "2025-08-01T00:00:00Z" is rejected with InvalidPropertyValue.  Bare date.
+  The SDK's TypeScript type is not the authority.
+
+OPEN
+  - Re-upload all seven stale CSVs TOGETHER, then re-verify this page.
+  - Remaining pages: community view, rent collection, maintenance.

@@ -188,3 +188,11 @@
 .rowLink:hover {
   text-decoration: underline;
 }
+
+/* Cross-link to the portfolio's other question. Not a nav bar: it sits where
+   the reader has just finished the pricing story and is a sentence, not a
+   menu item. */
+.jumpTo {
+  font-size: 14px;
+  margin: 0 0 var(--ih-space-md);
+}

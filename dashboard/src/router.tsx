@@ -1,3 +1,4 @@
+import AtRisk from "@/pages/AtRisk";
 import AuthCallback from "@/AuthCallback";
 import Overview from "@/pages/Overview";
 import PropertyDetail from "@/pages/PropertyDetail";
@@ -8,6 +9,10 @@ export const router = createBrowserRouter(
     {
       path: "/",
       element: <Overview />,
+    },
+    {
+      path: "/at-risk",
+      element: <AtRisk />,
     },
     {
       path: "/property/:propertyId",
