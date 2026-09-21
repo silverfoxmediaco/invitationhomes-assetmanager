@@ -194,6 +194,26 @@ than it saves.
     for a string from that change BEFORE uploading — `grep -r "New Heading"
     dist/assets/`. Verifying after the fact means finding out from the client.
 
+12. **"Create code repository" defaults to overwriting your live site.**
+    Developer Console → Code repository offers a Foundry-hosted git repo with
+    CI that builds on push — attractive, because it makes the stale-bundle
+    failure in gotcha 11 structurally impossible.
+
+    But it scaffolds a **React starter template**, not your code, and its
+    default CI/CD setting is *"Upload new versions and immediately deploy to
+    production"*. On an app that already has a site, that replaces the live
+    deployment with an empty starter. The dialog does warn, in small orange
+    text below the fold — read it before clicking Next.
+
+    If adopting it: choose **"Upload new versions only without deploying"**,
+    which is also the better long-term shape for a demo site (CI builds every
+    push so a bundle is never stale, promotion stays deliberate so a push
+    cannot change what a client is looking at mid-meeting). Then clone, replace
+    the scaffold with the real app, push, and promote.
+
+    Evaluated 2026-09-21 and PARKED: the bug it would have prevented was
+    already fixed, and the migration is an afternoon of plumbing.
+
 ## Foundry credentials
 
 - `FOUNDRY_TOKEN` lives in `~/.zshenv`, never just `export`ed — an export-only

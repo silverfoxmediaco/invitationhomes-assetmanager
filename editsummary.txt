@@ -1603,3 +1603,27 @@ THE SECOND FINDING ON THE PAGE
   the script, never the bare CLI, and when a deploy carries a specific visible
   change, grep dist/assets for a string from that change BEFORE uploading.
   Verifying afterwards means finding out from the client.
+
+--------------------------------------------------------------------------------
+2026-09-21  Foundry code repository — evaluated, parked
+--------------------------------------------------------------------------------
+  Considered moving development into a Foundry code repository so CI builds on
+  push, which would make the stale-bundle failure structurally impossible.
+
+  Worth knowing: a Foundry code repo can be CLONED LOCALLY, so it is not a
+  choice between local VS Code and a browser IDE. It also needs no token in
+  GitHub secrets — the repo is granted deploy permission natively, which is
+  strictly better than the GitHub Action I had proposed before reading the page.
+
+  STOPPED AT THE DIALOG. "Create code repository" scaffolds a React STARTER
+  TEMPLATE, not our code, and defaults to "Upload new versions and immediately
+  deploy to production". On an app with a live site that replaces the live
+  deployment with the empty starter — our 0.4.2 would have gone, and a client
+  opening the link would have seen a scaffold. Switched to "Upload new versions
+  only without deploying", which cleared the warning, then cancelled.
+
+  PARKED at James's call. The bug it prevents was fixed an hour earlier, and
+  the migration is an afternoon of plumbing against three open product items.
+  Recorded as CLAUDE.md gotcha 12 so the default is not walked into later.
+
+  Verified after cancelling: 0.4.2 still deployed, nothing created.
