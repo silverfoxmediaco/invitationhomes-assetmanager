@@ -1730,3 +1730,9 @@ THE SECOND FINDING ON THE PAGE
 
   TO VERIFY once built: 2,760 rows, 1,281 isUnderMarket, sum of positive
   gaps $112,740/mo ($1,352,880/yr). Computed from the local CSVs.
+
+  VERIFIED same day: build complete. Read property_market_gap back through
+  the v1 readTable API (full table, not the ontology's approximate count):
+  2,760 rows, 2,760 distinct homes, 1,281 isUnderMarket, $112,740/mo,
+  $1,352,880/yr, 0 rows flagged true with a non-positive gap. Matches the
+  local CSV computation and the dashboard exactly.
