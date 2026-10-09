@@ -1699,3 +1699,8 @@ THE SECOND FINDING ON THE PAGE
   Spotted, NOT fixed (out of scope): the drawer's Overview link still goes
   to "/", which is the landing page since the routes moved. Should be
   /dashboard.
+
+  UPDATE same day: committed 3787ab6, pushed, deployed 0.4.4 via a clean
+  build. Bundle grepped for the new headings before upload. Live /at-risk
+  reloaded and read back: new tab title, verdict, list note and method
+  paragraph all showing.
