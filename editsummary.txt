@@ -1763,3 +1763,28 @@ THE SECOND FINDING ON THE PAGE
   absent), deployed with npm run deploy. Live check: opened the drawer on
   /at-risk, clicked Overview, landed on /dashboard showing the portfolio
   overview.
+
+--------------------------------------------------------------------------------
+2026-10-09  Listing scrape for the disposition page's data scale-up
+--------------------------------------------------------------------------------
+  Why: client wants a page for packaging homes into bundles (5,000 to
+  100,000 homes) for institutional buyers, with a cap rate per bundle and a
+  filter for markets they want to exit. The synthetic portfolio is 3,001
+  homes in 14 Sun Belt markets, too small for any such bundle.
+
+  Added scripts/scrape_listings.py. Reads the property sitemap (4,556
+  listing URLs) and pulls each page's schema.org block: address, city,
+  state, ZIP, coordinates, beds, baths, sqft, asking rent. One request per
+  second, resumable, stays off /api and *.json (robots.txt allows the rest).
+  Output: data/reference/invitation-homes-listings.csv.
+
+  Pages carry no market field; market gets assigned from location after the
+  run. These are homes AVAILABLE TO LEASE today, not the owned portfolio, so
+  the file is a sampling distribution (where they operate, what homes there
+  look like), not a count.
+
+  Rule for use: real street addresses stay in the reference file only. The
+  generator keeps inventing addresses, so no real household ever sits next
+  to a synthetic arrears or at-risk flag.
+
+  Smoke test: 3 listings parsed cleanly. Full run started in the background.
