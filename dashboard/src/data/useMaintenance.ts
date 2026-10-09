@@ -5,7 +5,8 @@ import {
   Properties,
   Vendors,
 } from "@invitation-homes-asset-management/sdk";
-import { fetchAll } from "./fetchAll";
+import { aggregate } from "./aggregate";
+import { fetchAll, fetchWhere } from "./fetchAll";
 
 /**
  * Maintenance, and the one chain in it that needs an ontology to see.
@@ -162,30 +163,61 @@ export function useMaintenance(): {
         const today = todayIso();
         const countSince = monthsBack(12);
 
-        // The whole table, unfiltered. Seasonality needs three years to show a
-        // repeating shape rather than one summer, and at 26,476 rows this sits
-        // well inside the row guard. Everything else on this page windows in
-        // the browser off the same read.
-        const [workOrders, properties, vendors] = await Promise.all([
-          fetchAll<WorkOrderRow>(client, MaintenanceWorkOrders, {
-            select: [
-              "workOrderId",
-              "propertyId",
-              "category",
-              "responsibility",
-              "contributingNeglect",
-              "priority",
-              "isEmergency",
-              "openedDate",
-              "closedDate",
-              "cost",
-            ],
-          }),
-          fetchAll<PropertyRow>(client, Properties, {
-            select: ["propertyId", "streetAddress", "city", "state"],
-          }),
-          fetchAll<{ vendorId: string }>(client, Vendors, { select: ["vendorId"] }),
-        ]);
+        // Counted in Foundry, not in the browser. At 20,000 homes the work
+        // order table is ~200,000 rows, four times the row guard. Every
+        // figure on this page except close times is a count, sum or mean
+        // over a grouping, which is exactly what /aggregate is for.
+        const WO = MaintenanceWorkOrders.apiName;
+        const HVAC = ["HVAC - not cooling", "HVAC - not heating"];
+        const [byCategory12m, byCategoryAll, hvacSplit, hvacByMonth, openRows, recentClosed, properties, vendors] =
+          await Promise.all([
+            aggregate<{ category: string; responsibility: string }>(
+              WO,
+              [{ type: "count", name: "n" }, { type: "sum", field: "cost", name: "cost" }],
+              [{ field: "category", type: "exact" }, { field: "responsibility", type: "exact" }],
+              { type: "gte", field: "openedDate", value: countSince }
+            ),
+            aggregate<{ category: string; responsibility: string }>(
+              WO,
+              [{ type: "count", name: "n" }],
+              [{ field: "category", type: "exact" }, { field: "responsibility", type: "exact" }]
+            ),
+            // The neglect chain reads the whole history. 538 orders over three
+            // years is a pattern; the same number sliced to twelve months is
+            // an anecdote.
+            aggregate<{ contributingNeglect: string }>(
+              WO,
+              [{ type: "count", name: "n" }, { type: "sum", field: "cost", name: "cost" }],
+              [{ field: "contributingNeglect", type: "exact" }],
+              { type: "in", field: "category", value: HVAC }
+            ),
+            // Seasonality across all three years, folded to calendar month below.
+            aggregate<{ openedDate: string; category: string }>(
+              WO,
+              [{ type: "count", name: "n" }],
+              [
+                { field: "openedDate", type: "duration", value: 1, unit: "MONTHS" },
+                { field: "category", type: "exact" },
+              ],
+              { type: "in", field: "category", value: HVAC }
+            ),
+            fetchWhere<WorkOrderRow>(client, MaintenanceWorkOrders, { closedDate: { $isNull: true } }, {
+              select: ["workOrderId", "propertyId", "category", "priority", "openedDate", "cost"],
+            }),
+            // Close times need each order's own dates, which cannot be
+            // aggregated, so they come from the last six months of closed
+            // orders (~33,000 rows at 20,000 homes) rather than all three years.
+            fetchWhere<{ priority: string; openedDate: string; closedDate: string }>(
+              client,
+              MaintenanceWorkOrders,
+              { $and: [{ openedDate: { $gte: monthsBack(6) } }, { closedDate: { $isNull: false } }] },
+              { select: ["priority", "openedDate", "closedDate"] }
+            ),
+            fetchAll<PropertyRow>(client, Properties, {
+              select: ["propertyId", "streetAddress", "city", "state"],
+            }),
+            fetchAll<{ vendorId: string }>(client, Vendors, { select: ["vendorId"] }),
+          ]);
 
         if (cancelled) {
           return;
@@ -196,117 +228,108 @@ export function useMaintenance(): {
         let orders12m = 0;
         let landlordCost12m = 0;
         let residentChargedBack12m = 0;
+        const categories: CategoryCost[] = byCategory12m.map((g) => {
+          const orders = g.metrics.n ?? 0;
+          const cost = g.metrics.cost ?? 0;
+          orders12m += orders;
+          if (g.group.responsibility === "landlord") {
+            landlordCost12m += cost;
+          } else {
+            residentChargedBack12m += cost;
+          }
+          return {
+            category: g.group.category,
+            orders,
+            cost,
+            responsibility: g.group.responsibility,
+          };
+        });
+
         let landlordOrders = 0;
         let residentOrders = 0;
+        let filterOrders = 0;
+        for (const g of byCategoryAll) {
+          const n = g.metrics.n ?? 0;
+          if (g.group.responsibility === "landlord") {
+            landlordOrders += n;
+          } else {
+            residentOrders += n;
+          }
+          if (g.group.category === "Air filter") {
+            filterOrders += n;
+          }
+        }
 
-        const categoryMap = new Map<string, CategoryCost>();
+        // Grouping on a boolean returns the key as a string or a boolean
+        // depending on the backend version; compare loosely.
+        const isNeglect = (v: unknown) => String(v) === "true";
+        let neglectOrders = 0;
+        let neglectCost = 0;
+        let otherOrders = 0;
+        let otherCost = 0;
+        for (const g of hvacSplit) {
+          if (isNeglect(g.group.contributingNeglect)) {
+            neglectOrders += g.metrics.n ?? 0;
+            neglectCost += g.metrics.cost ?? 0;
+          } else {
+            otherOrders += g.metrics.n ?? 0;
+            otherCost += g.metrics.cost ?? 0;
+          }
+        }
+        const hvacOrders = neglectOrders + otherOrders;
+        const hvacCost = neglectCost + otherCost;
+
         const season = new Map<string, SeasonPoint>();
         for (let m = 1; m <= 12; m++) {
           const key = String(m).padStart(2, "0");
           season.set(key, { month: key, cooling: 0, heating: 0 });
         }
-
-        const hvacNeglect: number[] = [];
-        const hvacOther: number[] = [];
-        let hvacOrders = 0;
-        let hvacCost = 0;
-        let neglectOrders = 0;
-        let neglectCost = 0;
-        let filterOrders = 0;
+        for (const g of hvacByMonth) {
+          const point = season.get(iso(g.group.openedDate).slice(5, 7));
+          if (!point) {
+            continue;
+          }
+          if (g.group.category === "HVAC - not cooling") {
+            point.cooling += g.metrics.n ?? 0;
+          } else {
+            point.heating += g.metrics.n ?? 0;
+          }
+        }
 
         const emergencyDays: number[] = [];
         const urgentDays: number[] = [];
         const routineDays: number[] = [];
-
-        const open: OpenOrder[] = [];
-
-        for (const w of workOrders) {
-          const opened = iso(w.openedDate);
-          const closed = iso(w.closedDate);
-
-          if (w.responsibility === "landlord") {
-            landlordOrders++;
+        for (const w of recentClosed) {
+          const days = daysBetween(iso(w.openedDate), iso(w.closedDate));
+          if (w.priority === "emergency") {
+            emergencyDays.push(days);
+          } else if (w.priority === "urgent") {
+            urgentDays.push(days);
           } else {
-            residentOrders++;
-          }
-
-          if (opened >= countSince) {
-            orders12m++;
-            if (w.responsibility === "landlord") {
-              landlordCost12m += w.cost;
-            } else {
-              residentChargedBack12m += w.cost;
-            }
-            const key = `${w.category}|${w.responsibility}`;
-            const row = categoryMap.get(key) ?? {
-              category: w.category,
-              orders: 0,
-              cost: 0,
-              responsibility: w.responsibility,
-            };
-            row.orders++;
-            row.cost += w.cost;
-            categoryMap.set(key, row);
-          }
-
-          // The neglect chain reads the whole history. 538 orders over three
-          // years is a pattern; the same number sliced to twelve months is an
-          // anecdote.
-          if (w.category.startsWith("HVAC")) {
-            hvacOrders++;
-            hvacCost += w.cost;
-            if (w.contributingNeglect) {
-              neglectOrders++;
-              neglectCost += w.cost;
-              hvacNeglect.push(w.cost);
-            } else {
-              hvacOther.push(w.cost);
-            }
-          }
-          if (w.category === "Air filter") {
-            filterOrders++;
-          }
-
-          // Seasonality across all three years, by calendar month.
-          const mm = opened.slice(5, 7);
-          const point = season.get(mm);
-          if (point) {
-            if (w.category === "HVAC - not cooling") {
-              point.cooling++;
-            } else if (w.category === "HVAC - not heating") {
-              point.heating++;
-            }
-          }
-
-          if (closed) {
-            const days = daysBetween(opened, closed);
-            if (w.priority === "emergency") {
-              emergencyDays.push(days);
-            } else if (w.priority === "urgent") {
-              urgentDays.push(days);
-            } else {
-              routineDays.push(days);
-            }
-          } else {
-            const p = propertyById.get(w.propertyId);
-            open.push({
-              workOrderId: w.workOrderId,
-              propertyId: w.propertyId,
-              streetAddress: p?.streetAddress ?? "",
-              city: p?.city ?? "",
-              state: p?.state ?? "",
-              category: w.category,
-              priority: w.priority,
-              openedDate: opened,
-              ageDays: daysBetween(opened, today),
-              cost: w.cost,
-            });
+            routineDays.push(days);
           }
         }
 
+        const open: OpenOrder[] = openRows.map((w) => {
+          const p = propertyById.get(w.propertyId);
+          const opened = iso(w.openedDate);
+          return {
+            workOrderId: w.workOrderId,
+            propertyId: w.propertyId,
+            streetAddress: p?.streetAddress ?? "",
+            city: p?.city ?? "",
+            state: p?.state ?? "",
+            category: w.category,
+            priority: w.priority,
+            openedDate: opened,
+            ageDays: daysBetween(opened, today),
+            cost: w.cost,
+          };
+        });
+
         open.sort((a, b) => b.ageDays - a.ageDays);
 
-        const categories = [...categoryMap.values()].sort((a, b) => b.cost - a.cost);
+        categories.sort((a, b) => b.cost - a.cost);
 
         setData({
           orders12m,
@@ -317,8 +340,8 @@ export function useMaintenance(): {
           neglectOrders,
           neglectCost,
           neglectSharePct: hvacOrders ? neglectOrders / hvacOrders : 0,
-          neglectMeanCost: mean(hvacNeglect),
-          otherHvacMeanCost: mean(hvacOther),
+          neglectMeanCost: neglectOrders ? neglectCost / neglectOrders : 0,
+          otherHvacMeanCost: otherOrders ? otherCost / otherOrders : 0,
           filterOrders,
           categories,
           landlordOrders,

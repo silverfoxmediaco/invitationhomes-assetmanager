@@ -31,7 +31,7 @@ type Metric =
   | { type: "count"; name: string };
 
 type GroupBy =
-  | { field: string; type: "exact" }
+  | { field: string; type: "exact"; maxGroupCount?: number }
   | { field: string; type: "duration"; value: number; unit: "MONTHS" | "DAYS" | "YEARS" };
 
 export async function aggregate<G extends Record<string, string>>(
@@ -75,6 +75,18 @@ export async function aggregate<G extends Record<string, string>>(
     throw new Error(
       `Foundry returned ${payload.accuracy} results for ${objectType}. A collection rate ` +
         `shown to two decimal places must not be an estimate. Narrow the grouping.`
+    );
+  }
+
+  // ACCURATE is not the whole story. When a grouping has more groups than
+  // maxGroupCount, Foundry drops the rest, still reports ACCURATE, and says so
+  // only in excludedItems (measured 2026-10-09: 95,663 payments grouped by id
+  // with a cap of 30,000 came back ACCURATE with 65,663 excluded). A total
+  // built from a truncated grouping is silently low.
+  if (payload.excludedItems) {
+    throw new Error(
+      `Aggregation on ${objectType} dropped ${payload.excludedItems.toLocaleString()} rows ` +
+        `that did not fit the group limit. Raise maxGroupCount or group more coarsely.`
     );
   }
 

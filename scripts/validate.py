@@ -16,8 +16,8 @@ Exit code is non-zero if any check fails, so this can gate an upload.
 import csv, io, os, sys
 from collections import Counter
 
-G = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                 "data", "generated")
+G = os.environ.get("IH_GEN_OUT") or os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "generated")
 
 def load(n):
     return list(csv.DictReader(io.open(os.path.join(G, n), encoding="utf-8")))
@@ -45,8 +45,17 @@ def check(name, bad, total, sample=None):
         "  e.g. " + str(sample[:2]) if (not ok and sample) else ""))
 
 print("== referential integrity ==")
-check("property.communitySlug resolves",
-      sum(1 for p in props.values() if p["communitySlug"] not in comm), len(props))
+# Scattered homes belong to no community; every community home must resolve.
+check("property.communitySlug resolves (community homes)",
+      sum(1 for p in props.values() if p["homeType"] == "community" and p["communitySlug"] not in comm), len(props))
+check("scattered homes carry NO communitySlug",
+      sum(1 for p in props.values() if p["homeType"] == "scattered" and p["communitySlug"]), len(props))
+check("homeType is community or scattered",
+      sum(1 for p in props.values() if p["homeType"] not in ("community", "scattered")), len(props))
+check("every property has a market",
+      sum(1 for p in props.values() if not p["market"]), len(props))
+check("every property has a county (tax needs one)",
+      sum(1 for p in props.values() if not p["countyId"]), len(props))
 check("property.countyId resolves",
       sum(1 for p in props.values() if p["countyId"] and p["countyId"] not in cty), len(props))
 check("lease.propertyId resolves",
@@ -84,16 +93,16 @@ bad = [p["propertyId"] for p in props.values()
        if p["currentLeaseId"] and lea[p["currentLeaseId"]]["status"] != "active"]
 check("currentLeaseId points at an active lease", len(bad), len(props), bad)
 # "Starting at $X" is a floor. Nothing may sit below its community's anchor.
-bad = [p["propertyId"] for p in props.values()
-       if int(p["marketRent"]) < int(comm[p["communitySlug"]]["startingRent"])]
+bad = [p["propertyId"] for p in props.values() if p["homeType"] == "community"
+       and int(p["marketRent"]) < int(comm[p["communitySlug"]]["startingRent"])]
 check("rent >= community 'starting at' floor", len(bad), len(props), bad)
 dup = Counter(l["propertyId"] for l in lea.values() if l["status"] == "active")
 check("no property holds two active leases",
       sum(1 for v in dup.values() if v > 1), len(props))
 # City must always be qualified by state: "The Reserve" is in Dallas, GEORGIA,
 # while a separate Dallas market exists in Texas.
-bad = [p["propertyId"] for p in props.values()
-       if (p["city"], p["state"]) != (comm[p["communitySlug"]]["city"],
+bad = [p["propertyId"] for p in props.values() if p["homeType"] == "community"
+       and (p["city"], p["state"]) != (comm[p["communitySlug"]]["city"],
                                       comm[p["communitySlug"]]["state"])]
 check("property city/state matches its community", len(bad), len(props), bad)
 keys = set((c["city"], c["state"], c["beds"]) for c in comps)
@@ -106,8 +115,15 @@ bad = [e["expenseId"] for e in exp if e["scope"] == "property" and not e["proper
 check("property-scope expense has a propertyId", len(bad), len(exp), bad)
 bad = [e["expenseId"] for e in exp if e["scope"] == "community" and e["propertyId"]]
 check("community-scope expense has NO propertyId", len(bad), len(exp), bad)
-bad = [e["expenseId"] for e in exp if e["communitySlug"] not in comm]
-check("expense.communitySlug resolves", len(bad), len(exp), bad)
+bad = [e["expenseId"] for e in exp if e["communitySlug"] and e["communitySlug"] not in comm]
+check("expense.communitySlug resolves when present", len(bad), len(exp), bad)
+bad = [e["expenseId"] for e in exp if e["propertyId"]
+       and e["communitySlug"] != props[e["propertyId"]]["communitySlug"]]
+check("expense.communitySlug matches its property's", len(bad), len(exp), bad)
+# Every bill on every home, every year: a home with no bill pays no tax.
+billed = Counter(b["propertyId"] for b in bil)
+check("every property has 3 tax bills",
+      sum(1 for p in props if billed[p] != 3), len(props))
 bad = [e["expenseId"] for e in exp
        if e["propertyId"] and e["date"] < props[e["propertyId"]]["acquisitionDate"]]
 check("no expense before property acquisition", len(bad), len(exp), bad)
@@ -135,6 +151,8 @@ print("  occupancy                %.1f%%" % (100 * occ / len(props)))
 print("  payment status           %s" % dict(Counter(p["status"] for p in pay)))
 print("  lease outcomes           %s" % dict(Counter(l["status"] for l in lea.values())))
 print("  resident profiles        %s" % dict(Counter(r["syntheticProfileGroundTruth"] for r in res.values())))
+print("  home types               %s" % dict(Counter(p["homeType"] for p in props.values())))
+print("  homes by market          %s" % dict(Counter(p["market"] for p in props.values()).most_common()))
 print("  rent anchors             %s" % dict(Counter(c["rentAnchor"] for c in comm.values())))
 degr = sum(1 for r in res.values() if r["syntheticProfileGroundTruth"] in ("degrading", "severe"))
 print("  at-risk cohort           %.1f%% of residents" % (100 * degr / len(res)))

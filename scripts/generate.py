@@ -2,8 +2,16 @@
 """
 Synthetic data generator — Invitation Homes property operations prototype.
 
-Communities portfolio only. 76 REAL communities scraped from their site;
-everything below the Community line is generated.
+20,000 homes in two kinds (James, 2026-10-09; sized for 5,000+ home bundles):
+
+  community   ~3,000 homes in 76 REAL build-to-rent communities scraped from
+              their site. Everything below the Community line is generated.
+  scattered   ~17,000 scattered single-family homes across their 20 markets,
+              which is the shape most of a real SFR portfolio takes. Each one
+              copies the city, ZIP, beds, baths, sqft and rent level of a REAL
+              listing (invitation-homes-listings.csv) but never its street
+              address. A real address beside a synthetic arrears flag would
+              read as a claim about a real household.
 
     cd invitationhomes-foundry && python3 scripts/generate.py
 
@@ -14,6 +22,8 @@ Foundry link breaks.
 Reads from data/reference/:
     invitation-homes-community-details.csv   76 communities, real rents/beds
     city-county.csv                          60 cities -> 42 counties
+    invitation-homes-listings.csv            ~4,500 live listings (scrape_listings.py)
+    listing-city-county.csv                  listing cities -> counties (lookup_counties.py)
 """
 
 import csv, io, os, random, math
@@ -23,11 +33,29 @@ from collections import defaultdict, Counter
 SEED = 1947                      # same seed as Target Air, for no reason but habit
 AS_OF = date(2026, 9, 30)
 START = date(2023, 10, 1)        # 36 months of history
-TARGET_PROPERTIES = 3000
+TARGET_PROPERTIES = 3000         # community homes; unchanged so that story holds
+TOTAL_HOMES = 20000              # community + scattered
+HPA = .055                       # assumed annual home price appreciation, for cost basis
+
+# Their 20 markets, as listed in the property sitemap's /markets/ pages.
+# Slugs match the community file where a market already existed there.
+# Coordinates are each market's anchor city; a listing joins the nearest one.
+MARKETS = {
+    "atlanta": (33.749, -84.388), "austin": (30.267, -97.743),
+    "carolinas": (35.227, -80.843), "chicago": (41.878, -87.630),
+    "dallas": (32.777, -96.797), "denver": (39.739, -104.990),
+    "houston": (29.760, -95.370), "jacksonville": (30.332, -81.656),
+    "las-vegas": (36.170, -115.140), "southern-california": (34.052, -118.244),
+    "south-florida": (25.762, -80.192), "minneapolis": (44.978, -93.265),
+    "nashville": (36.163, -86.781), "orlando": (28.538, -81.379),
+    "phoenix": (33.448, -112.074), "northern-california": (38.582, -121.494),
+    "salt-lake-city": (40.761, -111.891), "san-antonio": (29.424, -98.494),
+    "seattle": (47.606, -122.332), "tampa": (27.951, -82.457),
+}
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF = os.path.join(ROOT, "data", "reference")
-OUT = os.path.join(ROOT, "data", "generated")
+OUT = os.environ.get("IH_GEN_OUT") or os.path.join(ROOT, "data", "generated")
 
 rng = random.Random(SEED)
 
@@ -167,6 +195,12 @@ STATE_TAX = {  # (mill rate, annual assessment drift, cycle)
     "AZ": (.0065, .045, "annual"), "CO": (.0055, .050, "biennial"),
     "TN": (.0072, .040, "quadrennial"), "UT": (.0061, .048, "annual"),
     "CA": (.0075, .020, "capped-prop13"),
+    # Added with the scattered homes. Approximate effective rates on rental
+    # (non-homestead) property, not sourced figures. Illinois is the outlier
+    # on purpose: its tax load is the usual reason Chicago is called non-core.
+    "IL": (.0215, .045, "triennial"), "IN": (.0100, .040, "annual"),
+    "NV": (.0060, .030, "capped-abatement"), "MN": (.0110, .060, "annual"),
+    "WA": (.0092, .065, "annual"), "SC": (.0140, .030, "quinquennial"),
 }
 
 counties = {}
@@ -289,7 +323,122 @@ for c in communities:
             countyId=c["_countyId"], beds=beds, baths=baths, sqft=sqft,
             yearBuilt=built, acquisitionDate=acq.isoformat(), _sizeFactor=f,
             acquisitionPrice=int(rent * rng.uniform(140, 190) / 100) * 100,
-            marketRent=rent, status="occupied"))
+            marketRent=rent, status="occupied",
+            market=c["market"], homeType="community", _hoa=True))
+
+# ------------------------------------------------------------- scattered homes
+
+# Most of a real SFR portfolio is NOT in build-to-rent communities: it is
+# individual houses bought one at a time across a metro. These homes copy the
+# shape of a real live listing (city, ZIP, beds, baths, sqft, rent level) and
+# invent everything else, street address included.
+#
+# The listings are homes AVAILABLE TO LEASE on one day, not the owned
+# portfolio, so they set the MIX (which markets, which cities, what homes look
+# like there) and never the count.
+
+def _km(a, b):
+    dx = (a[1] - b[1]) * 111.0 * math.cos(math.radians((a[0] + b[0]) / 2))
+    dy = (a[0] - b[0]) * 111.0
+    return math.hypot(dx, dy)
+
+MIN_CITY_LISTINGS = 3   # below this a city's median rent is one or two houses
+
+listings = [r for r in read("invitation-homes-listings.csv")
+            if r["beds"] and r["sqft"] and r["askingRent"] and r["latitude"]
+            and 1 <= int(float(r["beds"])) <= 7 and int(float(r["askingRent"])) > 500]
+for r in listings:
+    here = (float(r["latitude"]), float(r["longitude"]))
+    r["_market"] = min(MARKETS, key=lambda m: _km(here, MARKETS[m]))
+    r["_beds"] = int(float(r["beds"]))
+_city_n = Counter((r["city"], r["state"]) for r in listings)
+listings = [r for r in listings if _city_n[(r["city"], r["state"])] >= MIN_CITY_LISTINGS]
+
+# Counties for listing cities come from the FCC census-area lookup, cached in
+# reference by lookup_counties.py so generation never touches the network.
+listing_county = {(r["city"], r["state"]): r["county"]
+                  for r in read("listing-city-county.csv")}
+for (city, st) in sorted({(r["city"], r["state"]) for r in listings}):
+    county = listing_county.get((city, st), "")
+    if county and (county, st) not in counties:
+        mill, drift, cycle = STATE_TAX.get(st, (.011, .05, "annual"))
+        counties[(county, st)] = dict(
+            countyId="CTY-%03d" % (len(counties) + 1),
+            countyName=county, state=st,
+            millRate=round(mill * rng.uniform(.92, 1.08), 5),
+            assessmentDrift=round(drift * rng.uniform(.85, 1.15), 4),
+            reassessmentCycle=cycle, appealWindowDays=rng.choice([30, 45, 60]))
+
+# One curve per listing city, pinned so its value TODAY equals the city's
+# median asking rent: the listings are today's prices, so they anchor the end
+# of the window, and growth runs backwards from there. Community curves stay
+# anchored as before so the community story does not move.
+_by_city = defaultdict(list)
+for r in listings:
+    _by_city[(r["city"], r["state"])].append(
+        int(float(r["askingRent"])) / (1 + (r["_beds"] - 3) * .085))
+for (city, st), base3s in sorted(_by_city.items()):
+    if any((city, st, b) in market_curve for b in range(1, 8)):
+        continue                       # a community city already has its curve
+    base3 = sorted(base3s)[len(base3s) // 2]
+    growth = rng.uniform(.06, .13)
+    for beds in range(1, 8):
+        now = base3 * (1 + (beds - 3) * .085)
+        b0 = now / ((1 + growth) * _season(MONTHS[-1]))
+        market_curve[(city, st, beds)] = [
+            b0 * (1 + growth * i / max(1, len(MONTHS) - 1)) * _season(m)
+            for i, m in enumerate(MONTHS)]
+
+# Split the scattered count across markets in proportion to listings, by
+# largest remainder so the total lands exactly on TOTAL_HOMES.
+_by_market = defaultdict(list)
+for r in listings:
+    _by_market[r["_market"]].append(r)
+scattered_n = TOTAL_HOMES - len(properties)
+_raw = {m: scattered_n * len(v) / len(listings) for m, v in _by_market.items()}
+alloc = {m: int(x) for m, x in _raw.items()}
+for m in sorted(_raw, key=lambda m: _raw[m] - alloc[m], reverse=True)[:scattered_n - sum(alloc.values())]:
+    alloc[m] += 1
+
+for m in sorted(alloc):
+    pool = _by_market[m]
+    for _ in range(alloc[m]):
+        src = rng.choice(pool)
+        pid += 1
+        beds = src["_beds"]
+        baths = float(src["baths"]) if src["baths"] else round(min(beds, 2 + (beds - 3) * .5), 1)
+        sqft = int(float(src["sqft"]) * rng.uniform(.93, 1.07))
+        built = int(rng.triangular(1962, 2016, 1996))
+        # Scattered portfolios were mostly bought in the 2012-2014 recovery,
+        # with a tail of later purchases.
+        acq_year = max(built + 1, int(rng.triangular(2012, 2023, 2013)))
+        acq = date(min(acq_year, 2024), rng.randint(1, 12), rng.randint(1, 28))
+        if acq > AS_OF - timedelta(days=200):
+            acq = AS_OF - timedelta(days=rng.randint(220, 900))
+        f = 1.0 + max(0, (sqft - 1600)) / 1600 * .10
+        mkt_now = curve_at(src["city"], src["state"], beds, AS_OF)
+        rent = int(round(mkt_now * f * rng.uniform(.98, 1.04) / 5) * 5)
+        # Today's value at a 6.5-8% gross yield, deflated back to the purchase
+        # date: a home bought in 2013 carries a cost basis far below what it
+        # would sell for now, which is exactly what a disposition decision
+        # weighs.
+        value_now = rent * rng.uniform(150, 185)
+        years = (AS_OF - acq).days / 365.25
+        st = src["state"]
+        county = listing_county.get((src["city"], st), "")
+        properties.append(dict(
+            propertyId="PROP-%05d" % pid, communitySlug="",
+            streetAddress="%d %s %s" % (rng.randint(100, 9899),
+                                        rng.choice(STREETS), rng.choice(SUFFIX)),
+            city=src["city"], state=st, zip=src["zip"],
+            countyId=counties.get((county, st), {}).get("countyId", ""),
+            beds=beds, baths=baths, sqft=sqft,
+            yearBuilt=built, acquisitionDate=acq.isoformat(), _sizeFactor=f,
+            acquisitionPrice=int(value_now / (1 + HPA) ** years / 100) * 100,
+            marketRent=rent, status="occupied",
+            market=m, homeType="scattered", _valueNow=value_now,
+            # Scattered houses are often outside any HOA.
+            _hoa=rng.random() < .35))
 
 # ------------------------------------------------------------------- residents
 
@@ -464,10 +613,15 @@ for p in properties:
         cursor = end + timedelta(days=w_choice(
             {g: LEASE_START_WEIGHT[(end + timedelta(days=g)).month] for g in gaps}))
 
+# Indexed once: scanning every lease for every home is 20,000 x 55,000.
+_active = {}
+for l in leases:
+    if l["status"] == "active":
+        _active.setdefault(l["propertyId"], l)
 for p in properties:
-    act = [l for l in leases if l["propertyId"] == p["propertyId"] and l["status"] == "active"]
+    act = _active.get(p["propertyId"])
     p["status"] = "occupied" if act else rng.choice(["vacant", "turn", "vacant"])
-    p["currentLeaseId"] = act[0]["leaseId"] if act else ""
+    p["currentLeaseId"] = act["leaseId"] if act else ""
 
 # --------------------------------------------------------- vendors, work orders
 
@@ -475,7 +629,7 @@ VENDOR_NAMES = ["Apex","Blue Ridge","Cardinal","Delta","Evergreen","Frontier",
                 "Gulfstream","Heritage","Ironclad","Juniper","Keystone","Lone Star",
                 "Meridian","Northstar","Optima","Pinnacle","Quantum","Rampart"]
 vendors = []
-markets = sorted(set(c["market"] for c in communities))
+markets = sorted(set(p["market"] for p in properties))
 vn = 0
 for m in markets:
     for cat in sorted(set(f for _, _, _, f in MAINT.values())):
@@ -491,18 +645,18 @@ by_mkt_cat = defaultdict(list)
 for v in vendors:
     by_mkt_cat[(v["market"], v["category"])].append(v)
 
-slug_market = {c["slug"]: c["market"] for c in communities}
 wos = []; wid = 0
 for p in properties:
-    per_year = rng.uniform(1.8, 4.4)
+    # Older scattered houses break more often than new build-to-rent stock.
+    per_year = rng.uniform(1.8, 4.4) if p["homeType"] == "community" else rng.uniform(2.2, 5.0)
     n = int(per_year * 3 * rng.uniform(.7, 1.3))
     for _ in range(n):
         opened = START + timedelta(days=rng.randint(0, (AS_OF - START).days))
         cat = w_choice(maint_weights(opened.month, p["state"]))
         resp, lo, hi, family = MAINT[cat]
         emerg = rng.random() < (.14 if cat.startswith(("HVAC", "Plumbing")) and resp == "landlord" else .03)
-        pool = by_mkt_cat.get((slug_market[p["communitySlug"]], family)) or \
-               by_mkt_cat.get((slug_market[p["communitySlug"]], "General")) or vendors
+        pool = by_mkt_cat.get((p["market"], family)) or \
+               by_mkt_cat.get((p["market"], "General")) or vendors
         v = rng.choice(pool)
         days = max(0, rng.gauss(v["avgTurnaroundDays"], 2.0))
         if emerg:
@@ -577,7 +731,7 @@ for p in properties:
     for m in month_iter(START, AS_OF):
         if m < acq:
             continue
-        if m.month in (1, 4, 7, 10):
+        if m.month in (1, 4, 7, 10) and p["_hoa"]:
             add_expense(p["propertyId"], cs, "HOA", m, hoa_q * rng.uniform(.97, 1.03))
         if m.month == 1:
             add_expense(p["propertyId"], cs, "Insurance", m, ins_y * rng.uniform(.94, 1.09))
@@ -614,18 +768,26 @@ for c in communities:
 
 assessments, bills = [], []
 aid = bid = 0
+county_by_id = {c["countyId"]: c for c in counties.values()}
 for p in properties:
-    cty = counties.get(next(((c["_county"], c["state"]) for c in communities
-                             if c["slug"] == p["communitySlug"]), None))
+    cty = county_by_id.get(p["countyId"])
     if not cty:
         continue
-    base = p["acquisitionPrice"] * rng.uniform(.82, .96)
+    if p["homeType"] == "community":
+        base = p["acquisitionPrice"] * rng.uniform(.82, .96)
+    else:
+        # A 2013 purchase is not assessed at its 2013 price. Assess off what
+        # the home was worth in 2024, the first year of the window.
+        base = p["_valueNow"] / (1 + HPA) ** 2.75 * rng.uniform(.82, .96)
     prior = None
     for yr in (2024, 2025, 2026):
         drift = cty["assessmentDrift"]
         if cty["reassessmentCycle"] == "capped-prop13":
             drift = .02                                   # Prop 13 caps growth
-        elif cty["reassessmentCycle"] in ("octennial", "quadrennial") and yr != 2024:
+        elif cty["reassessmentCycle"] == "capped-abatement":
+            drift = .03                                   # Nevada caps rentals' bill growth
+        elif cty["reassessmentCycle"] in ("octennial", "quadrennial", "quinquennial",
+                                          "triennial") and yr != 2024:
             drift = .004                                  # holds flat between cycles
         val = int(base if prior is None else prior * (1 + drift * rng.uniform(.6, 1.5)))
         chg = 0.0 if prior is None else round((val - prior) / prior, 4)

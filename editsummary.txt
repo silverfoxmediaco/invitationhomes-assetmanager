@@ -1788,3 +1788,56 @@ THE SECOND FINDING ON THE PAGE
   to a synthetic arrears or at-risk flag.
 
   Smoke test: 3 listings parsed cleanly. Full run started in the background.
+
+--------------------------------------------------------------------------------
+2026-10-09  Pages made safe for 20,000 homes (0.4.6), generator scale-up
+--------------------------------------------------------------------------------
+  Why: at 20,000 homes several pages pulled whole object types into the
+  browser and would trip fetchAll's 50,000-row guard (leases 58,801, work
+  orders ~200,000, a year of expenses ~150,000, tax bills ~56,000, comps).
+  Fixed BEFORE uploading the new data so the live site never breaks.
+
+  Shared:
+    fetchAll/fetchWhere pages are 10,000 rows (Foundry's max, measured).
+    fetchLatestComps / compMonths: latest month found by aggregating on
+      month, then only that month read.
+    aggregate.ts now THROWS on excludedItems > 0. Foundry reports ACCURATE
+      even when a group cap silently drops rows (measured: 65,663 of 95,663
+      dropped, still ACCURATE). Also: the app's client is capped at 10,000
+      groups per aggregate; a user token was allowed 30,000 (gotcha 10 again).
+  Per page:
+    Overview      active leases only + latest comps.
+    Leasing       leases ending in last 18 months+, two comp months, churn
+                  costs summed in Foundry.
+    Maintenance   all figures via /aggregate except close times, which now
+                  come from the last 6 months of closed orders (4.5/4.6 days
+                  vs 4.6/4.7 over three years). NOTE, not changed: the page
+                  says "Median close times" but has always shown means.
+    Scenario      leases ended in last year+, latest comps, aggregate costs.
+                  BUG FIXED: renewalOfLeaseId was never selected, so the page
+                  always said retention "currently runs 0%". Now 45%, same
+                  as Leasing.
+    All homes     latest comps.
+    Communities   expenses by community/scope/category and landlord
+                  maintenance by home via /aggregate (sliced PROP-0..PROP-9
+                  to stay under 10,000 groups), latest tax year only.
+    At-risk       reads only non-paid payments (~11%) and rebuilds paid months
+                  from the leases; Foundry's per-month payment count must
+                  match the rebuild exactly or the page throws.
+  Verified: every page compared number by number, local vs live, on today's
+  data. Identical except the two intended changes above.
+  Deployed 0.4.6 via npm run deploy, bundle grepped first; live Scenario
+  reads 45%.
+
+  Generator (not yet run for real, not uploaded):
+    TOTAL_HOMES 20,000 = 3,001 community homes (unchanged logic) + ~17,000
+    scattered homes across their 20 sitemap markets, each copying a real
+    listing's city/ZIP/beds/baths/sqft/rent level, never its address.
+    New property columns: market, homeType. Scattered: no communitySlug,
+    35% have HOA, older stock, more work orders, 2012-2014-weighted
+    acquisitions with cost basis deflated at 5.5%/yr HPA.
+    New states' tax regimes (approximate): IL, IN, NV, MN, WA, SC.
+    scripts/lookup_counties.py: FCC census-area API, cached to
+    data/reference/listing-city-county.csv.
+    validate.py understands scattered homes; adds market/county/3-bills checks.
+    Trial run on partial scrape: 10 s, 20,000 homes, 660,619 payments.

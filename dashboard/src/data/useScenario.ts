@@ -6,7 +6,8 @@ import {
   MarketRateComps,
   Properties,
 } from "@invitation-homes-asset-management/sdk";
-import { fetchAll, fetchWhere } from "./fetchAll";
+import { aggregate } from "./aggregate";
+import { fetchAll, fetchLatestComps, fetchWhere } from "./fetchAll";
 
 /**
  * "What if we raised renewals by X%" — modelled honestly.
@@ -90,7 +91,6 @@ type LeaseRow = {
 };
 type PropertyRow = { propertyId: string; city: string; state: string; beds: number };
 type CompRow = { city: string; state: string; beds: number; month: string; medianRent: number };
-type ExpenseRow = { category: string; amount: number; date: string };
 
 const iso = (d: unknown): string =>
   typeof d === "string"
@@ -142,21 +142,35 @@ export function useScenario(inputs: ScenarioInputs): {
     (async () => {
       try {
         const since = monthsBack(12);
-        const [allLeases, properties, comps, expenses] = await Promise.all([
-          fetchAll<LeaseRow>(client, Leases, {
-            select: ["leaseId", "propertyId", "monthlyRent", "endDate", "status"],
+        // Leases still running or ended in the last year: the scenario prices
+        // the active ones and retention reads the ended ones. Comps for the
+        // latest month only, and turn costs summed in Foundry. At 20,000 homes
+        // the full lease, comp and expense histories each breach the row guard.
+        const [allLeases, properties, { asOfMonth, rows: comps }, expenseGroups] = await Promise.all([
+          fetchWhere<LeaseRow & { renewalOfLeaseId?: string }>(client, Leases, { endDate: { $gte: since } }, {
+            // renewalOfLeaseId was missing from this list until 2026-10-09,
+            // so retention below always found nothing renewed and the page
+            // read "currently runs 0%".
+            select: ["leaseId", "propertyId", "monthlyRent", "endDate", "status", "renewalOfLeaseId"],
           }),
           fetchAll<PropertyRow>(client, Properties, {
             select: ["propertyId", "city", "state", "beds"],
           }),
-          fetchAll<CompRow>(client, MarketRateComps, {
-            select: ["city", "state", "beds", "month", "medianRent"],
-          }),
-          fetchWhere<ExpenseRow>(
-            client,
-            Expenses,
-            { date: { $gte: since } },
-            { select: ["category", "amount", "date"] }
+          fetchLatestComps<CompRow>(client, MarketRateComps, ["city", "state", "beds", "month", "medianRent"]),
+          aggregate<{ category: string }>(
+            Expenses.apiName,
+            [
+              { type: "sum", field: "amount", name: "amount" },
+              { type: "count", name: "n" },
+            ],
+            [{ field: "category", type: "exact" }],
+            {
+              type: "and",
+              value: [
+                { type: "gte", field: "date", value: since },
+                { type: "in", field: "category", value: ["Turn", "Marketing", "Utilities"] },
+              ],
+            }
           ),
         ]);
 
@@ -164,34 +178,21 @@ export function useScenario(inputs: ScenarioInputs): {
           return;
         }
 
-        const asOfMonth = comps.reduce((max, c) => (c.month > max ? c.month : max), "");
         const compByKey = new Map<string, number>();
         for (const c of comps) {
-          if (c.month === asOfMonth) {
-            compByKey.set(compKey(c.city, c.state, c.beds), c.medianRent);
-          }
+          compByKey.set(compKey(c.city, c.state, c.beds), c.medianRent);
         }
 
         const active = allLeases.filter((l) => l.status === "active");
 
         // --- What a turn costs -------------------------------------------------
-        let turnWork = 0;
-        let turnEvents = 0;
-        let marketing = 0;
-        let utilities = 0;
-        let vacantMonthRows = 0;
-        for (const e of expenses) {
-          if (e.category === "Turn") {
-            turnWork += e.amount;
-            turnEvents++;
-          } else if (e.category === "Marketing") {
-            marketing += e.amount;
-          } else if (e.category === "Utilities") {
-            // One row is one month of a home standing empty.
-            utilities += e.amount;
-            vacantMonthRows++;
-          }
-        }
+        const totals = new Map(expenseGroups.map((g) => [g.group.category, g.metrics]));
+        const turnWork = totals.get("Turn")?.amount ?? 0;
+        const turnEvents = totals.get("Turn")?.n ?? 0;
+        const marketing = totals.get("Marketing")?.amount ?? 0;
+        // One utilities row is one month of a home standing empty.
+        const utilities = totals.get("Utilities")?.amount ?? 0;
+        const vacantMonthRows = totals.get("Utilities")?.n ?? 0;
         const events = Math.max(1, turnEvents);
         const vacantMonths = vacantMonthRows / events;
         const avgRent =
@@ -210,9 +211,7 @@ export function useScenario(inputs: ScenarioInputs): {
 
         // --- Retention, for reference only -------------------------------------
         const renewedFrom = new Set(
-          allLeases
-            .map((l) => (l as LeaseRow & { renewalOfLeaseId?: string }).renewalOfLeaseId)
-            .filter(Boolean)
+          allLeases.map((l) => l.renewalOfLeaseId).filter(Boolean)
         );
         let ended = 0;
         let renewed = 0;

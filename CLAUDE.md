@@ -328,9 +328,12 @@ palette carries over but the proportions do not.
 
 ## Open questions
 
-- Portfolio scale for the synthetic set: how many properties, across how many of
-  the 19 markets? Affects generation time, Foundry indexing and what the
-  dashboard has to aggregate.
+- ~~Portfolio scale~~ DECIDED 2026-10-09 by James: **20,000 homes**, up from
+  3,001. Driver: the disposition page bundles 5,000+ homes for institutional
+  buyers. 20,000 supports that without the ~6M payment rows of real scale
+  (~80,000). Market mix and home shape sampled from the listing scrape
+  (`data/reference/invitation-homes-listings.csv`); street addresses stay
+  generated.
 - Is there a real audience for this (a pitch, an interview, a client) or is it a
   portfolio piece? Changes how much polish the front end needs.
 - Does market comp data need a plausible external source modelled, or is a

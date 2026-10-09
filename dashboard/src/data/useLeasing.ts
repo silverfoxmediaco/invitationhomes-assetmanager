@@ -7,7 +7,8 @@ import {
   Properties,
   Residents,
 } from "@invitation-homes-asset-management/sdk";
-import { fetchAll, fetchWhere } from "./fetchAll";
+import { aggregate } from "./aggregate";
+import { compMonths, fetchAll, fetchWhere } from "./fetchAll";
 
 /**
  * The leasing pipeline: what is coming in, what is being re-signed, and what
@@ -141,13 +142,20 @@ export function useLeasing(): { data: Leasing | null; loading: boolean; error: E
     (async () => {
       try {
         const today = todayIso();
-        const fetchSince = monthsBack(13);
         const countSince = monthsBack(12);
 
-        const [leases, properties, comps, expenses] = await Promise.all([
-          // Every lease. Renewal chains and retention both need the history,
-          // and at 8,299 rows of eight columns this is a cheap read.
-          fetchAll<LeaseRow>(client, Leases, {
+        // Market movement compares two months, so only those two are read.
+        const months = await compMonths(MarketRateComps);
+        const asOfMonth = months[months.length - 1] ?? "";
+        const yearAgoMonth = months[months.length - 13] ?? months[0] ?? "";
+
+        const [leases, properties, comps, expenseGroups] = await Promise.all([
+          // Leases ending in the last 18 months or later. That is every lease
+          // the page touches: renewals and retention look back 12 months (a
+          // renewal's prior lease ends on the day the renewal starts), the
+          // activity chart 18, and pending move-ins forward. The full history
+          // is 58,801 rows at 20,000 homes and breaches the row guard.
+          fetchWhere<LeaseRow>(client, Leases, { endDate: { $gte: monthsBack(18) } }, {
             select: [
               "leaseId",
               "propertyId",
@@ -163,14 +171,28 @@ export function useLeasing(): { data: Leasing | null; loading: boolean; error: E
           fetchAll<PropertyRow>(client, Properties, {
             select: ["propertyId", "streetAddress", "city", "state", "status"],
           }),
-          fetchAll<{ month: string; medianRent: number }>(client, MarketRateComps, {
-            select: ["month", "medianRent"],
-          }),
-          fetchWhere<{ category: string; amount: number; date: string }>(
+          fetchWhere<{ month: string; medianRent: number }>(
             client,
-            Expenses,
-            { date: { $gte: fetchSince } },
-            { select: ["category", "amount", "date"] }
+            MarketRateComps,
+            { month: { $in: [asOfMonth, yearAgoMonth] } },
+            { select: ["month", "medianRent"] }
+          ),
+          // Churn cost is three category totals. Summed in Foundry: a year of
+          // expenses is ~150,000 rows at 20,000 homes.
+          aggregate<{ category: string }>(
+            Expenses.apiName,
+            [
+              { type: "sum", field: "amount", name: "amount" },
+              { type: "count", name: "n" },
+            ],
+            [{ field: "category", type: "exact" }],
+            {
+              type: "and",
+              value: [
+                { type: "gte", field: "date", value: countSince },
+                { type: "in", field: "category", value: ["Turn", "Marketing", "Utilities"] },
+              ],
+            }
           ),
         ]);
 
@@ -194,9 +216,6 @@ export function useLeasing(): { data: Leasing | null; loading: boolean; error: E
             byMonth.set(c.month, [c.medianRent]);
           }
         }
-        const monthKeys = [...byMonth.keys()].sort();
-        const asOfMonth = monthKeys[monthKeys.length - 1] ?? "";
-        const yearAgoMonth = monthKeys[monthKeys.length - 13] ?? monthKeys[0] ?? "";
         const medianOf = (m: string): number => {
           const v = [...(byMonth.get(m) ?? [])].sort((a, b) => a - b);
           if (!v.length) {
@@ -248,25 +267,13 @@ export function useLeasing(): { data: Leasing | null; loading: boolean; error: E
         }
 
         // --- What leaving costs ----------------------------------------------
-        let turnCost = 0;
-        let turnEvents = 0;
-        let marketingCost = 0;
-        let vacancyUtilities = 0;
-        for (const e of expenses) {
-          if (iso(e.date) < countSince) {
-            continue;
-          }
-          if (e.category === "Turn") {
-            turnCost += e.amount;
-            turnEvents++;
-          } else if (e.category === "Marketing") {
-            marketingCost += e.amount;
-          } else if (e.category === "Utilities") {
-            // Utilities bill only while a home is empty — residents pay their
-            // own — so this line is a direct read on vacancy.
-            vacancyUtilities += e.amount;
-          }
-        }
+        const totals = new Map(expenseGroups.map((g) => [g.group.category, g.metrics]));
+        const turnCost = totals.get("Turn")?.amount ?? 0;
+        const turnEvents = totals.get("Turn")?.n ?? 0;
+        const marketingCost = totals.get("Marketing")?.amount ?? 0;
+        // Utilities bill only while a home is empty (residents pay their own),
+        // so this line is a direct read on vacancy.
+        const vacancyUtilities = totals.get("Utilities")?.amount ?? 0;
 
         // --- Pending move-ins -------------------------------------------------
         const pending = leases

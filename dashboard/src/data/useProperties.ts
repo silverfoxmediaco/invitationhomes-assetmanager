@@ -6,7 +6,7 @@ import {
   MarketRateComps,
   Properties,
 } from "@invitation-homes-asset-management/sdk";
-import { fetchAll, fetchWhere } from "./fetchAll";
+import { fetchAll, fetchLatestComps, fetchWhere } from "./fetchAll";
 
 /**
  * Every home in the portfolio, unfiltered.
@@ -115,7 +115,7 @@ export function useProperties(): {
 
     (async () => {
       try {
-        const [properties, leases, comps, communities] = await Promise.all([
+        const [properties, leases, { asOfMonth, rows: comps }, communities] = await Promise.all([
           fetchAll<PropertyObj>(client, Properties, {
             select: [
               "propertyId",
@@ -138,9 +138,10 @@ export function useProperties(): {
             { status: { $eq: "active" } },
             { select: ["leaseId", "propertyId", "monthlyRent", "endDate", "status"] }
           ),
-          fetchAll<CompObj>(client, MarketRateComps, {
-            select: ["city", "state", "beds", "month", "medianRent"],
-          }),
+          // Today's market only; the 36-month history breaches the row guard
+          // at 20,000 homes.
+          fetchLatestComps<CompObj>(client, MarketRateComps,
+            ["city", "state", "beds", "month", "medianRent"]),
           fetchAll<CommunityObj>(client, Communities, {
             select: ["slug", "communityName", "market", "county"],
           }),
@@ -150,12 +151,9 @@ export function useProperties(): {
           return;
         }
 
-        const asOfMonth = comps.reduce((max, c) => (c.month > max ? c.month : max), "");
         const compByKey = new Map<string, number>();
         for (const c of comps) {
-          if (c.month === asOfMonth) {
-            compByKey.set(compKey(c.city, c.state, c.beds), c.medianRent);
-          }
+          compByKey.set(compKey(c.city, c.state, c.beds), c.medianRent);
         }
 
         const leaseById = new Map(leases.map((l) => [l.leaseId, l]));

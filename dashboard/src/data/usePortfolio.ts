@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useOsdkClient } from "@osdk/react";
 import { Properties, Leases, MarketRateComps } from "@invitation-homes-asset-management/sdk";
-import { fetchAll } from "./fetchAll";
+import { fetchAll, fetchLatestComps, fetchWhere } from "./fetchAll";
 
 /**
  * The join the whole project exists to serve.
@@ -78,24 +78,24 @@ export function usePortfolio(): {
       try {
         // Three reads in parallel. Only the columns each join actually needs:
         // Properties is 16 columns across 2,997 rows and we want five.
-        const [properties, leases, comps] = await Promise.all([
+        // Only active leases and only the latest month of comps: the join
+        // never uses anything else, and at 20,000 homes the full lease history
+        // (58,801) and comp history both breach the row guard.
+        const [properties, leases, { asOfMonth, rows: comps }] = await Promise.all([
           fetchAll<PropertyRow>(client, Properties, {
             select: ["propertyId", "streetAddress", "city", "state", "beds", "status", "currentLeaseId"],
           }),
-          fetchAll<LeaseRow>(client, Leases, {
+          fetchWhere<LeaseRow>(client, Leases, { status: { $eq: "active" } }, {
             select: ["leaseId", "propertyId", "monthlyRent", "status"],
           }),
-          fetchAll<CompRow>(client, MarketRateComps, {
-            select: ["city", "state", "beds", "month", "medianRent"],
-          }),
+          // The latest month the comps actually contain, not today's: a
+          // hardcoded "now" would silently empty the dashboard the moment the
+          // data stops being refreshed.
+          fetchLatestComps<CompRow>(client, MarketRateComps,
+            ["city", "state", "beds", "month", "medianRent"]),
         ]);
 
         if (cancelled) {return;}
-
-        // Compare against the most recent month the comps actually contain,
-        // not against today. Hardcoding "now" would silently produce an empty
-        // dashboard the moment the data stops being refreshed.
-        const asOfMonth = comps.reduce((max, c) => (c.month > max ? c.month : max), "");
 
         const compByKey = new Map<string, number>();
         for (const c of comps) {

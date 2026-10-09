@@ -27,7 +27,7 @@ import urllib.request
 SITEMAP = "https://invitationhomes.com/property/sitemap.xml"
 OUT = os.path.join(os.path.dirname(__file__), "..", "data", "reference", "invitation-homes-listings.csv")
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)"
-DELAY = 1.0
+DELAY = 0.25
 
 FIELDS = [
     "slug", "streetAddress", "city", "state", "zip", "latitude", "longitude",

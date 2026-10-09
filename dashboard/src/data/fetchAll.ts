@@ -1,5 +1,6 @@
 import type { Client } from "@osdk/client";
 import type { ObjectTypeDefinition } from "@osdk/api";
+import { aggregate } from "./aggregate";
 
 /**
  * Fetch every row of an object type, following pagination.
@@ -13,6 +14,10 @@ import type { ObjectTypeDefinition } from "@osdk/api";
  * `$select` is not optional at this scale. Properties alone is 16 columns
  * across 2,997 rows; asking for the four the caller actually uses is the
  * difference between a fast screen and a slow one.
+ *
+ * Pages are 10,000 rows, the most Foundry will return in one response
+ * (measured 2026-10-09: asking for 20,000 returns 10,000). At 20,000 homes the
+ * old 1,000-row pages turned one Properties read into twenty round trips.
  *
  * `maxRows` is a guard rather than a feature. Nothing on the overview should be
  * pulling a six-figure object type into the browser — if a caller trips this,
@@ -29,7 +34,7 @@ export async function fetchAll<T>(
   objectType: ObjectTypeDefinition,
   options: { select?: readonly string[]; pageSize?: number; maxRows?: number } = {}
 ): Promise<T[]> {
-  const { select, pageSize = 1000, maxRows = 50_000 } = options;
+  const { select, pageSize = 10_000, maxRows = 50_000 } = options;
 
   const out: T[] = [];
   let nextPageToken: string | undefined = undefined;
@@ -73,7 +78,7 @@ export async function fetchWhere<T>(
   where: Record<string, unknown>,
   options: { select?: readonly string[]; pageSize?: number; maxRows?: number } = {}
 ): Promise<T[]> {
-  const { select, pageSize = 1000, maxRows = 50_000 } = options;
+  const { select, pageSize = 10_000, maxRows = 50_000 } = options;
 
   const out: T[] = [];
   let nextPageToken: string | undefined = undefined;
@@ -94,4 +99,39 @@ export async function fetchWhere<T>(
   } while (nextPageToken);
 
   return out;
+}
+
+/**
+ * The most recent month of market comps, and only that month.
+ *
+ * Most screens compare a lease against today's market, which is one month of
+ * a 36-month history. Reading the whole history to keep one month worked at
+ * 3,001 homes and breaches the row guard at 20,000, where the history runs to
+ * tens of thousands of rows. The latest month is found by grouping on month
+ * in Foundry (36 groups) rather than assumed from the calendar, so a dataset
+ * that stops being refreshed still shows its last real month instead of an
+ * empty screen.
+ */
+export async function fetchLatestComps<T>(
+  client: Client,
+  objectType: ObjectTypeDefinition,
+  select: readonly string[]
+): Promise<{ asOfMonth: string; rows: T[] }> {
+  const months = await compMonths(objectType);
+  const asOfMonth = months[months.length - 1] ?? "";
+  if (!asOfMonth) {
+    throw new Error(`${objectType.apiName} returned no months. Check the comps dataset.`);
+  }
+  const rows = await fetchWhere<T>(client, objectType, { month: { $eq: asOfMonth } }, { select });
+  return { asOfMonth, rows };
+}
+
+/** Every month the comps contain, oldest first, counted in Foundry. */
+export async function compMonths(objectType: ObjectTypeDefinition): Promise<string[]> {
+  const groups = await aggregate<{ month: string }>(
+    objectType.apiName,
+    [{ type: "count", name: "n" }],
+    [{ field: "month", type: "exact" }]
+  );
+  return groups.map((g) => g.group.month).sort();
 }

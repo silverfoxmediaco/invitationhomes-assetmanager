@@ -9,7 +9,8 @@ import {
   Properties,
   TaxBills,
 } from "@invitation-homes-asset-management/sdk";
-import { fetchAll, fetchWhere } from "./fetchAll";
+import { aggregate } from "./aggregate";
+import { fetchAll, fetchLatestComps, fetchWhere } from "./fetchAll";
 
 /**
  * The portfolio seen as 76 acquisitions rather than 3,001 houses.
@@ -43,9 +44,7 @@ import { fetchAll, fetchWhere } from "./fetchAll";
  * pattern and which part is one expensive quarter.
  *
  * Windows: costs are the trailing TWELVE months, which is what the per-year
- * figures claim. Thirteen are fetched so a month boundary cannot clip the
- * earliest one, and the thirteenth is then dropped — summing what was fetched
- * would inflate every annual figure by about 8%.
+ * figures claim. Foundry sums them with the window applied server-side.
  */
 
 export interface CommunityRow {
@@ -128,20 +127,6 @@ type PropertyRow = {
 };
 type LeaseRow = { leaseId: string; propertyId: string; monthlyRent: number; status: string };
 type CompRow = { city: string; state: string; beds: number; month: string; medianRent: number };
-type WorkOrderRow = {
-  propertyId: string;
-  responsibility: string;
-  cost: number;
-  openedDate: string;
-};
-type ExpenseRow = {
-  propertyId: string;
-  communitySlug: string;
-  scope: string;
-  category: string;
-  amount: number;
-  date: string;
-};
 type TaxBillRow = { propertyId: string; taxYear: number; amountDue: number };
 
 const compKey = (city: string, state: string, beds: number) => `${city}|${state}|${beds}`;
@@ -155,13 +140,6 @@ function monthsBack(months: number): string {
   d.setUTCDate(1);
   return d.toISOString().slice(0, 10);
 }
-
-const iso = (d: unknown): string =>
-  typeof d === "string"
-    ? d.slice(0, 10)
-    : d instanceof Date
-      ? d.toISOString().slice(0, 10)
-      : "";
 
 function median(values: number[]): number {
   if (values.length === 0) {
@@ -187,12 +165,22 @@ export function useCommunities(): {
 
     (async () => {
       try {
-        // Fetch thirteen, count twelve. The extra month is boundary slack, not
-        // data: counting it would overstate every per-year figure.
-        const fetchSince = monthsBack(13);
         const countSince = monthsBack(12);
 
-        const [communities, properties, leases, comps, workOrders, expenses, bills] =
+        // Latest tax year present, so the bill read below is one year of
+        // bills rather than three.
+        const taxYears = await aggregate<{ taxYear: string }>(
+          TaxBills.apiName,
+          [{ type: "count", name: "n" }],
+          [{ field: "taxYear", type: "exact" }]
+        );
+        const latestTaxYear = Math.max(...taxYears.map((g) => Number(g.group.taxYear)));
+
+        // At 20,000 homes a year of expenses is ~150,000 rows and a year of
+        // work orders ~67,000, both past the row guard. Costs are summed in
+        // Foundry instead: expenses by community, scope and category (they
+        // carry their own communitySlug), landlord maintenance by home.
+        const [communities, properties, leases, { asOfMonth, rows: comps }, maintByHome, expenseGroups, bills] =
           await Promise.all([
             fetchAll<CommunityObj>(client, Communities, {
               select: [
@@ -215,24 +203,43 @@ export function useCommunities(): {
               { status: { $eq: "active" } },
               { select: ["leaseId", "propertyId", "monthlyRent", "status"] }
             ),
-            fetchAll<CompRow>(client, MarketRateComps, {
-              select: ["city", "state", "beds", "month", "medianRent"],
-            }),
-            // Filtered in Foundry. Unfiltered these are 26,476 and 81,400 rows;
-            // the expense table alone would breach fetchAll's row guard.
-            fetchWhere<WorkOrderRow>(
-              client,
-              MaintenanceWorkOrders,
-              { openedDate: { $gte: fetchSince } },
-              { select: ["propertyId", "responsibility", "cost", "openedDate"] }
+            fetchLatestComps<CompRow>(client, MarketRateComps,
+              ["city", "state", "beds", "month", "medianRent"]),
+            // Landlord maintenance only. Resident-responsibility work is
+            // charged back and is not a cost of holding the home.
+            // Foundry caps an aggregation at 10,000 groups and there are
+            // 20,000 homes, so the grouping runs in ten slices by id prefix
+            // (PROP-0xxxx through PROP-9xxxx, at most 10,000 ids each).
+            Promise.all(
+              [..."0123456789"].map((d) =>
+                aggregate<{ propertyId: string }>(
+                  MaintenanceWorkOrders.apiName,
+                  [{ type: "sum", field: "cost", name: "cost" }],
+                  [{ field: "propertyId", type: "exact", maxGroupCount: 10_000 }],
+                  {
+                    type: "and",
+                    value: [
+                      { type: "startsWith", field: "propertyId", value: `PROP-${d}` },
+                      { type: "eq", field: "responsibility", value: "landlord" },
+                      { type: "gte", field: "openedDate", value: countSince },
+                    ],
+                  }
+                )
+              )
+            ).then((slices) => slices.flat()),
+            aggregate<{ communitySlug: string; scope: string; category: string }>(
+              Expenses.apiName,
+              [{ type: "sum", field: "amount", name: "amount" }],
+              [
+                { field: "communitySlug", type: "exact", maxGroupCount: 1_000 },
+                { field: "scope", type: "exact" },
+                { field: "category", type: "exact" },
+              ],
+              { type: "gte", field: "date", value: countSince }
             ),
-            fetchWhere<ExpenseRow>(
-              client,
-              Expenses,
-              { date: { $gte: fetchSince } },
-              { select: ["propertyId", "communitySlug", "scope", "category", "amount", "date"] }
-            ),
-            fetchAll<TaxBillRow>(client, TaxBills, {
+            // Most recent year's bill per home. Taking every bill would total
+            // three years of tax against one year of everything else.
+            fetchWhere<TaxBillRow>(client, TaxBills, { taxYear: { $eq: latestTaxYear } }, {
               select: ["propertyId", "taxYear", "amountDue"],
             }),
           ]);
@@ -241,12 +248,9 @@ export function useCommunities(): {
           return;
         }
 
-        const asOfMonth = comps.reduce((max, c) => (c.month > max ? c.month : max), "");
         const compByKey = new Map<string, number>();
         for (const c of comps) {
-          if (c.month === asOfMonth) {
-            compByKey.set(compKey(c.city, c.state, c.beds), c.medianRent);
-          }
+          compByKey.set(compKey(c.city, c.state, c.beds), c.medianRent);
         }
 
         const activeLease = new Map<string, LeaseRow>();
@@ -259,56 +263,40 @@ export function useCommunities(): {
           communityOf.set(p.propertyId, p.communitySlug);
         }
 
-        // Landlord maintenance only. Resident-responsibility work is charged
-        // back and is not a cost of holding the home.
         const maintenance = new Map<string, number>();
-        for (const w of workOrders) {
-          if (w.responsibility !== "landlord" || iso(w.openedDate) < countSince) {
-            continue;
-          }
-          const slug = communityOf.get(w.propertyId);
+        for (const g of maintByHome) {
+          const slug = communityOf.get(g.group.propertyId);
           if (slug) {
-            maintenance.set(slug, (maintenance.get(slug) ?? 0) + w.cost);
+            maintenance.set(slug, (maintenance.get(slug) ?? 0) + (g.metrics.cost ?? 0));
           }
         }
 
-        // Community-scope expenses carry no propertyId — that is how common
-        // area cost is held — so they are keyed on their own communitySlug.
+        // Community-scope expenses carry no propertyId (that is how common
+        // area cost is held), and property-scope rows carry their home's
+        // communitySlug, so both group on the slug.
         const opex = new Map<string, number>();
         const capex = new Map<string, number>();
         const commonArea = new Map<string, number>();
-        for (const e of expenses) {
-          if (iso(e.date) < countSince) {
-            continue;
-          }
-          if (e.scope === "community") {
-            commonArea.set(e.communitySlug, (commonArea.get(e.communitySlug) ?? 0) + e.amount);
-            continue;
-          }
-          const slug = communityOf.get(e.propertyId) ?? e.communitySlug;
+        for (const g of expenseGroups) {
+          const slug = g.group.communitySlug;
           if (!slug) {
+            continue; // scattered homes belong to no community
+          }
+          const amount = g.metrics.amount ?? 0;
+          if (g.group.scope === "community") {
+            commonArea.set(slug, (commonArea.get(slug) ?? 0) + amount);
             continue;
           }
           // CapEx is separated because it is episodic. Blended into operating
           // cost it makes a small community look badly run when all that
           // happened is two roofs inside the window.
-          const bucket = e.category === "CapEx" ? capex : opex;
-          bucket.set(slug, (bucket.get(slug) ?? 0) + e.amount);
+          const bucket = g.group.category === "CapEx" ? capex : opex;
+          bucket.set(slug, (bucket.get(slug) ?? 0) + amount);
         }
 
-        // Most recent bill per property, then summed by community. Taking every
-        // bill would total three years of tax against one year of everything
-        // else.
-        const latestBill = new Map<string, TaxBillRow>();
-        for (const b of bills) {
-          const held = latestBill.get(b.propertyId);
-          if (!held || b.taxYear > held.taxYear) {
-            latestBill.set(b.propertyId, b);
-          }
-        }
         const tax = new Map<string, number>();
-        for (const [propertyId, bill] of latestBill) {
-          const slug = communityOf.get(propertyId);
+        for (const bill of bills) {
+          const slug = communityOf.get(bill.propertyId);
           if (slug) {
             tax.set(slug, (tax.get(slug) ?? 0) + bill.amountDue);
           }

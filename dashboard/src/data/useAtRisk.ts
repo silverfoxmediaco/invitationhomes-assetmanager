@@ -6,6 +6,7 @@ import {
   RentPayments,
   Residents,
 } from "@invitation-homes-asset-management/sdk";
+import { aggregate } from "./aggregate";
 import { fetchAll, fetchWhere } from "./fetchAll";
 import { bucketFor, scoreResident, type AgeBucket, type Band, type RiskResult } from "./riskScore";
 
@@ -153,6 +154,33 @@ function daysBetween(fromIso: string, toIso: string): number {
   return Math.round((b - a) / 86_400_000);
 }
 
+/** The 1st of every month from `from` through `to`, inclusive, as bare dates. */
+function monthStarts(from: string, to: string): string[] {
+  const out: string[] = [];
+  let y = Number(from.slice(0, 4));
+  let m = Number(from.slice(5, 7));
+  // A window starting mid-month first bills on the following 1st.
+  if (from.slice(8, 10) !== "01") {
+    m += 1;
+    if (m > 12) {
+      m = 1;
+      y += 1;
+    }
+  }
+  for (;;) {
+    const d = `${y}-${String(m).padStart(2, "0")}-01`;
+    if (d > to) {
+      return out;
+    }
+    out.push(d);
+    m += 1;
+    if (m > 12) {
+      m = 1;
+      y += 1;
+    }
+  }
+}
+
 const BUCKETS: AgeBucket[] = ["current", "1-30", "31-60", "61-90", "90+"];
 
 export function useAtRisk(): { data: AtRisk | null; loading: boolean; error: Error | null } {
@@ -166,11 +194,27 @@ export function useAtRisk(): { data: AtRisk | null; loading: boolean; error: Err
 
     (async () => {
       try {
-        const [leases, payments, residents, properties] = await Promise.all([
-          // EVERY lease, not just the active ones. Two reasons: a resident's
-          // history spans their renewals, and the lease — not the payment —
-          // is the authority on who was living there.
-          fetchAll<LeaseRow>(client, Leases, {
+        // At 20,000 homes, 13 months of rent payments is ~240,000 rows, far
+        // past what a browser should hold. But ~89% of them are "paid": the
+        // full rent, on time, which the lease alone fully describes. So only
+        // the exceptions (late, partial, missed, waived) are read, and the
+        // paid months are rebuilt from the leases. Foundry then counts every
+        // payment per month, and the rebuilt ledger must match that count
+        // exactly or the page refuses to render. A guess that is checked
+        // against the source on every load is not a guess.
+        const since = windowStart();
+        const [perMonth, leases, exceptions, residents, properties] = await Promise.all([
+          aggregate<{ dueDate: string }>(
+            RentPayments.apiName,
+            [{ type: "count", name: "n" }],
+            [{ field: "dueDate", type: "exact", maxGroupCount: 1_000 }],
+            { type: "gte", field: "dueDate", value: since }
+          ),
+          // Every lease that could own a payment in the window, not just the
+          // active ones. Two reasons: a resident's history spans their
+          // renewals, and the lease (not the payment) is the authority on who
+          // was living there.
+          fetchWhere<LeaseRow>(client, Leases, { endDate: { $gte: since } }, {
             select: [
               "leaseId",
               "propertyId",
@@ -184,7 +228,7 @@ export function useAtRisk(): { data: AtRisk | null; loading: boolean; error: Err
           fetchWhere<PaymentRow>(
             client,
             RentPayments,
-            { dueDate: { $gte: windowStart() } },
+            { $and: [{ dueDate: { $gte: since } }, { $not: { status: { $eq: "paid" } } }] },
             {
               select: ["leaseId", "residentId", "dueDate", "amountDue", "amountPaid", "status"],
             }
@@ -210,23 +254,29 @@ export function useAtRisk(): { data: AtRisk | null; loading: boolean; error: Err
         const leaseById = new Map(leases.map((l) => [l.leaseId, l]));
         const activeLeases = leases.filter((l) => l.status === "active");
 
+        const sourceCount = new Map<string, number>();
+        let dataThrough = "";
+        for (const g of perMonth) {
+          const due = iso(g.group.dueDate);
+          sourceCount.set(due, g.metrics.n ?? 0);
+          if (due > dataThrough) {
+            dataThrough = due;
+          }
+        }
+
         // Payments are grouped by LEASE, and the resident is then read off the
         // lease. Not off the payment's own residentId — that field is a
         // denormalization for convenience, and a denormalized key is only as
         // good as the last upload that wrote it. This join goes through the
         // object that owns the fact.
         const paymentsByLease = new Map<string, PaymentRow[]>();
-        let dataThrough = "";
+        const exceptionMonths = new Set<string>();
         let inTerm = 0;
         let outOfTerm = 0;
         let orphaned = 0;
 
-        for (const p of payments) {
+        for (const p of exceptions) {
           const due = iso(p.dueDate);
-          if (due > dataThrough) {
-            dataThrough = due;
-          }
-
           // Integrity check, counted as we go because it is free here and the
           // alternative is a page that quietly reports the wrong number. A
           // payment has to fall inside the term of the lease it belongs to.
@@ -238,7 +288,7 @@ export function useAtRisk(): { data: AtRisk | null; loading: boolean; error: Err
           } else {
             outOfTerm++;
           }
-
+          exceptionMonths.add(`${p.leaseId}|${due}`);
           const list = paymentsByLease.get(p.leaseId);
           if (list) {
             list.push(p);
@@ -264,6 +314,51 @@ export function useAtRisk(): { data: AtRisk | null; loading: boolean; error: Err
               `pointing at a lease that does not exist). These datasets came from ` +
               `different generations of the synthetic data. Re-upload rent_payments.csv ` +
               `before trusting anything on this page.`
+          );
+        }
+
+        // Rebuild the paid months. A payment is due on the 1st of each month
+        // the lease covers, from its start through its end or the last month
+        // in the data, whichever is first.
+        const rebuiltCount = new Map<string, number>();
+        for (const e of exceptions) {
+          const due = iso(e.dueDate);
+          rebuiltCount.set(due, (rebuiltCount.get(due) ?? 0) + 1);
+        }
+        for (const lease of leases) {
+          const start = iso(lease.startDate);
+          const last = iso(lease.endDate) < dataThrough ? iso(lease.endDate) : dataThrough;
+          for (const due of monthStarts(since > start ? since : start, last)) {
+            if (due < start || exceptionMonths.has(`${lease.leaseId}|${due}`)) {
+              continue;
+            }
+            rebuiltCount.set(due, (rebuiltCount.get(due) ?? 0) + 1);
+            const row: PaymentRow = {
+              leaseId: lease.leaseId,
+              residentId: lease.residentId,
+              dueDate: due,
+              amountDue: lease.monthlyRent,
+              amountPaid: lease.monthlyRent,
+              status: "paid",
+            };
+            const list = paymentsByLease.get(lease.leaseId);
+            if (list) {
+              list.push(row);
+            } else {
+              paymentsByLease.set(lease.leaseId, [row]);
+            }
+          }
+        }
+
+        const drift = [...sourceCount].filter(([due, n]) => (rebuiltCount.get(due) ?? 0) !== n);
+        if (drift.length) {
+          const [due, n] = drift[0];
+          throw new Error(
+            `The rebuilt rent ledger does not match Foundry: ${due.slice(0, 7)} holds ` +
+              `${n.toLocaleString()} payments, the rebuild has ` +
+              `${(rebuiltCount.get(due) ?? 0).toLocaleString()} (${drift.length} months differ). ` +
+              `Paid months are inferred from the leases, so leases and payments must come from ` +
+              `the same generation of the data. Re-upload both before trusting this page.`
           );
         }
 
