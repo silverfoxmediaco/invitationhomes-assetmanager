@@ -117,7 +117,7 @@ async function callAdvisor(snapshot: AdvisorSnapshot): Promise<AdvisorResult> {
   } catch {
     throw new Error(
       "The advisor returned something that is not JSON. Check the Logic block's " +
-        "output — the prompt asks for a bare JSON object with no markdown fence."
+        "output. The prompt asks for a bare JSON object with no markdown fence."
     );
   }
 

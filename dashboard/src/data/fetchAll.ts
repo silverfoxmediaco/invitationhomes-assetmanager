@@ -50,7 +50,7 @@ export async function fetchAll<T>(
     if (out.length >= maxRows) {
       throw new Error(
         `fetchAll exceeded maxRows (${maxRows}). This object type is too large ` +
-          `to pull into the browser — filter it or aggregate server-side.`
+          `to pull into the browser. Filter it or aggregate server-side.`
       );
     }
   } while (nextPageToken);
@@ -89,7 +89,7 @@ export async function fetchWhere<T>(
     nextPageToken = page.nextPageToken;
 
     if (out.length >= maxRows) {
-      throw new Error(`fetchWhere exceeded maxRows (${maxRows}) — narrow the filter.`);
+      throw new Error(`fetchWhere exceeded maxRows (${maxRows}). Narrow the filter.`);
     }
   } while (nextPageToken);
 

@@ -60,12 +60,11 @@ function Collections(): React.ReactElement {
       </div>
 
       <p className={css.verdict}>
-        January is not expensive, it is laborious. The share of rent eventually
-        collected moves {pct1(data.collectedSpread)} across the year. The share paid{" "}
+        January&rsquo;s problem is effort. The share of rent eventually collected moves{" "}
+        {pct1(data.collectedSpread)} across the year. The share paid{" "}
         <span className={css.verdictFigure}>on time</span> moves{" "}
-        <span className={css.verdictFigure}>{pct1(data.onTimeSpread)}</span> — roughly three
-        times as far. Almost the same money arrives; in winter it arrives after somebody has
-        chased it.
+        <span className={css.verdictFigure}>{pct1(data.onTimeSpread)}</span>, about 3x as far.
+        Almost the same money arrives, but in winter someone has to chase it first.
       </p>
 
       <div className={css.figures}>
@@ -99,7 +98,7 @@ function Collections(): React.ReactElement {
         </div>
       </div>
 
-      <h2 className={css.sectionTitle}>The same season, three years running</h2>
+      <h2 className={css.sectionTitle}>Collections by calendar month, 3 years</h2>
       <p className={css.sectionNote}>
         Every month of the history folded onto the calendar, so one bad January reads as a
         season rather than an incident. Both lines are plotted because a single
@@ -132,8 +131,8 @@ function Collections(): React.ReactElement {
       <p className={css.sectionNote}>
         The current month is excluded from the totals above: it is billed but only part
         collected, so including it would drag every figure down for calendar reasons rather
-        than business ones. Waived months are excluded from both ratios — a concession the
-        company granted is not rent a resident failed to pay.
+        than business ones. Waived months are excluded from both ratios, because a concession
+        the company granted is not rent a resident failed to pay.
       </p>
 
       <div className={css.tableWrap}>
@@ -172,12 +171,12 @@ function Collections(): React.ReactElement {
       </div>
 
       <p className={own.method}>
-        These figures are computed by Foundry, not in this browser. Monthly totals over 95,663
-        payments are three numbers a month; fetching the rows to add them up here would move
-        megabytes to answer a question the platform can answer where the data already sits.
-        One request returns 165 groups — every month by every payment status. The response
-        carries an accuracy flag and this page refuses anything Foundry marks approximate,
-        because a collection rate shown to a decimal place must not be an estimate.
+        Foundry computes these figures server-side. Monthly totals over 95,663 payments come
+        down to 3 numbers a month, and fetching every row to add them up in the browser would
+        move megabytes for a question Foundry can answer where the data sits. One request
+        returns 165 groups: every month by every payment status. The response carries an
+        accuracy flag, and this page rejects anything Foundry marks approximate, since a
+        collection rate shown to one decimal place cannot be an estimate.
       </p>
     </div>
   );

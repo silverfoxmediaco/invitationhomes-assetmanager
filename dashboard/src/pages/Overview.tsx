@@ -107,7 +107,7 @@ function Overview(): React.ReactElement {
         </div>
       </div>
 
-      <h2 className={css.sectionTitle}>The other question</h2>
+      <h2 className={css.sectionTitle}>Rent owed</h2>
       <p className={css.sectionNote}>
         Rent forgone is one exposure. Rent owed is the other, and it is a different
         population: some of the homes below are also occupied by residents falling behind,

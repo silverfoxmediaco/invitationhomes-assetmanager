@@ -74,7 +74,7 @@ export async function aggregate<G extends Record<string, string>>(
   if (payload.accuracy && payload.accuracy !== "ACCURATE") {
     throw new Error(
       `Foundry returned ${payload.accuracy} results for ${objectType}. A collection rate ` +
-        `shown to two decimal places must not be an estimate — narrow the grouping.`
+        `shown to two decimal places must not be an estimate. Narrow the grouping.`
     );
   }
 

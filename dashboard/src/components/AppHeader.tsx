@@ -59,7 +59,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
       {
         to: "/maintenance",
         label: "Maintenance",
-        note: "Who pays, and where duty becomes cost",
+        note: "Who pays, and what skipped filters cost",
       },
     ],
   },

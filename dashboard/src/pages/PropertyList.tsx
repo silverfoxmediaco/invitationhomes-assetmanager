@@ -309,9 +309,9 @@ function PropertyList(): React.ReactElement {
 
       <p className={own.method}>
         Vacant and in-turn homes are listed rather than hidden. They have no contract rent, so
-        they carry no gap and drop out of every under-market figure on this dashboard — which
-        is right for those figures and wrong as a picture of the portfolio, because a home
-        earning nothing is the most expensive kind there is. A dash in the gap column means
+        they carry no gap and drop out of every under-market figure on this dashboard. That
+        is correct for those figures, but an empty home still costs money to hold, so they
+        stay in this list. A dash in the gap column means
         either no lease or no comparable for that city and bedroom count; it never means the
         home is at market.
       </p>

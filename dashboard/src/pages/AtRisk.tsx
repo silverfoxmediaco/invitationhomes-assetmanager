@@ -59,7 +59,7 @@ function AtRisk(): React.ReactElement {
           &larr; Portfolio overview
         </Link>
         <div className={css.status}>
-          Scoring residents against twelve months of payment history…
+          Scoring residents against 12 months of payment history…
         </div>
       </div>
     );
@@ -93,7 +93,7 @@ function AtRisk(): React.ReactElement {
         <span className={css.verdictFigure}>{num.format(flagged)}</span> of{" "}
         {num.format(data.scored)} residents are scored at risk or critical. They hold{" "}
         <span className={css.verdictFigure}>{usd0.format(data.totalBalance * data.concentration)}</span>{" "}
-        of the {usd0.format(data.totalBalance)} outstanding across the portfolio —{" "}
+        of the {usd0.format(data.totalBalance)} outstanding across the portfolio:{" "}
         {pct0(data.concentration)} of the arrears from {pct0(flagged / data.scored)} of the
         residents.
       </p>
@@ -146,10 +146,10 @@ function AtRisk(): React.ReactElement {
       <h2 className={css.sectionTitle}>The list</h2>
       <p className={css.sectionNote}>
         Scored on arrears, recent payment trend, direction of travel, collection rate and how
-        close the lease is to expiry. Every number is explainable: the reasons column is what
-        produced it. Direction is weighted separately from arrears on purpose — a resident who
-        always pays on day three and one who paid on time for a year and has now missed twice
-        can owe the same money today, and they are not the same problem.
+        close the lease is to expiry. The Why column lists what produced each score.
+        Direction is weighted separately from arrears on purpose. A resident who always pays
+        on the 3rd and one who paid on time for a year and has now missed twice can owe the
+        same money today, but they need different conversations.
       </p>
 
       <div className={own.filters}>
@@ -234,12 +234,12 @@ function AtRisk(): React.ReactElement {
       )}
 
       <p className={own.method}>
-        Rules-based, not a model. The data would support training one — three years of
-        time-ordered payments with lease outcomes as labels — but it is generated, so a model
-        trained on it would recover the generator&rsquo;s own rule for who pays late and score
-        near-perfectly against it. That accuracy would measure nothing about real residents. A
-        transparent score a controller can argue with is the honest version, and it is also
-        what property managers actually use.
+        The score is rules-based. Three years of time-ordered payments with lease outcomes as
+        labels could train a model, but this data is generated, so a model would learn the
+        generator&rsquo;s own rule for who pays late and score near-perfectly against it. That
+        accuracy would say nothing about real residents. A score a controller can read and
+        argue with is more useful here, and it is closer to how property managers already
+        work.
       </p>
     </div>
   );

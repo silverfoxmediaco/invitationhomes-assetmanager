@@ -49,13 +49,13 @@ function CommunityDetail(): React.ReactElement {
   const verdict = (() => {
     const heavyCost = annualRent > 0 && costTotal > annualRent * 0.45;
     if (underPct > 0.5 && heavyCost) {
-      return "Most of this community is under market AND it is expensive to hold. Repricing at renewal recovers part of it, but the cost side needs its own answer.";
+      return "Most of this community is under market and expensive to hold. Repricing at renewal recovers part of it, but the cost side needs its own answer.";
     }
     if (underPct > 0.5) {
-      return "Most of this community is priced below market while costing no more than usual to run. That is a pricing decision, and it is one decision rather than one per house.";
+      return "Most of this community is priced below market while costing no more than usual to run. That makes it a pricing decision, and one that can be made for the whole community at once.";
     }
     if (heavyCost) {
-      return "Rents here are broadly at market, but the community is expensive to hold. The question is what is driving the cost, not what to charge.";
+      return "Rents here are broadly at market, but the community is expensive to hold. Start with what is driving the cost.";
     }
     return "Rents are broadly at market and costs are in normal range.";
   })();

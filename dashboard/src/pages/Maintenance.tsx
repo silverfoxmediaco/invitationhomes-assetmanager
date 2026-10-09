@@ -74,7 +74,7 @@ function Maintenance(): React.ReactElement {
 
       <p className={css.verdict}>
         <span className={css.verdictFigure}>{num.format(data.neglectOrders)}</span> heating and
-        cooling failures — {pct0(data.neglectSharePct)} of every HVAC call — had a skipped air
+        cooling failures ({pct0(data.neglectSharePct)} of every HVAC call) had a skipped air
         filter as a contributing factor. The filter is the resident&rsquo;s job, and Lease Easy
         posts it to them. The repair,{" "}
         <span className={css.verdictFigure}>{usd0.format(data.neglectCost)}</span> of it, was
@@ -110,15 +110,14 @@ function Maintenance(): React.ReactElement {
         </div>
       </div>
 
-      <h2 className={css.sectionTitle}>The lever is frequency, not severity</h2>
+      <h2 className={css.sectionTitle}>Savings come from fewer calls</h2>
       <p className={css.sectionNote}>
         A neglect-contributed HVAC failure costs{" "}
         <strong>{usd0.format(data.neglectMeanCost)}</strong> on average. Every other HVAC
         failure costs <strong>{usd0.format(data.otherHvacMeanCost)}</strong>. They are the same
-        repair — a skipped filter does not make the job worse, it makes the job happen. So
-        there is nothing to save per call, only calls to avoid, and the return on getting
-        filters actually changed is the whole {usd0.format(perYear)} a year rather than a
-        margin on it.
+        repair. A skipped filter causes the call rather than making the job bigger, so there
+        is nothing to save per call, only calls to avoid, and getting filters changed is worth
+        the full {usd0.format(perYear)} a year rather than a margin on it.
       </p>
       <p className={css.sectionNote}>
         The portfolio already bills residents for {num.format(data.filterOrders)} air-filter
@@ -129,10 +128,9 @@ function Maintenance(): React.ReactElement {
 
       <h2 className={css.sectionTitle}>Heating and cooling follow the weather</h2>
       <p className={css.sectionNote}>
-        Every HVAC call across three years, by calendar month. Cooling failures trip in the
-        summer and heating in the winter, which is obvious until you are the one staffing it —
-        the two peaks are six months apart and roughly the same height, so the trade is one
-        crew moving between them rather than two crews half idle.
+        Every HVAC call across 3 years, by calendar month. Cooling failures peak in summer and
+        heating failures in winter. The two peaks are 6 months apart and about the same
+        height, so one crew can move between them instead of two crews sitting half idle.
       </p>
 
       <div className={own.season}>
@@ -163,7 +161,7 @@ function Maintenance(): React.ReactElement {
       <p className={css.sectionNote}>
         Split by who pays under the published responsibilities. Resident-responsibility work
         is charged back, which is why it is excluded from the landlord cost on every other
-        screen in this dashboard — folding it in would overstate what a home costs to own.
+        screen in this dashboard. Including it would overstate what a home costs to own.
       </p>
 
       <div className={css.tableWrap}>
@@ -255,11 +253,10 @@ function Maintenance(): React.ReactElement {
       <p className={own.method}>
         One thing this page will not tell you: whether a vendor is slower than it promises.
         Measured against the work orders, none of the {num.format(data.vendorCount)} vendors
-        runs slower than its own stated turnaround and the average is 0.7 days inside it.
-        That is not a fleet of disciplined contractors, it is the synthetic data — the stated
-        average is what generated the close dates, so comparing them is circular. Turnaround
-        appears here as description and no vendor is ranked on it. Against real data the same
-        join is worth making, and it is exactly the kind of thing the ontology is for.
+        runs slower than its own stated turnaround, and the average is 0.7 days inside it.
+        That comes from the synthetic data: the stated average generated the close dates, so
+        comparing them is circular. Turnaround appears here as description and no vendor is
+        ranked on it. With real data, this join would be worth making.
       </p>
     </div>
   );

@@ -1657,3 +1657,45 @@ THE SECOND FINDING ON THE PAGE
 
   Deployed 0.4.3 — built clean, and the bundle was grepped for the new logic
   and for the absence of the old BEFORE uploading, per gotcha 11.
+
+--------------------------------------------------------------------------------
+2026-10-09  Removed AI writing tells from the dashboard's visible copy
+--------------------------------------------------------------------------------
+  James asked for a sweep of the React app for my tells. Scope was what a
+  visitor reads (page prose, verdict strings, drawer notes, the tab title and
+  error messages that render on screen), not code comments.
+
+  Removed from prose:
+  - Em dashes, rewritten as commas, colons or two sentences (about 40).
+  - "X, not Y" pivots, including three section headings: "The lever is
+    frequency, not severity", "Half the cost spread is the county, not the
+    operator" (also hardcoded "Half" over a computed share), and the
+    property/community verdict strings.
+  - Spelled-out numbers next to digits elsewhere: twelve/thirteen months,
+    eight percent, four points, seventy-five homes, three years.
+  - Self-praise and flourishes: "the honest version", "with a confident
+    face", "too timid rather than too bold", "exactly the kind of thing the
+    ontology is for", "where duty becomes cost", "obvious until you are the
+    one staffing it".
+  - Reused "The other ..." headings (Overview, Leasing) renamed to say what
+    the section holds.
+  - Leasing said "Both numbers are real" about synthetic data; reworded.
+  - Leasing opened "Renewal pricing is working" regardless of whether it was;
+    now "Retention is the weaker number".
+  - Page title separator is now a pipe.
+
+  Left alone: the em dash used as an empty-cell placeholder in tables. It is
+  a structural mark and the All homes method note refers to it ("A dash in
+  the gap column means ...").
+
+  Files: Landing, Overview, PropertyDetail, PropertyList, AtRisk,
+  Collections, CommunityList, CommunityDetail, Leasing, Maintenance,
+  Scenario, Advisor, AppHeader, index.html, fetchAll.ts, aggregate.ts,
+  useAdvisor.ts.
+
+  tsc, eslint and vite build clean. Not yet rendered in the browser, not
+  committed, not deployed.
+
+  Spotted, NOT fixed (out of scope): the drawer's Overview link still goes
+  to "/", which is the landing page since the routes moved. Should be
+  /dashboard.

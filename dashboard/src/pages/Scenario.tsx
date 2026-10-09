@@ -136,7 +136,7 @@ function Scenario(): React.ReactElement {
             <span className={css.verdictFigure}>
               {num.format(Math.round(data.breakEvenTurns))}
             </span>{" "}
-            extra departures — {pct0(data.breakEvenPct)} of those leases.
+            extra departures, {pct0(data.breakEvenPct)} of those leases.
           </p>
 
           <div className={css.figures}>
@@ -180,10 +180,10 @@ function Scenario(): React.ReactElement {
           <h2 className={css.sectionTitle}>What this does not tell you</h2>
           <p className={css.sectionNote}>
             It does not predict how residents react. There is no elasticity in this data and
-            there cannot be — residents who left have no recorded offer, so nothing says what
-            increase they walked away from. A tool that answered &ldquo;a {pct1(raise / 100)}{" "}
-            rise costs you four points of retention&rdquo; would be inventing the one number
-            the question turns on, and inventing it with a confident face.
+            there cannot be, because residents who left have no recorded offer, so nothing says
+            what increase they walked away from. A tool that answered &ldquo;a{" "}
+            {pct1(raise / 100)} rise costs you 4 points of retention&rdquo; would be making up
+            the number the whole question turns on.
           </p>
           <p className={css.sectionNote}>
             So it reports the break-even instead. At {pct1(raise / 100)} you add{" "}
@@ -191,15 +191,15 @@ function Scenario(): React.ReactElement {
             {usd0.format(data.turnCost.total)}; the increase pays for itself as long as it
             drives fewer than <strong>{num.format(Math.round(data.breakEvenTurns))}</strong>{" "}
             extra move-outs. Whether {pct0(data.breakEvenPct)} of this cohort would walk over{" "}
-            {pct1(raise / 100)} is a judgement about your market, and it is yours to make —
-            but it is now a judgement about one number rather than about the whole decision.
+            {pct1(raise / 100)} is a judgement about your market, and that call is yours. This
+            page narrows it to a single number.
           </p>
 
           <h2 className={css.sectionTitle}>What a turn costs, and why</h2>
           <p className={css.sectionNote}>
             Derived from the expense ledger across {num.format(data.turnCost.events)} turns in
-            the last twelve months, not assumed. Vacancy is measurable because utilities bill
-            only while a home is empty — residents pay their own — so the utility rows per
+            the last 12 months. Vacancy is measurable because the landlord only pays utilities
+            while a home is empty (residents pay their own), so the utility rows per
             turn are the vacant months, and the rent forgone across them is the largest single
             component.
           </p>
@@ -258,15 +258,14 @@ function Scenario(): React.ReactElement {
               <>
                 Even after the rise, <strong>{num.format(data.belowMarketAfter)}</strong> of
                 these homes would still sit below their city and bedroom-count median, by{" "}
-                {usd0.format(data.headroomMonthly)} a month between them —{" "}
-                {usd0.format(data.headroomMonthly * 12)} a year still on the table. The risk in
-                this scenario may be that it is too timid rather than too bold.
+                {usd0.format(data.headroomMonthly)} a month between them, or{" "}
+                {usd0.format(data.headroomMonthly * 12)} a year still on the table. This
+                increase may be too small rather than too large.
               </>
             ) : (
               <>
                 After the rise, every home in this window would be at or above its market
-                median. Beyond this point the increase is no longer catching up to the market;
-                it is leading it.
+                median. Any larger increase would put these rents ahead of the market.
               </>
             )}
           </p>
@@ -274,10 +273,9 @@ function Scenario(): React.ReactElement {
           <p className={own.ihScMethod}>
             Reads active leases, their homes&rsquo; market comparables, and the expense ledger.
             Moving the controls re-runs the arithmetic, not the queries. Retention across the
-            portfolio currently runs {pct0(data.currentRetentionPct)}, shown for reference only
-            — it is not an input to this model, because applying a portfolio-wide average to a
-            specific cohort facing a specific increase would be the same invention this page
-            refuses to make.
+            portfolio currently runs {pct0(data.currentRetentionPct)}, shown for reference only.
+            It is not an input to this model, because applying a portfolio-wide average to one
+            cohort facing one specific increase would make up the same number described above.
           </p>
         </>
       )}

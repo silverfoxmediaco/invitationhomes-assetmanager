@@ -54,15 +54,15 @@ function PropertyDetail(): React.ReactElement {
     }
     const heavyCost = data.annualCost > (data.annualRent ?? 0) * 0.45;
     if (!heavyCost) {
-      return "Under market on rent, with costs in normal range. This is a pricing decision, not a cost problem.";
+      return "Under market on rent, with costs in normal range, so this is a pricing decision.";
     }
     // Heavy cost means something different depending on what it is made of. A
     // roof replaced once is not a home that is expensive to run, and treating
     // the two alike would argue for selling a house that simply had a bad year.
     const capexLed = data.capex12m > data.annualCost * 0.3;
     return capexLed
-      ? "Under market, and the last twelve months carried a large capital item. Strip that out and the running costs are ordinary — the gap to market is the live problem, not the spend."
-      : "Under market AND expensive to run, with the cost in recurring items rather than one-off capital. Raising rent at renewal closes part of the gap, but the cost side needs its own answer.";
+      ? "Under market, and the last 12 months carried a large capital item. Strip that out and the running costs are ordinary, so the gap to market is the problem to work on."
+      : "Under market and expensive to run, with the cost in recurring items rather than one-off capital. Raising rent at renewal closes part of the gap, but the cost side needs its own answer.";
   })();
 
   return (
@@ -205,8 +205,8 @@ function PropertyDetail(): React.ReactElement {
           <>
             {" "}
             <strong>{data.neglectCount}</strong> were heating or cooling failures where a
-            skipped air-filter change contributed — the resident&rsquo;s responsibility
-            under the published split, but the landlord paid for the repair.
+            skipped air-filter change contributed. Under the published split that is the
+            resident&rsquo;s job, but the landlord paid for the repair.
           </>
         )}
       </p>

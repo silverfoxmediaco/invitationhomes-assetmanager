@@ -90,9 +90,9 @@ function CommunityList(): React.ReactElement {
       <p className={css.verdict}>
         <span className={css.verdictFigure}>{num.format(data.majorityUnder)}</span> of{" "}
         {num.format(data.communities)} communities have more than half their homes priced below
-        market. Under-market rent is not scattered across the portfolio — it collects in
-        communities where pricing was set at acquisition and has not been revisited since,
-        which is one decision each rather than {num.format(data.underMarketTotal)}.
+        market. Under-market rent clusters in communities where pricing was set at acquisition
+        and never revisited, so it can be fixed with one decision per community instead of{" "}
+        {num.format(data.underMarketTotal)} separate ones.
       </p>
 
       <div className={css.figures}>
@@ -122,13 +122,13 @@ function CommunityList(): React.ReactElement {
         </div>
       </div>
 
-      <h2 className={css.sectionTitle}>Half the cost spread is the county, not the operator</h2>
+      <h2 className={css.sectionTitle}>Where the cost spread comes from</h2>
       <p className={css.sectionNote}>
         {low && high && (
           <>
             Holding a home in <strong>{high.name}</strong> ({high.city}, {high.state}) costs{" "}
             {usd0.format(high.costPerHome)} a year. In <strong>{low.name}</strong> ({low.city},{" "}
-            {low.state}) it costs {usd0.format(low.costPerHome)} — a spread of{" "}
+            {low.state}) it costs {usd0.format(low.costPerHome)}, a spread of{" "}
             {usd0.format(high.costPerHome - low.costPerHome)}. Property tax accounts for{" "}
             <strong>{pct0(data.taxShareOfSpread)}</strong> of it and episodic CapEx for a
             further {pct0(data.capexShareOfSpread)}. Routine maintenance differs by only{" "}
@@ -137,13 +137,12 @@ function CommunityList(): React.ReactElement {
         )}
       </p>
       <p className={css.sectionNote}>
-        Which is why the four cost columns are kept apart. Tax is set by the county and no
-        operator can move it. CapEx is real money but it arrives in lumps — two roofs inside
+        That is why the four cost columns are kept apart. Tax is set by the county and no
+        operator can move it. CapEx is real money, but it arrives in lumps: two roofs inside
         the window in a {low ? low.homes : 30}-home community move its cost per home by
-        thousands, while the same spend across seventy-five homes barely registers, so the
-        column should be read as history rather than as run rate. Maintenance and recurring
-        operating cost are the two an operator actually controls, and they are also the two
-        that vary least. Blending all four into one number would bury that.
+        thousands, while the same spend across 75 homes barely registers, so read that column
+        as history rather than as a run rate. Maintenance and recurring operating cost are the
+        two an operator controls, and they vary least. One blended number would hide that.
       </p>
 
       <h2 className={css.sectionTitle}>Every community</h2>
@@ -230,16 +229,16 @@ function CommunityList(): React.ReactElement {
       </div>
 
       <p className={own.method}>
-        Costs are the trailing twelve months per home in the community: landlord-responsible
+        Costs are the trailing 12 months per home in the community: landlord-responsible
         maintenance, episodic capital spend, recurring operating expenses including the
         community&rsquo;s share of common-area landscaping, and the most recent property tax
-        bill. Thirteen months are read so a month boundary cannot clip the earliest, and the
-        thirteenth is dropped before totalling — counting it would inflate every per-year
-        figure by roughly eight percent. Resident-responsibility work is excluded: it is
+        bill. The query reads 13 months so a month boundary cannot clip the earliest, and the
+        13th is dropped before totalling, since counting it would inflate every per-year figure
+        by about 8%. Resident-responsibility work is excluded: it is
         charged back and is not a cost of holding the home. &ldquo;Below
         ask&rdquo; counts occupied homes contracted under the starting rent the community
-        advertises today, and is only shown for the 73 communities that publish one; the other
-        three fall back to a market median, and comparing a real contract against an estimate
+        advertises today, and is only shown for the 73 communities that publish one. The other
+        3 fall back to a market median, and comparing a real contract against an estimate
         of our own would be a finding about the estimate.
       </p>
     </div>

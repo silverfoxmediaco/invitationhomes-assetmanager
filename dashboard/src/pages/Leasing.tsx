@@ -78,19 +78,19 @@ function Leasing(): React.ReactElement {
       </div>
 
       <p className={css.verdict}>
-        Renewals signed in the last twelve months went up{" "}
+        Renewals signed in the last 12 months went up{" "}
         <span className={css.verdictFigure}>{pct1(data.renewalIncreasePct)}</span> while the
         market moved {pct1(data.marketGrowthPct)}.{" "}
         {gaining ? (
           <>
             Renewal pricing is running <strong>{pct1(data.outpacePct)}</strong> ahead of the
-            market, so the gap the portfolio page reports is closing rather than widening —
-            slowly, because a 24-month lease only reprices twice in four years.
+            market, so the gap the portfolio page reports is closing rather than widening. It
+            closes slowly, because a 24-month lease only reprices twice in 4 years.
           </>
         ) : (
           <>
             Renewal pricing is running <strong>{pct1(data.outpacePct)}</strong> behind the
-            market, so every renewal quietly widens the gap the portfolio page reports.
+            market, so every renewal widens the gap the portfolio page reports.
           </>
         )}
       </p>
@@ -133,29 +133,28 @@ function Leasing(): React.ReactElement {
         </div>
       </div>
 
-      <h2 className={css.sectionTitle}>The other half of it</h2>
+      <h2 className={css.sectionTitle}>Retention and churn cost</h2>
       <p className={css.sectionNote}>
-        Renewal pricing is working. Retention is not: {pct0(data.retentionPct)} of the leases
-        that ended in the last twelve months were re-signed, so the portfolio replaced roughly{" "}
+        Retention is the weaker number: {pct0(data.retentionPct)} of the leases that ended in
+        the last 12 months were re-signed, so the portfolio replaced roughly{" "}
         {num.format(data.expired12m - data.renewed12m)} households. That churn cost{" "}
-        <strong>{usd0.format(data.churnCost)}</strong> — {usd0.format(data.turnCost)} across{" "}
+        <strong>{usd0.format(data.churnCost)}</strong>: {usd0.format(data.turnCost)} across{" "}
         {num.format(data.turnEvents)} turns, {usd0.format(data.marketingCost)} of marketing,
         and {usd0.format(data.vacancyUtilities)} of utilities on homes standing empty, which
         the landlord only pays while nobody lives there.
       </p>
       <p className={css.sectionNote}>
         Set against {usd0.format(data.renewalUpliftPerYear)} of rent added by renewal
-        increases, that is the trade worth arguing about. What this data{" "}
+        increases, that is the trade-off to weigh. What this data{" "}
         <strong>cannot</strong> show is whether the two are connected: residents who left have
         no recorded offer to compare against, so nothing here establishes that the increases
-        drove the departures. Both numbers are real; the causal link is not in the ontology.
+        drove the departures. Both numbers come from the data; the causal link does not.
       </p>
 
       <h2 className={css.sectionTitle}>Leases signed, last 18 months</h2>
       <p className={css.sectionNote}>
-        Leasing follows the school calendar, not the weather — the summer peak and the
-        February trough are the same pattern every year, and staffing a turn crew against the
-        average means being short in August. The final bar is the month in progress and stops
+        Leasing follows the school calendar. The summer peak and the February trough repeat
+        every year, and staffing a turn crew against the average means being short in August. The final bar is the month in progress and stops
         at today, so it is short for calendar reasons rather than business ones.
       </p>
 
