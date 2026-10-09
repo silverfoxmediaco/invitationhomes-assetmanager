@@ -1941,3 +1941,12 @@ THE SECOND FINDING ON THE PAGE
   homes, 10,652 isUnderMarket, $1,046,455/mo ($12,557,460/yr), 0 flags with
   a non-positive gap. Matches the live Overview exactly, so Data Lineage and
   the dashboard agree again.
+
+--------------------------------------------------------------------------------
+2026-10-09  US spelling on screen (0.5.3)
+--------------------------------------------------------------------------------
+  Overview figure label "Annualised" -> "Annualized"; Scenario loading text
+  "Modelling..." -> "Modeling...". Searched all visible copy for British
+  spellings; only these two were on screen (remaining hits are code comments
+  and the `cancelled` variable name). Bundle grepped (new present, old
+  absent), deployed 0.5.3.

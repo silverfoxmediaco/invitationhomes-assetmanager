@@ -101,7 +101,7 @@ function Overview(): React.ReactElement {
           <div className={css.figureNote}>rent forgone each month</div>
         </div>
         <div className={css.figure}>
-          <div className={css.figureLabel}>Annualised</div>
+          <div className={css.figureLabel}>Annualized</div>
           <div className={css.figureValue}>{usd0.format(data.underMarketAnnual)}</div>
           <div className={css.figureNote}>at current gaps</div>
         </div>

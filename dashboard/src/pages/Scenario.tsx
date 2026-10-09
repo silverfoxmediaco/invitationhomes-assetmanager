@@ -121,7 +121,7 @@ function Scenario(): React.ReactElement {
       {controls}
 
       {loading || !data ? (
-        <div className={css.status}>Modelling…</div>
+        <div className={css.status}>Modeling…</div>
       ) : data.leases === 0 ? (
         <p className={css.sectionNote}>
           No active leases expire in this window.
