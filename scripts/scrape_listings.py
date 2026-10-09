@@ -8,8 +8,8 @@ reach the generated data or the app: a real address next to a synthetic
 arrears flag reads as a claim about a real household. See CLAUDE.md.
 
 Polite by design: robots.txt allows /houses-for-rent/ pages; this never touches
-/api or *.json, sends one request at a time with a delay, and resumes from the
-output file if interrupted.
+/api or *.json, keeps at most four requests in flight with a delay after each,
+and resumes from the output file if interrupted.
 
     python3 scripts/scrape_listings.py            # full run, ~75 min
     python3 scripts/scrape_listings.py --limit 5  # smoke test
@@ -23,11 +23,13 @@ import re
 import sys
 import time
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 
 SITEMAP = "https://invitationhomes.com/property/sitemap.xml"
 OUT = os.path.join(os.path.dirname(__file__), "..", "data", "reference", "invitation-homes-listings.csv")
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)"
 DELAY = 0.25
+WORKERS = 4
 
 FIELDS = [
     "slug", "streetAddress", "city", "state", "zip", "latitude", "longitude",
@@ -117,16 +119,22 @@ def main() -> None:
 
     new_file = not os.path.exists(OUT)
     failed = 0
-    with open(OUT, "a", newline="") as f:
+
+    def fetch(url):
+        time.sleep(DELAY)
+        try:
+            return parse(url, get(url))
+        except Exception as e:  # a dead listing is normal; keep going
+            print(f"  fail {url}: {e}", flush=True)
+            return None
+
+    # WORKERS requests in flight at once, each followed by DELAY: about 1.6
+    # requests a second in practice, since each page takes ~2 s to serve.
+    with open(OUT, "a", newline="") as f, ThreadPoolExecutor(WORKERS) as pool:
         w = csv.DictWriter(f, fieldnames=FIELDS, lineterminator="\n")
         if new_file:
             w.writeheader()
-        for i, url in enumerate(todo, 1):
-            try:
-                row = parse(url, get(url))
-            except Exception as e:  # a dead listing is normal; keep going
-                row = None
-                print(f"  fail {url}: {e}", flush=True)
+        for i, row in enumerate(pool.map(fetch, todo), 1):
             if row:
                 w.writerow(row)
                 f.flush()
@@ -134,7 +142,6 @@ def main() -> None:
                 failed += 1
             if i % 100 == 0:
                 print(f"{i}/{len(todo)} fetched, {failed} without listing data", flush=True)
-            time.sleep(DELAY)
     print(f"done: {len(todo) - failed} saved, {failed} without listing data", flush=True)
 
 

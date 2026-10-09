@@ -117,7 +117,7 @@ def maint_weights(month, state):
     """Category mix for a work order in this month and state."""
     w = {k: .45 for k in MAINT}
     w.update({"HVAC - not cooling": 1.0, "Plumbing - leak": 1.0,
-              "Appliance": .8, "Electrical": .6, "Roof": .4, "Turn": .5,
+              "Appliance": .8, "Electrical": .6, "Roof": .4, "Turn": .12,
               "Lawn maintenance": .7, "Pest control": .6, "Air filter": .5})
     if state in HOT_STATES and month in (6, 7, 8, 9):
         w["HVAC - not cooling"] = 3.2            # the hot markets carry the summer load
@@ -130,7 +130,10 @@ def maint_weights(month, state):
         w["Lawn maintenance"] = 1.4
         w["Sprinkler"] = .9
     if month in (5, 6, 7, 8):
-        w["Turn"] = 1.9                          # turns follow the leasing calendar, not weather
+        # Turns follow the leasing calendar, not weather. Kept small: the
+        # make-ready itself is booked as a Turn EXPENSE at each move-out, and
+        # a full-size work order on top of it charged every turn twice.
+        w["Turn"] = .45
         w["Pool maintenance"] = 1.2
     return w
 
@@ -693,10 +696,16 @@ for p in properties:
 #              bundle sells "utility management" as a convenience, not as the
 #              landlord absorbing the bill). Charging the landlord for utilities
 #              on an occupied home would have invented a cost that does not exist.
-#   CapEx / Turn / Legal / Marketing stay episodic and per-transaction: they are
-#              4% of rows and 57% of the money, and they are what a CFO drills into.
-EPISODIC = {"Marketing": (80, 900, 2), "Legal": (200, 2400, 1),
-            "CapEx": (900, 14000, 1), "Turn": (600, 5200, 1)}
+#   CapEx      episodic and per-transaction, roughly one job every two years.
+#   Turn / Marketing / Legal  at MOVE-OUTS only (see below), not on a timer.
+#
+# Calibrated 2026-10-09 against what a buyer underwrites. The first scale-up
+# run charged every home a turn, two marketing bills and a legal bill EVERY
+# YEAR whether or not anyone left, insurance at roughly twice a typical SFR
+# policy, and CapEx near $4,500 a home a year. NOI came out at 41% of rent
+# against the ~60-65% a real SFR operator runs, which priced the portfolio
+# below its own cost basis on the Dispositions page.
+EPISODIC = {"CapEx": (900, 9000, .45)}
 
 # Vacancy windows per property, derived from the lease chain AFTER leases exist.
 # Reconciling this during generation rather than after is how Target Air ended
@@ -727,7 +736,7 @@ for p in properties:
     cs = p["communitySlug"]
     acq = date.fromisoformat(p["acquisitionDate"])
     hoa_q = rng.uniform(110, 420)
-    ins_y = rng.uniform(900, 2400)
+    ins_y = rng.uniform(550, 1250)
     for m in month_iter(START, AS_OF):
         if m < acq:
             continue
@@ -753,6 +762,25 @@ for p in properties:
                 continue
             add_expense(p["propertyId"], cs, cat, d,
                         rng.triangular(lo, hi, lo + (hi - lo) * .3))
+
+# Move-out costs land when a home actually turns over: a lease that ended
+# inside the window and was not renewed. Make-ready and marketing at every
+# move-out, legal fees only behind an eviction. This is what makes the
+# Scenario page's "cost of one turn" a per-turn figure rather than an annual
+# charge divided by an unrelated count.
+_renewed = {l["renewalOfLeaseId"] for l in leases if l["renewalOfLeaseId"]}
+for l in leases:
+    end = date.fromisoformat(l["endDate"])
+    if l["status"] == "active" or l["leaseId"] in _renewed or not (START <= end <= AS_OF):
+        continue
+    pid_ = l["propertyId"]
+    cs = slug_of[pid_]
+    d = min(AS_OF, end + timedelta(days=rng.randint(2, 12)))
+    add_expense(pid_, cs, "Turn", d, rng.triangular(600, 5200, 600 + 4600 * .3))
+    add_expense(pid_, cs, "Marketing", d, rng.uniform(150, 900))
+    if l["status"] == "evicted":
+        add_expense(pid_, cs, "Legal", end - timedelta(days=rng.randint(20, 75)),
+                    rng.uniform(800, 3500))
 
 # COMMON-AREA LANDSCAPING is a genuine community cost funded through HOA, and it
 # is NOT a per-property line. Scoped to the community, with no propertyId, which

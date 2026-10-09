@@ -38,6 +38,11 @@ const GROUPS: { title: string; items: Item[] }[] = [
       { to: "/dashboard", label: "Overview", note: "What the portfolio is leaving on the table" },
       { to: "/properties", label: "All homes", note: "Every property, searchable" },
       { to: "/communities", label: "Communities", note: "The portfolio as 76 acquisitions" },
+      {
+        to: "/dispositions",
+        label: "Dispositions",
+        note: "Markets priced as bundles, and what to sell",
+      },
     ],
   },
   {

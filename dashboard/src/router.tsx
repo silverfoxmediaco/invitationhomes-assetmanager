@@ -3,6 +3,7 @@ import AuthCallback from "@/AuthCallback";
 import Collections from "@/pages/Collections";
 import CommunityDetail from "@/pages/CommunityDetail";
 import CommunityList from "@/pages/CommunityList";
+import Disposition from "@/pages/Disposition";
 import Landing from "@/landing/Landing";
 import Layout from "@/components/Layout";
 import Leasing from "@/pages/Leasing";
@@ -35,6 +36,7 @@ export const router = createBrowserRouter(
         { path: "/at-risk", element: <AtRisk /> },
         { path: "/maintenance", element: <Maintenance /> },
         { path: "/scenario", element: <Scenario /> },
+        { path: "/dispositions", element: <Disposition /> },
       ],
     },
     {

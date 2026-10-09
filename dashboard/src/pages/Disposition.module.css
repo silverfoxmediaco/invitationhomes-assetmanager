@@ -1,0 +1,211 @@
+/* Dispositions page. Shared page furniture (masthead, verdict, figures,
+   table) comes from Overview.module.css; everything here is specific to
+   building a sale package, and every class carries the ihDp prefix. */
+
+.ihDpBack {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ih-primary);
+  text-decoration: none;
+  margin-bottom: var(--ih-space-md);
+}
+
+.ihDpBack:hover {
+  text-decoration: underline;
+}
+
+/* --- Cap rate control ----------------------------------------------------- */
+
+.ihDpControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ih-space-xl);
+  margin: var(--ih-space-lg) 0 var(--ih-space-xl);
+  padding: var(--ih-space-lg);
+  background: #f7faf5;
+  border: 1px solid var(--ih-n1);
+  border-radius: 6px;
+}
+
+.ihDpField {
+  min-width: 0;
+}
+
+.ihDpLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ih-n6);
+  margin-bottom: var(--ih-space-sm);
+}
+
+.ihDpCapRow {
+  display: flex;
+  align-items: center;
+  gap: var(--ih-space-md);
+}
+
+.ihDpSlider {
+  width: 260px;
+  max-width: 50vw;
+  accent-color: var(--ih-primary);
+  cursor: pointer;
+}
+
+.ihDpNumberWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--ih-n2);
+  border-radius: 4px;
+  background: var(--ih-white);
+  padding: 0 var(--ih-space-sm) 0 0;
+}
+
+.ihDpNumberWrap:focus-within {
+  border-color: var(--ih-primary);
+  outline: 2px solid var(--ih-primary);
+  outline-offset: -1px;
+}
+
+.ihDpNumber {
+  width: 72px;
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 20px;
+  text-align: right;
+  padding: var(--ih-space-xs) var(--ih-space-sm);
+  border: none;
+  background: transparent;
+  color: var(--ih-text);
+}
+
+.ihDpNumber:focus {
+  outline: none;
+}
+
+.ihDpPercent {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ih-n5);
+}
+
+.ihDpControlNote {
+  flex: 1 1 280px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ih-text-secondary);
+}
+
+/* --- Sale package ----------------------------------------------------------
+   A full-width panel on the corporate teal tint, so it reads as the thing
+   being assembled rather than another table section. */
+
+.ihDpPackage {
+  margin: 0 0 var(--ih-space-2xl);
+  padding: var(--ih-space-lg);
+  border: 1px solid #cfdcdd;
+  border-radius: 6px;
+  background: #f3f7f7;
+}
+
+.ihDpPackageTitle {
+  font-family: var(--ih-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  margin: 0 0 var(--ih-space-sm);
+  color: var(--ih-corporate);
+}
+
+.ihDpPackageEmpty,
+.ihDpPackageList {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ih-text-secondary);
+}
+
+.ihDpPackageList {
+  font-weight: 600;
+  color: var(--ih-text);
+}
+
+/* --- Table ---------------------------------------------------------------- */
+
+.ihDpTable td {
+  vertical-align: top;
+}
+
+.ihDpRowChosen,
+.ihDpTable tbody tr.ihDpRowChosen:hover {
+  background: #f3f7f7;
+}
+
+.ihDpCheck {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ih-corporate);
+  cursor: pointer;
+}
+
+.ihDpMarket {
+  display: block;
+  font-weight: 600;
+}
+
+.ihDpMix {
+  display: block;
+  font-size: 11px;
+  color: var(--ih-n6);
+}
+
+/* Signals carry their meaning in words; the tint only groups them. */
+.ihDpSignal {
+  display: inline-block;
+  padding: 2px var(--ih-space-sm);
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--ih-n2);
+  color: var(--ih-n8);
+  background: var(--ih-white);
+}
+
+.ihDpSignal_reset {
+  border-color: #e3c84a;
+  background: #fdf8e1;
+  color: #6b5a06;
+}
+
+.ihDpSignal_sell {
+  border-color: #b9cdcf;
+  background: #eef4f4;
+  color: var(--ih-corporate);
+}
+
+.ihDpSignal_hold {
+  color: var(--ih-n7);
+}
+
+/* --- Method ---------------------------------------------------------------- */
+
+.ihDpMethod {
+  max-width: 760px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ih-text-secondary);
+}
+
+.ihDpMethod p {
+  margin: 0 0 var(--ih-space-md);
+}
+
+.ihDpCaveat {
+  font-size: 13px;
+  color: var(--ih-n6);
+}

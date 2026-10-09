@@ -1841,3 +1841,42 @@ THE SECOND FINDING ON THE PAGE
     data/reference/listing-city-county.csv.
     validate.py understands scattered homes; adds market/county/3-bills checks.
     Trial run on partial scrape: 10 s, 20,000 homes, 660,619 payments.
+
+--------------------------------------------------------------------------------
+2026-10-09  Dispositions page (built, not deployed), cost calibration, upload script
+--------------------------------------------------------------------------------
+  New page /dispositions (pages/Disposition.tsx, Disposition.module.css with
+  ihDp* classes, data/useDisposition.ts), drawer entry under Portfolio.
+    One bundle per market. Trailing-12-month NOI = collected rent - opex
+    (ex CapEx, plus common-area share) - landlord maintenance - latest tax
+    bill - 6% management (assumed; IH self-manages, a buyer underwrites it).
+    Buyer cap rate slider (default 5.5%), Exit checkbox per market building a
+    sale package (homes, NOI, price, gain over cost basis, price lost to
+    under-market rent). Cap rate and exit list live in the URL.
+    Signal per market: Reset rents first (rent discount >= 3% of price),
+    Sell candidate (NOI on cost below portfolio), Hold.
+    All sums run in Foundry; per-home sums sliced PROP-0..9 for the
+    10,000-group cap. Throws if any home lacks a market.
+    NEEDS the new data + `market`/`homeType` mapped on Properties first.
+  scripts/check_disposition.py: independent recount from the CSVs.
+
+  Generator calibration. First 20k run: NOI 41% of rent (real SFR ~60-65%),
+  portfolio priced below its own cost basis. Causes: every home charged a
+  turn, two marketing bills and a legal bill every year regardless of
+  move-outs; insurance ~2x a typical SFR policy; CapEx ~$4,500/home/yr;
+  turns double-booked as work orders. Now: Turn + Marketing at actual
+  move-outs (lease ended, not renewed), Legal only behind evictions,
+  insurance $550-1,250, CapEx ~1 job per 2 years, Turn work orders cut.
+  Result on trial data: NOI ~63% of rent, $6.3B at 5.5% vs $5.55B cost.
+  These change Leasing churn cost, Scenario turn cost and Communities cost
+  per home; all figures move with the 20k data anyway.
+
+  scripts/upload_all.py: dry run by default. Keeps each dataset's existing
+  column names/types (case-insensitive match, so lower-case `propertyid`
+  mappings survive), CSV column order, v1 atomic SNAPSHOT upload, schema
+  re-applied, readTable row-count check on all twelve. Refuses if any column
+  would be dropped. Dry run: only Properties changes (+market, +homeType).
+
+  Stale copy to fix with final numbers: Overview notice + "76 communities,
+  9 states", Landing "76 communities and 3,001 homes", AtRisk "95,000
+  payment rows", Collections "95,663 payments".
