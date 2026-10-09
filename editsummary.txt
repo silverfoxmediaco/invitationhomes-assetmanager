@@ -1704,3 +1704,29 @@ THE SECOND FINDING ON THE PAGE
   build. Bundle grepped for the new headings before upload. Live /at-risk
   reloaded and read back: new tab title, verdict, list note and method
   paragraph all showing.
+
+--------------------------------------------------------------------------------
+2026-10-09  Lineage: first derived dataset in Pipeline Builder
+--------------------------------------------------------------------------------
+  Before: every raw dataset fed its object type directly, so Data Lineage
+  showed 12 separate dataset-to-object-type pairs.
+
+  Built invitationhomes-pipeline (batch, Standard) in the Invitation Homes
+  project. 12 raw datasets as inputs. Left out leases (0), properties (0),
+  market_rate_comps (0): stray 21 Sept uploads that back no object type.
+  NOT deleted.
+
+  property_market_gap = same logic as usePortfolio.ts:
+    leases -> filter status = active -> leaseId, monthlyRent
+    market_rate_comps -> top 1 per city/state/beds by month desc
+    properties INNER JOIN leases on currentLeaseId = leaseId
+      INNER JOIN comps on city, state, beds
+    gapPerMonth = medianRent - monthlyRent, gapPct, isUnderMarket = gap > 0
+  Top-1-per-segment replaces the dashboard's global latest month because
+  Window/Aggregate/Top rows all require a partition. Checked equivalent
+  locally: all 117 segments have a 2026-09 comp, one row each.
+
+  Deployed; build was running at hand-off. Ontology and app untouched.
+
+  TO VERIFY once built: 2,760 rows, 1,281 isUnderMarket, sum of positive
+  gaps $112,740/mo ($1,352,880/yr). Computed from the local CSVs.
