@@ -35,7 +35,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
   {
     title: "Portfolio",
     items: [
-      { to: "/", label: "Overview", note: "What the portfolio is leaving on the table" },
+      { to: "/dashboard", label: "Overview", note: "What the portfolio is leaving on the table" },
       { to: "/properties", label: "All homes", note: "Every property, searchable" },
       { to: "/communities", label: "Communities", note: "The portfolio as 76 acquisitions" },
     ],

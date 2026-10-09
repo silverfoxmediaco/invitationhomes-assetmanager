@@ -1736,3 +1736,30 @@ THE SECOND FINDING ON THE PAGE
   2,760 rows, 2,760 distinct homes, 1,281 isUnderMarket, $112,740/mo,
   $1,352,880/yr, 0 rows flagged true with a non-positive gap. Matches the
   local CSV computation and the dashboard exactly.
+
+--------------------------------------------------------------------------------
+2026-10-09  Lineage paused; drawer Overview link fixed (0.4.5)
+--------------------------------------------------------------------------------
+  Lineage work PAUSED by James. property_market_gap is the demo example and
+  is enough on its own. Left unfinished in invitationhomes-pipeline, with no
+  output attached:
+    expenses -> filter date >= 2025-10-01 -> case bucket (common / capex /
+      opex) -> pivot by communitySlug, sum(amount). Preview matched the local
+      CSVs: 76 rows, capex/common/opex exact for the communities checked.
+    maintenance_work_orders -> filter responsibility = landlord and
+      openedDate >= 2025-10-01 -> sum(cost) per propertyId.
+  Still to do if resumed: latest tax bill per home, join both to properties,
+  roll up by community, join the expense pivot, write community_cost_per_home.
+  Expected: 76 communities, 3,001 homes, $58,166,506 total, median
+  $18,933/home, low cedar-landing $14,316, high fountain-park $24,637.
+  Pipeline deployed (logic only, no outputs rebuilt) Oct 9 9:57 AM, Succeeded.
+
+  Found on the way: all 12 raw datasets now carry typed schemas, so a typed
+  clean layer would add little. Repointing the ontology dropped from the plan.
+
+  Drawer fix: the Overview item in AppHeader.tsx pointed at "/", which has
+  been the landing page since the overview moved. Now "/dashboard".
+  Version 0.4.5. Clean build, bundle grepped for the new link (old one
+  absent), deployed with npm run deploy. Live check: opened the drawer on
+  /at-risk, clicked Overview, landed on /dashboard showing the portfolio
+  overview.
