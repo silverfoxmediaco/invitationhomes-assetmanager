@@ -1935,3 +1935,9 @@ THE SECOND FINDING ON THE PAGE
   Repo: data/reference/invitation-homes-listings.csv is gitignored (real
   addresses); listing-city-county.csv keeps city/state/county/FIPS only.
   CLAUDE.md gotchas 13 (aggregate truncation + 10k app cap) and 14 (upload).
+
+  property_market_gap REBUILT on the 20,000-home data (pipeline deploy with
+  the output selected). readTable recount: 18,429 rows, 18,429 distinct
+  homes, 10,652 isUnderMarket, $1,046,455/mo ($12,557,460/yr), 0 flags with
+  a non-positive gap. Matches the live Overview exactly, so Data Lineage and
+  the dashboard agree again.
