@@ -7,6 +7,7 @@ import {
   usePriced,
   type PricedBundle,
 } from "@/data/useDisposition";
+import { useMarketStrategy } from "@/data/useMarketStrategy";
 import css from "./Overview.module.css";
 import own from "./Disposition.module.css";
 
@@ -36,7 +37,7 @@ function money(x: number): string {
 }
 
 const SIGNAL_LABEL: Record<PricedBundle["signal"], string> = {
-  reset: "Reset rents first",
+  reset: "Reset rents, then sell",
   sell: "Sell candidate",
   hold: "Hold",
 };
@@ -44,14 +45,21 @@ const SIGNAL_LABEL: Record<PricedBundle["signal"], string> = {
 const DEFAULT_CAP = 5.5;
 
 function Disposition(): React.ReactElement {
-  const { data, loading, error } = useDisposition();
+  const { data, loading: dataLoading, error: dataError } = useDisposition();
+  const market = useMarketStrategy();
   const [params, setParams] = useSearchParams();
+  const loading = dataLoading || market.loading;
+  // A failed save is shown beside the table; a failed load stops the page.
+  const error = dataError ?? (market.loading ? null : market.strategies.size ? null : market.error);
 
-  // The cap rate and the exit list live in the URL, so a package someone
-  // builds can be sent as a link and opens exactly as they left it.
+  // The cap rate is a what-if, so it lives in the URL. The exit list is a
+  // decision, so it lives in Foundry: every viewer sees the same package,
+  // and each change is stamped with who made it and when.
   const capParam = Number(params.get("cap"));
   const cap = Number.isFinite(capParam) && capParam > 0 ? capParam : DEFAULT_CAP;
-  const exit = new Set((params.get("exit") ?? "").split(",").filter(Boolean));
+  const exit = new Set(
+    [...market.strategies.values()].filter((m) => m.strategy === "exit").map((m) => m.marketId)
+  );
 
   const { rows, portfolioCapOnCost } = usePriced(data?.bundles, cap / 100);
 
@@ -60,20 +68,8 @@ function Disposition(): React.ReactElement {
     next.set("cap", value);
     setParams(next, { replace: true });
   };
-  const toggleExit = (market: string): void => {
-    const nextSet = new Set(exit);
-    if (nextSet.has(market)) {
-      nextSet.delete(market);
-    } else {
-      nextSet.add(market);
-    }
-    const next = new URLSearchParams(params);
-    if (nextSet.size) {
-      next.set("exit", [...nextSet].sort().join(","));
-    } else {
-      next.delete("exit");
-    }
-    setParams(next, { replace: true });
+  const toggleExit = (marketId: string): void => {
+    void market.setStrategy(marketId, exit.has(marketId) ? "core" : "exit");
   };
 
   const back = (
@@ -179,56 +175,71 @@ function Disposition(): React.ReactElement {
 
       <section className={own.ihDpPackage} aria-label="Sale package">
         <h2 className={own.ihDpPackageTitle}>Sale package</h2>
-        {pkg.length === 0 ? (
-          <p className={own.ihDpPackageEmpty}>
-            Tick <strong>Exit</strong> on any market below to build a sale package. The
-            selection stays in the link, so the package can be shared as it stands.
-          </p>
-        ) : (
-          <>
-            <p className={own.ihDpPackageList}>
-              {pkg
-                .map((r) => r.name)
-                .sort()
-                .join(", ")}
-            </p>
-            <div className={css.figures}>
-              <div className={css.figure}>
-                <div className={css.figureLabel}>Homes</div>
-                <div className={css.figureValue}>{num.format(pkgHomes)}</div>
-                <div className={css.figureNote}>{pct0(pkgHomes / Math.max(1, homes))} of the portfolio</div>
-              </div>
-              <div className={css.figure}>
-                <div className={css.figureLabel}>NOI, 12 mo</div>
-                <div className={css.figureValue}>{money(pkgNoi)}</div>
-                <div className={css.figureNote}>{usd0.format(pkgNoi / Math.max(1, pkgHomes))} a home</div>
-              </div>
-              <div className={css.figure}>
-                <div className={css.figureLabel}>Price at {pct1(cap / 100)}</div>
-                <div className={css.figureValue}>{money(pkgPrice)}</div>
-                <div className={css.figureNote}>{usd0.format(pkgPrice / Math.max(1, pkgHomes))} a home</div>
-              </div>
-              <div className={css.figure}>
-                <div className={css.figureLabel}>Over cost basis</div>
-                <div className={css.figureValue}>{money(pkgPrice - pkgCost)}</div>
-                <div className={css.figureNote}>on {money(pkgCost)} paid</div>
-              </div>
-              <div className={css.figure}>
-                <div className={css.figureLabel}>Left to the buyer</div>
-                <div className={css.figureValue}>{money(pkgDiscount)}</div>
-                <div className={css.figureNote}>price lost to under-market rent</div>
-              </div>
+        {/* Same layout empty or full, so ticking the first market cannot move
+            the table under the presenter's cursor. */}
+        <p className={pkg.length ? own.ihDpPackageList : own.ihDpPackageEmpty}>
+          {pkg.length ? (
+            pkg
+              .map((r) => r.name)
+              .sort()
+              .join(", ")
+          ) : (
+            <>
+              Tick <strong>Exit</strong> on any market below to build a sale package. The
+              choice is saved in Foundry through the Set Market Strategy action, so everyone
+              opening this page sees the same package, with who changed it and when.
+            </>
+          )}
+        </p>
+        <div className={css.figures}>
+          <div className={css.figure}>
+            <div className={css.figureLabel}>Homes</div>
+            <div className={css.figureValue}>{pkg.length ? num.format(pkgHomes) : "\u2014"}</div>
+            <div className={css.figureNote}>
+              {pkg.length ? `${pct0(pkgHomes / Math.max(1, homes))} of the portfolio` : "none selected"}
             </div>
-          </>
-        )}
+          </div>
+          <div className={css.figure}>
+            <div className={css.figureLabel}>NOI, 12 mo</div>
+            <div className={css.figureValue}>{pkg.length ? money(pkgNoi) : "\u2014"}</div>
+            <div className={css.figureNote}>
+              {pkg.length ? `${usd0.format(pkgNoi / Math.max(1, pkgHomes))} a home` : "\u00a0"}
+            </div>
+          </div>
+          <div className={css.figure}>
+            <div className={css.figureLabel}>Price at {pct1(cap / 100)}</div>
+            <div className={css.figureValue}>{pkg.length ? money(pkgPrice) : "\u2014"}</div>
+            <div className={css.figureNote}>
+              {pkg.length ? `${usd0.format(pkgPrice / Math.max(1, pkgHomes))} a home` : "\u00a0"}
+            </div>
+          </div>
+          <div className={css.figure}>
+            <div className={css.figureLabel}>Over cost basis</div>
+            <div className={css.figureValue}>{pkg.length ? money(pkgPrice - pkgCost) : "\u2014"}</div>
+            <div className={css.figureNote}>{pkg.length ? `on ${money(pkgCost)} paid` : "\u00a0"}</div>
+          </div>
+          <div className={css.figure}>
+            <div className={css.figureLabel}>Left to the buyer</div>
+            <div className={css.figureValue}>{pkg.length ? money(pkgDiscount) : "\u2014"}</div>
+            <div className={css.figureNote}>price lost to under-market rent</div>
+          </div>
+        </div>
       </section>
+
+      {market.error && market.strategies.size > 0 && (
+        <div className={css.error}>
+          <strong>Could not save that change.</strong> {market.error.message}
+        </div>
+      )}
 
       <h2 className={css.sectionTitle}>Markets as bundles</h2>
       <p className={css.sectionNote}>
         One bundle per market, weakest return on cost first. Institutional buyers price a
-        metro, not a house. The signal reads <em>Reset rents first</em> when under-market
-        rents cost {pct0(RESET_THRESHOLD)} or more of the sale price, <em>Sell candidate</em>{" "}
-        when NOI on cost basis runs below the portfolio&rsquo;s, and <em>Hold</em> otherwise.
+        metro, not a house. A market earning less on its cost basis than the portfolio
+        ({pct1(portfolioCapOnCost)}) is a <em>Sell candidate</em>; if under-market rents
+        also cost {pct0(RESET_THRESHOLD)} or more of its price, the signal reads{" "}
+        <em>Reset rents, then sell</em>, because a buyer would collect that increase.
+        Everything else is <em>Hold</em>.
       </p>
 
       <div className={css.tableWrap}>
@@ -252,14 +263,20 @@ function Disposition(): React.ReactElement {
           <tbody>
             {sorted.map((r) => (
               <tr key={r.market} className={exit.has(r.market) ? own.ihDpRowChosen : undefined}>
-                <td>
-                  <input
-                    type="checkbox"
-                    className={own.ihDpCheck}
-                    checked={exit.has(r.market)}
-                    onChange={() => toggleExit(r.market)}
-                    aria-label={`Include ${r.name} in the sale package`}
-                  />
+                <td className={own.ihDpCheckCell}>
+                  {/* The whole cell is the target. A bare 16px box is easy to miss
+                      when someone is presenting from a laptop to a room. */}
+                  <label className={own.ihDpCheckLabel}>
+                    <input
+                      type="checkbox"
+                      className={own.ihDpCheck}
+                      checked={exit.has(r.market)}
+                      disabled={market.saving !== null}
+                      onChange={() => toggleExit(r.market)}
+                      aria-label={`Mark ${r.name} for exit`}
+                    />
+                    {market.saving === r.market && <span className={own.ihDpSaving}>saving</span>}
+                  </label>
                 </td>
                 <td>
                   <span className={own.ihDpMarket}>{r.name}</span>

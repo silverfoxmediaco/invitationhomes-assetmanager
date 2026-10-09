@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Replace all twelve Foundry datasets with data/generated/, together.
+Replace all thirteen Foundry datasets with data/generated/, together.
 
 CLAUDE.md gotcha 9: a PARTIAL re-upload is the worst failure in this project,
-because nothing errors. So this script checks all twelve before touching any,
-and uploads all twelve in one run.
+because nothing errors. So this script checks all of them before touching any,
+and uploads them all in one run.
 
 Per dataset (see memory: reference_foundry_csv_upload):
   1. Read the dataset's CURRENT schema. Column names are kept exactly as they
@@ -49,6 +49,10 @@ DATASETS = {
     "tax_assessments": "ri.foundry.main.dataset.34b887d9-9710-49d3-9ffa-f4bafa6de107",
     "tax_bills": "ri.foundry.main.dataset.ff7ee3c7-5bb7-4b73-8eb9-c055ca110610",
     "market_rate_comps": "ri.foundry.main.dataset.6e3c4f35-6633-4137-830c-37bc4a5f56f4",
+    # Backs Market Strategy, the one object type users write to. Created
+    # 2026-10-09; re-uploading it does not undo strategy edits, which live in
+    # the ontology keyed on marketId.
+    "markets": "ri.foundry.main.dataset.17cad456-959e-4fd6-9ad5-79ff219065ce",
 }
 
 
@@ -106,7 +110,7 @@ def main():
         print("\ndry run only; nothing sent. Re-run with --upload.")
         return
 
-    print("\nuploading all twelve")
+    print(f"\nuploading all {len(plans)}")
     for name, (rid, path, schema, rows) in plans.items():
         with open(path, "rb") as f:
             payload = f.read()
@@ -127,7 +131,7 @@ def main():
             bad.append(name)
     if bad:
         raise SystemExit(f"Row counts differ for {bad}. Check readTable output before trusting the ontology.")
-    print("\nall twelve uploaded and read back")
+    print(f"\nall {len(plans)} uploaded and read back")
 
 
 if __name__ == "__main__":

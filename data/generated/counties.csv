@@ -42,3 +42,66 @@ CTY-040,Polk,FL,0.01064,0.0635,annual,30
 CTY-041,Manatee,FL,0.01142,0.0672,annual,60
 CTY-042,Sarasota,FL,0.01156,0.068,annual,60
 CTY-043,Charlotte,FL,0.01141,0.0557,annual,60
+CTY-044,Cobb,GA,0.01065,0.0515,annual,45
+CTY-045,Fulton,GA,0.01009,0.0625,annual,45
+CTY-046,Seminole,FL,0.0109,0.0614,annual,60
+CTY-047,Harnett,NC,0.00823,0.0303,octennial,60
+CTY-048,Sacramento,CA,0.0081,0.0198,capped-prop13,45
+CTY-049,Contra Costa,CA,0.00807,0.0177,capped-prop13,60
+CTY-050,Pinal,AZ,0.00614,0.044,annual,45
+CTY-051,Gwinnett,GA,0.0111,0.055,annual,30
+CTY-052,Kane,IL,0.02229,0.0464,triennial,60
+CTY-053,Hennepin,MN,0.0106,0.0537,annual,60
+CTY-054,Palm Beach,FL,0.01046,0.0573,annual,45
+CTY-055,Will,IL,0.02292,0.049,triennial,30
+CTY-056,Pierce,WA,0.00954,0.0662,annual,45
+CTY-057,Adams,CO,0.00559,0.0483,biennial,60
+CTY-058,Jefferson,CO,0.00564,0.0494,biennial,30
+CTY-059,Johnson,TX,0.02086,0.0903,annual,30
+CTY-060,Denton,TX,0.02132,0.091,annual,30
+CTY-061,Bartow,GA,0.00974,0.0623,annual,45
+CTY-062,Douglas,CO,0.00533,0.056,biennial,30
+CTY-063,Dallas,TX,0.02277,0.0752,annual,60
+CTY-064,Johnston,NC,0.00901,0.038,octennial,60
+CTY-065,Pinellas,FL,0.01048,0.0689,annual,60
+CTY-066,Broward,FL,0.01103,0.0571,annual,60
+CTY-067,Maury,TN,0.0073,0.0422,quadrennial,45
+CTY-068,Cabarrus,NC,0.00834,0.0352,octennial,60
+CTY-069,Rockdale,GA,0.00982,0.0624,annual,60
+CTY-070,King,WA,0.00853,0.0581,annual,60
+CTY-071,Forsyth,GA,0.01049,0.0503,annual,45
+CTY-072,Miami-Dade,FL,0.01113,0.0687,annual,60
+CTY-073,Gaston,NC,0.00854,0.0323,octennial,60
+CTY-074,DeKalb,GA,0.011,0.049,annual,60
+CTY-075,Denver,CO,0.00563,0.0461,biennial,45
+CTY-076,Solano,CA,0.00734,0.0229,capped-prop13,45
+CTY-077,Durham,NC,0.00899,0.0329,octennial,60
+CTY-078,Clayton,GA,0.01117,0.0588,annual,30
+CTY-079,Snohomish,WA,0.00848,0.0572,annual,60
+CTY-080,Fayette,GA,0.01016,0.0546,annual,30
+CTY-081,Hall,GA,0.01035,0.0468,annual,45
+CTY-082,San Bernardino,CA,0.00802,0.0228,capped-prop13,30
+CTY-083,St. Lucie,FL,0.01092,0.0657,annual,30
+CTY-084,Galveston,TX,0.02157,0.0815,annual,60
+CTY-085,Sumner,TN,0.00754,0.0429,quadrennial,45
+CTY-086,Guilford,NC,0.0088,0.0316,octennial,30
+CTY-087,Henry,GA,0.01042,0.0631,annual,60
+CTY-088,Clark,NV,0.00632,0.0309,capped-abatement,30
+CTY-089,Williamson,TX,0.02178,0.082,annual,60
+CTY-090,Larimer,CO,0.00563,0.0443,biennial,30
+CTY-091,Thurston,WA,0.0095,0.0678,annual,45
+CTY-092,Los Angeles,CA,0.00791,0.018,capped-prop13,30
+CTY-093,Placer,CA,0.00797,0.0199,capped-prop13,45
+CTY-094,Lincoln,NC,0.00839,0.0325,octennial,60
+CTY-095,Douglas,GA,0.01058,0.0514,annual,30
+CTY-096,Davidson,TN,0.00691,0.039,quadrennial,60
+CTY-097,Coweta,GA,0.01103,0.0572,annual,60
+CTY-098,Flagler,FL,0.01098,0.0708,annual,60
+CTY-099,Dakota,MN,0.01066,0.0663,annual,60
+CTY-100,St. Johns,FL,0.01117,0.0565,annual,30
+CTY-101,Ramsey,MN,0.0111,0.0659,annual,45
+CTY-102,Robertson,TN,0.00775,0.0388,quadrennial,45
+CTY-103,Carroll,GA,0.00975,0.0512,annual,30
+CTY-104,Ellis,TX,0.02212,0.074,annual,45
+CTY-105,Forsyth,NC,0.00912,0.038,octennial,30
+CTY-106,Yolo,CA,0.00738,0.0177,capped-prop13,60

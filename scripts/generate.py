@@ -392,13 +392,21 @@ for (city, st), base3s in sorted(_by_city.items()):
             b0 * (1 + growth * i / max(1, len(MONTHS) - 1)) * _season(m)
             for i, m in enumerate(MONTHS)]
 
-# Split the scattered count across markets in proportion to listings, by
-# largest remainder so the total lands exactly on TOTAL_HOMES.
+# Split the scattered count across markets: a floor of MARKET_FLOOR homes
+# each, then the rest in proportion to listings, by largest remainder so the
+# total lands exactly on TOTAL_HOMES.
+#
+# The floor exists because listings measure what is FOR RENT TODAY, not what
+# is owned. Pure proportion gave Austin 16 homes and Chicago 65, which is a
+# statement about this week's vacancies, and an Austin "bundle" of 16 homes
+# on the Dispositions page would be the first thing a CFO questioned.
+MARKET_FLOOR = 400
 _by_market = defaultdict(list)
 for r in listings:
     _by_market[r["_market"]].append(r)
 scattered_n = TOTAL_HOMES - len(properties)
-_raw = {m: scattered_n * len(v) / len(listings) for m, v in _by_market.items()}
+_spare = scattered_n - MARKET_FLOOR * len(_by_market)
+_raw = {m: MARKET_FLOOR + _spare * len(v) / len(listings) for m, v in _by_market.items()}
 alloc = {m: int(x) for m, x in _raw.items()}
 for m in sorted(_raw, key=lambda m: _raw[m] - alloc[m], reverse=True)[:scattered_n - sum(alloc.values())]:
     alloc[m] += 1
@@ -898,6 +906,29 @@ write("expenses.csv", expenses)
 write("tax_assessments.csv", assessments)
 write("tax_bills.csv", bills)
 write("market_rate_comps.csv", comps)
+
+# One row per market for the Market Strategy object type, which is the only
+# thing in this project that users WRITE: the Dispositions page marks a market
+# core or exit through the Set Market Strategy action. Everything starts as
+# core; the generator never decides what to sell. Ontology edits persist
+# across re-uploads because the key (marketId) never changes.
+MARKET_NAMES = {
+    "atlanta": "Atlanta", "austin": "Austin", "carolinas": "Carolinas",
+    "chicago": "Chicago", "dallas": "Dallas", "denver": "Denver",
+    "houston": "Houston", "jacksonville": "Jacksonville", "las-vegas": "Las Vegas",
+    "minneapolis": "Minneapolis", "nashville": "Nashville",
+    "northern-california": "Northern California", "orlando": "Orlando",
+    "phoenix": "Phoenix", "salt-lake-city": "Salt Lake City",
+    "san-antonio": "San Antonio", "seattle": "Seattle",
+    "south-florida": "South Florida", "southern-california": "Southern California",
+    "tampa": "Tampa",
+}
+_homes_in = Counter(p["market"] for p in properties)
+write("markets.csv", [dict(
+    marketId=m, marketName=MARKET_NAMES[m],
+    anchorLatitude=MARKETS[m][0], anchorLongitude=MARKETS[m][1],
+    homes=_homes_in[m], strategy="core", note="", updatedBy="", updatedAt="")
+    for m in sorted(MARKETS)])
 
 print("\nprofiles:", dict(Counter(r["syntheticProfileGroundTruth"] for r in residents)))
 print("lease outcomes:", dict(Counter(l["status"] for l in leases)))

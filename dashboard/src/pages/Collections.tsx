@@ -171,10 +171,10 @@ function Collections(): React.ReactElement {
       </div>
 
       <p className={own.method}>
-        Foundry computes these figures server-side. Monthly totals over 95,663 payments come
+        Foundry computes these figures server-side. Monthly totals over 660,591 payments come
         down to 3 numbers a month, and fetching every row to add them up in the browser would
         move megabytes for a question Foundry can answer where the data sits. One request
-        returns 165 groups: every month by every payment status. The response carries an
+        returns 180 groups: every month by every payment status. The response carries an
         accuracy flag, and this page rejects anything Foundry marks approximate, since a
         collection rate shown to one decimal place cannot be an estimate.
       </p>

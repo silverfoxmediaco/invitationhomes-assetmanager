@@ -1,0 +1,625 @@
+city,state,county,countyFips
+Albertville,MN,Wright,27171
+Aledo,TX,Parker,48367
+Algona,WA,King,53033
+Andover,MN,Anoka,27003
+Angier,NC,Harnett,37085
+Anoka,MN,Anoka,27003
+Apex,NC,Wake,37183
+Apple Valley,MN,Dakota,27037
+Arlington,TX,Tarrant,48439
+Arlington,WA,Snohomish,53061
+Arlington Heights,IL,Cook,17031
+Auburn,WA,King,53033
+Aurora,CO,Arapahoe,08005
+Aurora,IL,Kane,17089
+Austin,TX,Travis,48453
+Bellwood,IL,Cook,17031
+Berwyn,IL,Cook,17031
+Blaine,MN,Anoka,27003
+Bloomington,MN,Hennepin,27053
+Boerne,TX,Bexar,48029
+Bolingbrook,IL,Will,17197
+Bonney Lake,WA,Pierce,53053
+Bothell,WA,Snohomish,53061
+Brighton,CO,Adams,08001
+Brooklyn Center,MN,Hennepin,27053
+Brooklyn Park,MN,Hennepin,27053
+Broomfield,CO,Jefferson,08059
+Buckeye,AZ,Maricopa,04013
+Buckley,WA,Pierce,53053
+Burleson,TX,Johnson,48251
+Burnsville,MN,Dakota,27037
+Carol Stream,IL,DuPage,17043
+Cary,IL,McHenry,17111
+Castle Rock,CO,Douglas,08035
+Centennial,CO,Arapahoe,08005
+Chaska,MN,Carver,27019
+Clayton,NC,Johnston,37101
+Cleburne,TX,Johnson,48251
+Colorado Springs,CO,El Paso,08041
+Columbia Heights,MN,Anoka,27003
+Commerce City,CO,Adams,08001
+Coon Rapids,MN,Anoka,27003
+Corona,CA,Riverside,06065
+Cottage Grove,MN,Washington,27163
+Country Club Hills,IL,Cook,17031
+Covington,WA,King,53033
+Crest Hill,IL,Will,17197
+Crowley,TX,Tarrant,48439
+Crystal,MN,Hennepin,27053
+Cypress,TX,Harris,48201
+Dayton,MN,Hennepin,27053
+Denver,CO,Denver,08031
+Duvall,WA,King,53033
+Eagan,MN,Dakota,27037
+Elbert,CO,El Paso,08041
+Elgin,IL,Cook,17031
+Elk River,MN,Sherburne,27141
+Elmhurst,IL,DuPage,17043
+Elmwood Park,IL,Cook,17031
+Englewood,CO,Arapahoe,08005
+Erie,CO,Boulder,08013
+Escondido,CA,San Diego,06073
+Evans,CO,Weld,08123
+Everett,WA,Snohomish,53061
+Federal Heights,CO,Adams,08001
+Federal Way,WA,King,53033
+Fife,WA,Pierce,53053
+Forest Lake,MN,Chisago,27025
+Fort Worth,TX,Tarrant,48439
+Fountain,CO,El Paso,08041
+Fridley,MN,Anoka,27003
+Garner,NC,Johnston,37101
+Glendale Heights,IL,DuPage,17043
+Graham,WA,Pierce,53053
+Grand Prairie,TX,Tarrant,48439
+Greeley,CO,Weld,08123
+Haltom City,TX,Tarrant,48439
+Hanover Park,IL,Cook,17031
+Haslet,TX,Tarrant,48439
+Helotes,TX,Bexar,48029
+Hemet,CA,Riverside,06065
+Highlands Ranch,CO,Douglas,08035
+Hockley,TX,Harris,48201
+Hoffman Estates,IL,Cook,17031
+Houston,TX,Harris,48201
+Huntley,IL,McHenry,17111
+Jarrell,TX,Williamson,48491
+Johnstown,CO,Larimer,08069
+Joliet,IL,Will,17197
+Katy,TX,Fort Bend,48157
+Kent,WA,King,53033
+Knightdale,NC,Wake,37183
+Lacey,WA,Thurston,53067
+Lake Stevens,WA,Snohomish,53061
+Lake in the Hills,IL,McHenry,17111
+Lakeville,MN,Dakota,27037
+Lakewood,WA,Pierce,53053
+Lindenhurst,IL,Lake,17097
+Lisle,IL,DuPage,17043
+Littleton,CO,Jefferson,08059
+Lochbuie,CO,Weld,08123
+Lockhart,TX,Caldwell,48055
+Long Lake,MN,Hennepin,27053
+Lynnwood,WA,Snohomish,53061
+Magnolia,TX,Montgomery,48339
+Mansfield,TX,Tarrant,48439
+Maple Valley,WA,King,53033
+Marysville,WA,Snohomish,53061
+Matteson,IL,Cook,17031
+Melrose Park,IL,Cook,17031
+Menifee,CA,Riverside,06065
+Midvale,UT,Salt Lake,49035
+Minneapolis,MN,Hennepin,27053
+Minnetrista,MN,Hennepin,27053
+Monroe,WA,Snohomish,53061
+Montgomery,TX,Montgomery,48339
+Murrieta,CA,Riverside,06065
+New Braunfels,TX,Comal,48091
+North Aurora,IL,Kane,17089
+North Richland Hills,TX,Tarrant,48439
+Northglenn,CO,Adams,08001
+Oak Forest,IL,Cook,17031
+Oak Lawn,IL,Cook,17031
+Oakdale,MN,Washington,27163
+Olympia,WA,Thurston,53067
+Olympia Fields,IL,Cook,17031
+Orland Hills,IL,Cook,17031
+Orting,WA,Pierce,53053
+Pacific,WA,King,53033
+Palos Heights,IL,Cook,17031
+Park Forest,IL,Cook,17031
+Parker,CO,Douglas,08035
+Peoria,AZ,Maricopa,04013
+Phoenix,AZ,Maricopa,04013
+Plainfield,IL,Will,17197
+Plymouth,MN,Hennepin,27053
+Puyallup,WA,Pierce,53053
+Raleigh,NC,Wake,37183
+Renton,WA,King,53033
+Richfield,MN,Hennepin,27053
+Richmond,TX,Fort Bend,48157
+Richton Park,IL,Cook,17031
+Robbinsdale,MN,Hennepin,27053
+Rolesville,NC,Wake,37183
+Rolling Meadows,IL,Cook,17031
+Romeoville,IL,Will,17197
+Roselle,IL,DuPage,17043
+Rosemount,MN,Dakota,27037
+Saginaw,TX,Tarrant,48439
+Saint Charles,IL,Kane,17089
+Saint Louis Park,MN,Hennepin,27053
+Saint Paul,MN,Ramsey,27123
+Salt Lake City,UT,Salt Lake,49035
+San Antonio,TX,Bexar,48029
+San Marcos,TX,Hays,48209
+Sandy,UT,Salt Lake,49035
+Saratoga Springs,UT,Utah,49049
+Savage,MN,Scott,27139
+Seatac,WA,King,53033
+Selma,NC,Johnston,37101
+Severance,CO,Weld,08123
+Shakopee,MN,Scott,27139
+Shoreview,MN,Ramsey,27123
+Smithfield,NC,Johnston,37101
+Snohomish,WA,Snohomish,53061
+Spanaway,WA,Pierce,53053
+Stone Park,IL,Cook,17031
+Sugar Land,TX,Fort Bend,48157
+Tacoma,WA,Pierce,53053
+Temecula,CA,Riverside,06065
+Thornton,CO,Adams,08001
+Tinley Park,IL,Cook,17031
+Tomball,TX,Harris,48201
+Tumwater,WA,Thurston,53067
+University Place,WA,Pierce,53053
+Vadnais Heights,MN,Ramsey,27123
+Villa Park,IL,DuPage,17043
+Village of Riverside,IL,Cook,17031
+Waconia,MN,Carver,27019
+Wake Forest,NC,Wake,37183
+Warrenville,IL,DuPage,17043
+Watauga,TX,Tarrant,48439
+Weatherford,TX,Parker,48367
+Wendell,NC,Wake,37183
+West Jordan,UT,Salt Lake,49035
+West Valley City,UT,Salt Lake,49035
+Westminster,CO,Jefferson,08059
+Westmont,IL,DuPage,17043
+White Bear Lake,MN,Ramsey,27123
+Wildomar,CA,Riverside,06065
+Willow Park,TX,Parker,48367
+Winfield,IL,DuPage,17043
+Woodbury,MN,Washington,27163
+Woodridge,IL,DuPage,17043
+Zebulon,NC,Wake,37183
+puyallup,WA,Pierce,53053
+Acworth,GA,Cobb,13067
+Allen,TX,Collin,48085
+Alpharetta,GA,Fulton,13121
+Altamonte Springs,FL,Seminole,12117
+Antelope,CA,Sacramento,06067
+Antioch,CA,Contra Costa,06013
+Antioch,TN,Davidson,47037
+Apache Junction,AZ,Pinal,04021
+Apollo Beach,FL,Hillsborough,12057
+Apopka,FL,Orange,12095
+Argyle,TX,Denton,48121
+Arleta,CA,Los Angeles,06037
+Atlanta,GA,Fulton,13121
+Atlantis,FL,Palm Beach,12099
+Auburn,GA,Gwinnett,13135
+Austell,GA,Cobb,13067
+Avondale,AZ,Maricopa,04013
+Ball Ground,GA,Cherokee,13057
+Bartow,FL,Polk,12105
+Baytown,TX,Harris,48201
+Beaumont,CA,Riverside,06065
+Belle Isle,FL,Orange,12095
+Bethlehem,GA,Walton,13297
+Boca Raton,FL,Palm Beach,12099
+Boynton Beach,FL,Palm Beach,12099
+Bradenton,FL,Manatee,12081
+Brandon,FL,Hillsborough,12057
+Braselton,GA,Gwinnett,13135
+Brentwood,CA,Contra Costa,06013
+Browns Summit,NC,Guilford,37081
+Buford,GA,Gwinnett,13135
+Burlington,NC,Guilford,37081
+Canoga Park,CA,Los Angeles,06037
+Canton,GA,Cherokee,13057
+Cape Coral,FL,Lee,12071
+Carmichael,CA,Sacramento,06067
+Carrollton,TX,Denton,48121
+Cartersville,GA,Bartow,13015
+Casselberry,FL,Seminole,12117
+Cedar Hill,TX,Dallas,48113
+Chandler,AZ,Maricopa,04013
+Charlotte,NC,Mecklenburg,37119
+Citrus Heights,CA,Sacramento,06067
+Clarkston,GA,DeKalb,13089
+Clarksville,TN,Montgomery,47125
+Clearwater,FL,Pinellas,12103
+Clermont,FL,Lake,12069
+Cocoa,FL,Brevard,12009
+Coconut Creek,FL,Broward,12011
+College Park,GA,Fulton,13121
+Columbia,TN,Maury,47119
+Concord,NC,Cabarrus,37025
+Conroe,TX,Montgomery,48339
+Conyers,GA,Rockdale,13247
+Cooper City,FL,Broward,12011
+Coppell,TX,Dallas,48113
+Coral Springs,FL,Broward,12011
+Cornelius,NC,Mecklenburg,37119
+Covington,GA,Rockdale,13247
+Crandall,TX,Kaufman,48257
+Cumming,GA,Forsyth,13117
+Cutler Bay,FL,Miami-Dade,12086
+Dacula,GA,Gwinnett,13135
+Dallas,GA,Paulding,13223
+Dallas,NC,Gaston,37071
+Dallas,TX,Dallas,48113
+Davenport,FL,Polk,12105
+Davidson,NC,Mecklenburg,37119
+Davie,FL,Broward,12011
+Daytona Beach,FL,Volusia,12127
+Debary,FL,Volusia,12127
+Decatur,GA,DeKalb,13089
+Deer Park,TX,Harris,48201
+Deerfield Beach,FL,Broward,12011
+Deland,FL,Volusia,12127
+Delray Beach,FL,Palm Beach,12099
+Deltona,FL,Volusia,12127
+Denton,TX,Denton,48121
+Denver,NC,Lincoln,37109
+Desoto,TX,Dallas,48113
+Discovery Bay,CA,Contra Costa,06013
+Dixon,CA,Solano,06095
+Doral,FL,Miami-Dade,12086
+Douglasville,GA,Paulding,13223
+Duarte,CA,Los Angeles,06037
+Duluth,GA,Gwinnett,13135
+Dundee,FL,Polk,12105
+Dunedin,FL,Pinellas,12103
+Durham,NC,Durham,37063
+East Point,GA,Fulton,13121
+Edgewater,FL,Volusia,12127
+El Mirage,AZ,Maricopa,04013
+Elk Grove,CA,Sacramento,06067
+Ellenton,FL,Manatee,12081
+Ellenwood,GA,Clayton,13063
+Euless,TX,Tarrant,48439
+Eustis,FL,Lake,12069
+Fair Oaks,CA,Sacramento,06067
+Fairburn,GA,Fulton,13121
+Fairfield,CA,Solano,06095
+Fate,TX,Rockwall,48397
+Fayetteville,GA,Fayette,13113
+Fillmore,CA,Ventura,06111
+Fleming Island,FL,Clay,12019
+Florence,AZ,Pinal,04021
+Flower Mound,TX,Denton,48121
+Flowery Branch,GA,Hall,13139
+Fontana,CA,San Bernardino,06071
+Forney,TX,Kaufman,48257
+Fort Lauderdale,FL,Broward,12011
+Fort Myers,FL,Lee,12071
+Fort Pierce,FL,St. Lucie,12111
+Fresno,TX,Fort Bend,48157
+Friendswood,TX,Galveston,48167
+Frisco,TX,Denton,48121
+Fuquay Varina,NC,Wake,37183
+Gainesville,GA,Hall,13139
+Gallatin,TN,Sumner,47165
+Galt,CA,Sacramento,06067
+Garland,TX,Dallas,48113
+Gastonia,NC,Gaston,37071
+Gibsonton,FL,Hillsborough,12057
+Gilbert,AZ,Maricopa,04013
+Glendale,AZ,Maricopa,04013
+Goodlettsville,TN,Davidson,47037
+Goodyear,AZ,Maricopa,04013
+Granada Hills,CA,Los Angeles,06037
+Grand Island,FL,Lake,12069
+Grapevine,TX,Tarrant,48439
+Grayson,GA,Gwinnett,13135
+Green Cove Springs,FL,Clay,12019
+Greenacres,FL,Palm Beach,12099
+Greensboro,NC,Guilford,37081
+Groveland,FL,Lake,12069
+Gulfport,FL,Pinellas,12103
+Haines City,FL,Polk,12105
+Hampton,GA,Henry,13151
+Harmony,FL,Osceola,12097
+Harrisburg,NC,Cabarrus,37025
+Haw River,NC,Alamance,37001
+Henderson,NV,Clark,32003
+Hendersonville,TN,Sumner,47165
+Hermitage,TN,Davidson,47037
+Hialeah,FL,Miami-Dade,12086
+Hialeah Gardens,FL,Miami-Dade,12086
+High Point,NC,Guilford,37081
+Highland,CA,San Bernardino,06071
+Hiram,GA,Paulding,13223
+Holiday,FL,Pasco,12101
+Holly Springs,NC,Wake,37183
+Hollywood,FL,Broward,12011
+Homestead,FL,Miami-Dade,12086
+Hoschton,GA,Gwinnett,13135
+Howey in the Hills,FL,Lake,12069
+Hudson,FL,Pasco,12101
+Humble,TX,Harris,48201
+Huntersville,NC,Mecklenburg,37119
+Hurst,TX,Tarrant,48439
+Indian Trail,NC,Union,37179
+Inglewood,CA,Los Angeles,06037
+Iowa Colony,TX,Brazoria,48039
+Irving,TX,Dallas,48113
+Jacksonville,FL,Clay,12019
+Jacksonville Beach,FL,Duval,12031
+Johns Creek,GA,Fulton,13121
+Josephine,TX,Collin,48085
+Jupiter,FL,Palm Beach,12099
+Justin,TX,Denton,48121
+Kannapolis,NC,Cabarrus,37025
+Kennesaw,GA,Cobb,13067
+Kings Mountain,NC,Cleveland,37045
+Kingwood,TX,Harris,48201
+Kissimmee,FL,Polk,12105
+La Marque,TX,Galveston,48167
+La Porte,TX,Harris,48201
+La Puente,CA,Los Angeles,06037
+La Vergne,TN,Rutherford,47149
+LaVergne,TN,Rutherford,47149
+Lake Alfred,FL,Polk,12105
+Lake Mary,FL,Seminole,12117
+Lake Wales,FL,Polk,12105
+Lake Worth,FL,Palm Beach,12099
+Lakeland,FL,Polk,12105
+Lakewood Ranch,FL,Manatee,12081
+Lancaster,CA,Los Angeles,06037
+Lancaster,TX,Dallas,48113
+Land O Lakes,FL,Pasco,12101
+Largo,FL,Pinellas,12103
+Las Vegas,NV,Clark,32003
+Lauderdale Lakes,FL,Broward,12011
+Laveen,AZ,Maricopa,04013
+Lawrenceville,GA,Gwinnett,13135
+League City,TX,Galveston,48167
+Lebanon,TN,Wilson,47189
+Leesburg,FL,Lake,12069
+Lehigh Acres,FL,Lee,12071
+Lewisville,TX,Denton,48121
+Lilburn,GA,Gwinnett,13135
+Lincoln,CA,Placer,06061
+Lincolnton,NC,Lincoln,37109
+Linda,CA,Yuba,06115
+Litchfield Park,AZ,Maricopa,04013
+Lithia,FL,Hillsborough,12057
+Lithia Springs,GA,Douglas,13097
+Lithonia,GA,DeKalb,13089
+Little Elm,TX,Denton,48121
+Locust Grove,GA,Henry,13151
+Lodi,CA,San Joaquin,06077
+Loganville,GA,Gwinnett,13135
+Long Beach,CA,Los Angeles,06037
+Longwood,FL,Seminole,12117
+Los Angeles,CA,Los Angeles,06037
+Loxahatchee,FL,Palm Beach,12099
+Lutz,FL,Hillsborough,12057
+Mableton,GA,Cobb,13067
+Maiden,NC,Catawba,37035
+Manteca,CA,San Joaquin,06077
+Margate,FL,Broward,12011
+Maricopa,AZ,Pinal,04021
+Marietta,GA,Cobb,13067
+Marysville,CA,Yuba,06115
+Matthews,NC,Mecklenburg,37119
+Mc Leansville,NC,Guilford,37081
+McDonough,GA,Henry,13151
+McKinney,TX,Collin,48085
+Mcdonough,GA,Henry,13151
+Mckinney,TX,Collin,48085
+Mebane,NC,Alamance,37001
+Melbourne,FL,Brevard,12009
+Mentone,CA,San Bernardino,06071
+Mesa,AZ,Maricopa,04013
+Miami,FL,Miami-Dade,12086
+Miami Gardens,FL,Miami-Dade,12086
+Miami Lakes,FL,Miami-Dade,12086
+Middleburg,FL,Clay,12019
+Midland,NC,Cabarrus,37025
+Midlothian,TX,Ellis,48139
+Minneola,FL,Lake,12069
+Mint Hill,NC,Mecklenburg,37119
+Miramar,FL,Broward,12011
+Mission Hills,CA,Los Angeles,06037
+Missouri City,TX,Fort Bend,48157
+Monroe,GA,Walton,13297
+Monroe,NC,Union,37179
+Montclair,CA,San Bernardino,06071
+Mooresville,NC,Iredell,37097
+Moreno Valley,CA,Riverside,06065
+Mount Dora,FL,Lake,12069
+Mount Holly,NC,Gaston,37071
+Mulberry,FL,Polk,12105
+Murfreesboro,TN,Rutherford,47149
+Naples,FL,Collier,12021
+Nashville,TN,Davidson,47037
+New Caney,TX,Montgomery,48339
+New Port Richey,FL,Pasco,12101
+New Smyrna Beach,FL,Volusia,12127
+Newnan,GA,Coweta,13077
+Nokomis,FL,Sarasota,12115
+Norcross,GA,Gwinnett,13135
+North Fort Myers,FL,Lee,12071
+North Highlands,CA,Sacramento,06067
+North Hills,CA,Los Angeles,06037
+North Hollywood,CA,Los Angeles,06037
+North Las Vegas,NV,Clark,32003
+North Palm Beach,FL,Palm Beach,12099
+North Port,FL,Sarasota,12115
+Northridge,CA,Los Angeles,06037
+Oakley,CA,Contra Costa,06013
+Ocoee,FL,Orange,12095
+Odessa,FL,Pasco,12101
+Oldsmar,FL,Pinellas,12103
+Olivehurst,CA,Yuba,06115
+Opa Locka,FL,Miami-Dade,12086
+Orange City,FL,Volusia,12127
+Orange Park,FL,Clay,12019
+Orangevale,CA,Sacramento,06067
+Orlando,FL,Orange,12095
+Ormond Beach,FL,Volusia,12127
+Osteen,FL,Volusia,12127
+Oviedo,FL,Seminole,12117
+Oxford,GA,Newton,13217
+Palm Bay,FL,Brevard,12009
+Palm Beach Gardens,FL,Palm Beach,12099
+Palm Coast,FL,Flagler,12035
+Palm Harbor,FL,Pinellas,12103
+Palm Springs,FL,Palm Beach,12099
+Palmdale,CA,Los Angeles,06037
+Palmetto,FL,Manatee,12081
+Palmetto,GA,Fulton,13121
+Panorama City,CA,Los Angeles,06037
+Parkland,FL,Broward,12011
+Parrish,FL,Manatee,12081
+Pasadena,TX,Harris,48201
+Peachtree City,GA,Fayette,13113
+Pembroke Pines,FL,Broward,12011
+Pinellas Park,FL,Pinellas,12103
+Pittsburg,CA,Contra Costa,06013
+Plano,TX,Collin,48085
+Plant City,FL,Hillsborough,12057
+Plantation,FL,Broward,12011
+Plumas Lake,CA,Yuba,06115
+Poinciana,FL,Polk,12105
+Pompano Beach,FL,Broward,12011
+Ponder,TX,Denton,48121
+Ponte Vedra,FL,St. Johns,12109
+Port Charlotte,FL,Charlotte,12015
+Port Richey,FL,Pasco,12101
+Port Saint Lucie,FL,St. Lucie,12111
+Powder Springs,GA,Paulding,13223
+Princeton,TX,Collin,48085
+Punta Gorda,FL,Charlotte,12015
+Queen Creek,AZ,Pinal,04021
+Rancho Cordova,CA,Sacramento,06067
+Rancho Cucamonga,CA,San Bernardino,06071
+Red Oak,TX,Ellis,48139
+Reseda,CA,Los Angeles,06037
+Rialto,CA,San Bernardino,06071
+Richardson,TX,Dallas,48113
+Rio Linda,CA,Sacramento,06067
+Rio Vista,CA,Solano,06095
+Riverdale,GA,Fulton,13121
+Riverside,CA,Riverside,06065
+Riverview,FL,Hillsborough,12057
+Roanoke,TX,Denton,48121
+Rockledge,FL,Brevard,12009
+Rocklin,CA,Placer,06061
+Rockmart,GA,Paulding,13223
+Rockwall,TX,Rockwall,48397
+Rockwell,NC,Rowan,37159
+Roseville,CA,Placer,06061
+Roswell,GA,Cobb,13067
+Rotonda West,FL,Charlotte,12015
+Rowlett,TX,Dallas,48113
+Royal Palm Beach,FL,Palm Beach,12099
+Ruskin,FL,Hillsborough,12057
+Sacramento,CA,Sacramento,06067
+Safety Harbor,FL,Pinellas,12103
+Saint Augustine,FL,St. Johns,12109
+Saint Cloud,FL,Osceola,12097
+Saint Johns,FL,St. Johns,12109
+Saint Petersburg,FL,Pinellas,12103
+Salisbury,NC,Rowan,37159
+San Bernardino,CA,San Bernardino,06071
+San Fernando,CA,Los Angeles,06037
+San Jacinto,CA,Riverside,06065
+San Tan Valley,AZ,Maricopa,04013
+Sanford,FL,Seminole,12117
+Santa Clarita,CA,Los Angeles,06037
+Sarasota,FL,Sarasota,12115
+Saugus,CA,Los Angeles,06037
+Scottsdale,AZ,Maricopa,04013
+Seffner,FL,Hillsborough,12057
+Seminole,FL,Pinellas,12103
+Shenandoah,TX,Montgomery,48339
+Smyrna,GA,Cobb,13067
+Smyrna,TN,Rutherford,47149
+Snellville,GA,Gwinnett,13135
+Sorrento,FL,Lake,12069
+Spring,TX,Harris,48201
+Spring Hill,FL,Hernando,12053
+Spring Hill,TN,Maury,47119
+Springfield,TN,Robertson,47147
+St Augustine,FL,St. Johns,12109
+St Cloud,FL,Osceola,12097
+St Johns,FL,St. Johns,12109
+St. Cloud,FL,Osceola,12097
+St. Petersburg,FL,Pinellas,12103
+Stafford,TX,Fort Bend,48157
+Stallings,NC,Union,37179
+Statesville,NC,Iredell,37097
+Stockbridge,GA,Henry,13151
+Stone Mountain,GA,DeKalb,13089
+Stonecrest,GA,DeKalb,13089
+Sugar Hill,GA,Gwinnett,13135
+Suisun City,CA,Solano,06095
+Sun City,AZ,Maricopa,04013
+Sun City Center,FL,Hillsborough,12057
+Sunrise,FL,Broward,12011
+Surprise,AZ,Maricopa,04013
+Suwanee,GA,Gwinnett,13135
+Tamarac,FL,Broward,12011
+Tampa,FL,Hillsborough,12057
+Tavares,FL,Lake,12069
+Tempe,AZ,Maricopa,04013
+Temple,GA,Carroll,13045
+Temple Terrace,FL,Hillsborough,12057
+Terrell,TX,Kaufman,48257
+The Colony,TX,Denton,48121
+The Woodlands,TX,Montgomery,48339
+Thousand Oaks,CA,Ventura,06111
+Titusville,FL,Brevard,12009
+Tolleson,AZ,Maricopa,04013
+Trinity,FL,Pasco,12101
+Troutman,NC,Iredell,37097
+Tucker,GA,Gwinnett,13135
+Union City,GA,Fulton,13121
+Vacaville,CA,Solano,06095
+Vallejo,CA,Solano,06095
+Valrico,FL,Hillsborough,12057
+Van Nuys,CA,Los Angeles,06037
+Venice,FL,Sarasota,12115
+Vero Beach,FL,Indian River,12061
+Villa Rica,GA,Carroll,13045
+Waxahachie,TX,Ellis,48139
+Waxhaw,NC,Union,37179
+Wellington,FL,Palm Beach,12099
+Wesley Chapel,FL,Pasco,12101
+West Melbourne,FL,Brevard,12009
+West Palm Beach,FL,Palm Beach,12099
+Weston,FL,Broward,12011
+White House,TN,Robertson,47147
+Whitsett,NC,Guilford,37081
+Wilmington,CA,Los Angeles,06037
+Winder,GA,Barrow,13013
+Windermere,FL,Orange,12095
+Wingate,NC,Union,37179
+Winston Salem,NC,Forsyth,37067
+Winter Garden,FL,Orange,12095
+Winter Haven,FL,Polk,12105
+Winter Park,FL,Seminole,12117
+Winter Springs,FL,Seminole,12117
+Woodland,CA,Yolo,06113
+Woodstock,GA,Cherokee,13057
+Wylie,TX,Dallas,48113
+Youngtown,AZ,Maricopa,04013
+Yucaipa,CA,San Bernardino,06071
+Yulee,FL,Nassau,12089
+Zephyrhills,FL,Pasco,12101

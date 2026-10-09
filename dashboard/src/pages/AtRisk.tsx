@@ -130,7 +130,7 @@ function AtRisk(): React.ReactElement {
       <p className={css.sectionNote}>
         Each resident counted once, in the oldest bucket carrying a balance. Buckets are
         computed at read time from the due date, so the thresholds can move without
-        regenerating 95,000 payment rows.
+        regenerating 660,000 payment rows.
       </p>
 
       <div className={own.ageing}>

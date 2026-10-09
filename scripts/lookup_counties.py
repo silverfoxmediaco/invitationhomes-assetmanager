@@ -23,7 +23,7 @@ REF = os.path.join(os.path.dirname(__file__), "..", "data", "reference")
 LISTINGS = os.path.join(REF, "invitation-homes-listings.csv")
 OUT = os.path.join(REF, "listing-city-county.csv")
 API = "https://geo.fcc.gov/api/census/area?lat={lat}&lon={lon}&format=json"
-FIELDS = ["city", "state", "county", "countyFips", "latitude", "longitude"]
+FIELDS = ["city", "state", "county", "countyFips"]  # no coordinates: they locate a real home
 SUFFIXES = (" County", " Parish", " Municipality")
 
 
@@ -64,8 +64,7 @@ def main() -> None:
                 if name.endswith(s):
                     name = name[: -len(s)]
             w.writerow({"city": key[0], "state": key[1], "county": name,
-                        "countyFips": hits[0]["county_fips"],
-                        "latitude": r["latitude"], "longitude": r["longitude"]})
+                        "countyFips": hits[0]["county_fips"]})
             f.flush()
             if i % 100 == 0:
                 print(f"{i}/{len(todo)}", flush=True)

@@ -1,7 +1,7 @@
 {
   "name": "dashboard",
   "private": true,
-  "version": "0.4.6",
+  "version": "0.5.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,7 +17,7 @@
     "site:versions": "osdk site version list"
   },
   "dependencies": {
-    "@invitation-homes-asset-management/sdk": "latest",
+    "@invitation-homes-asset-management/sdk": "^0.2.0",
     "@osdk/client": "^2.70.0",
     "@osdk/foundry": "^2.75.0",
     "@osdk/oauth": "^1.1.0",

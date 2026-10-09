@@ -39,8 +39,13 @@ import { fetchAll, fetchLatestComps, fetchWhere } from "./fetchAll";
  */
 
 export const MANAGEMENT_FEE = 0.06;
-/** Price lost to under-market rent above which a bundle should be repriced before sale. */
-export const RESET_THRESHOLD = 0.03;
+/**
+ * Among bundles worth selling, the share of price lost to under-market rent
+ * above which rents should be reset first. 3% was the first setting and it
+ * fired on 17 of 20 markets, because under-market rent costs every market
+ * 3-9% of its price; a signal that is always on says nothing.
+ */
+export const RESET_THRESHOLD = 0.05;
 
 export const MARKET_NAMES: Record<string, string> = {
   atlanta: "Atlanta",
@@ -374,12 +379,15 @@ export function usePriced(
       const rentDiscount =
         buyerCap > 0 ? (b.underMarketPerYear * (1 - MANAGEMENT_FEE)) / buyerCap : 0;
       const capOnCost = b.costBasis > 0 ? b.noi / b.costBasis : 0;
-      const signal: PricedBundle["signal"] =
-        impliedPrice > 0 && rentDiscount / impliedPrice >= RESET_THRESHOLD
+      // Whether to sell comes first: a bundle earning less on what was paid
+      // for it than the portfolio does. How to sell comes second: if a buyer
+      // would capture a large rent uplift, reset rents before going to market.
+      const sellable = capOnCost < portfolioCapOnCost;
+      const signal: PricedBundle["signal"] = !sellable
+        ? "hold"
+        : impliedPrice > 0 && rentDiscount / impliedPrice >= RESET_THRESHOLD
           ? "reset"
-          : capOnCost < portfolioCapOnCost
-            ? "sell"
-            : "hold";
+          : "sell";
       return {
         ...b,
         capOnCost,

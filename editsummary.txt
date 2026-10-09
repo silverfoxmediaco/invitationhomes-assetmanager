@@ -1880,3 +1880,58 @@ THE SECOND FINDING ON THE PAGE
   Stale copy to fix with final numbers: Overview notice + "76 communities,
   9 states", Landing "76 communities and 3,001 homes", AtRisk "95,000
   payment rows", Collections "95,663 payments".
+
+--------------------------------------------------------------------------------
+2026-10-09  20,000-home data LIVE, Dispositions page + Foundry write-back (0.5.2)
+--------------------------------------------------------------------------------
+  Scrape: 4,553 listings, 0 failures (4 requests in flight, ~1.6/s).
+  Counties: 624 listing cities via FCC API.
+  Generator: per-market floor of 400 scattered homes (pure listing proportion
+    gave Austin 16 and Chicago 65; listings measure vacancy, not ownership).
+    Markets now 409 (Austin) to 2,380 (Atlanta). New output markets.csv.
+  validate.py: all checks passed. check_disposition.py: portfolio NOI
+    $15,218/home, 5.5% on cost, $5.53B at 5.5% vs $5.58B paid, rent discount
+    $214.6M.
+
+  UPLOADED all 13 datasets via scripts/upload_all.py (new: markets,
+  ri.foundry.main.dataset.17cad456-959e-4fd6-9ad5-79ff219065ce). Every
+  readTable row count matched the CSV; every object type's ACCURATE count
+  matched too: 20,000 properties, 58,981 leases, 660,591 payments, 39,213
+  residents, 200,705 work orders, 259,885 expenses, 60,000 assessments and
+  bills, 29,520 comps, 106 counties, 137 vendors, 76 communities, 20 markets.
+
+  Ontology (done in Ontology Manager this session, from my tab):
+    Market Strategy object type on `markets` (PK marketId, title marketName),
+      edits allowed, object edit history ON.
+    Set Market Strategy action (set-market-strategy): modifies strategy
+      (required, core | exit) and note; updatedAt = Current Time,
+      updatedBy = Current User, set by Foundry, never by the browser.
+    Properties: market and homeType mapped (18 of 18 columns).
+  Developer Console: Market Strategy + Set Market Strategy added to the app's
+    resources; SDK 0.2.0 generated on generator 2.70.0 (kept, not 2.76.0,
+    to match @osdk/client 2.70); app now on ^0.2.0.
+
+  App:
+    useMarketStrategy.ts: reads the 20 strategies, Exit checkbox applies the
+      action and reads back. First write-back in the app.
+    Dispositions: exit list moved from the URL to Foundry (cap rate stays in
+      the URL as a what-if). Verified live: Chicago set to exit, read back
+      from Foundry with user id + timestamp, then returned to core. All 20
+      markets start the meeting as core.
+    Signal reworked: 3% threshold fired on 17 of 20 markets. Now Sell
+      candidate = NOI on cost below portfolio; of those, Reset rents, then
+      sell when rent discount >= 5% of price. Live: 4 reset-then-sell
+      (San Antonio, Dallas, Austin, Chicago), 4 sell (Houston, Tampa,
+      Jacksonville, Orlando), 12 hold.
+    Demo hazards fixed: Exit cell is the click target (16px box missed);
+      sale package panel renders the same layout empty or full, because the
+      first tick pushed the table down and the next click hit another row
+      (verified: table top unchanged across tick/untick).
+    Copy updated for 20,000 homes: Overview notice and caption, Landing,
+      At-risk, Collections (660,591 payments, 180 groups).
+    Every page smoke-tested locally on the new data: 2-4 s each, no errors.
+  Deployed 0.5.0, 0.5.1, 0.5.2 via npm run deploy, bundle grepped each time.
+
+  Repo: data/reference/invitation-homes-listings.csv is gitignored (real
+  addresses); listing-city-county.csv keeps city/state/county/FIPS only.
+  CLAUDE.md gotchas 13 (aggregate truncation + 10k app cap) and 14 (upload).

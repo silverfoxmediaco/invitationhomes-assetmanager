@@ -122,9 +122,12 @@
   color: var(--ih-corporate);
 }
 
+/* Two lines reserved either way, so a long market list cannot push the
+   figures (and the table) down when it wraps. */
 .ihDpPackageEmpty,
 .ihDpPackageList {
-  margin: 0;
+  margin: 0 0 var(--ih-space-sm);
+  min-height: 3em;
   font-size: 14px;
   line-height: 1.5;
   color: var(--ih-text-secondary);
@@ -146,11 +149,31 @@
   background: #f3f7f7;
 }
 
+.ihDpTable td.ihDpCheckCell {
+  padding: 0;
+}
+
+.ihDpCheckLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
 .ihDpCheck {
   width: 16px;
   height: 16px;
   accent-color: var(--ih-corporate);
   cursor: pointer;
+}
+
+.ihDpSaving {
+  display: block;
+  font-size: 10px;
+  color: var(--ih-n6);
 }
 
 .ihDpMarket {

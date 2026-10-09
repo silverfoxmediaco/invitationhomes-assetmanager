@@ -45,7 +45,7 @@ function Landing(): React.ReactElement {
 
           <h1 className={css.ihDoorTitle}>Portfolio Operations</h1>
           <p className={css.ihDoorLede}>
-            Where the portfolio stands today across 76 communities and 3,001 homes: which
+            Where the portfolio stands today across 20 markets and 20,000 homes: which
             homes are priced under their market, what each one costs to hold, and which
             residents are falling behind.
           </p>

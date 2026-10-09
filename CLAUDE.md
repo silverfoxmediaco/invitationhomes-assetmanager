@@ -214,6 +214,23 @@ than it saves.
     Evaluated 2026-09-21 and PARKED: the bug it would have prevented was
     already fixed, and the migration is an afternoon of plumbing.
 
+13. **`/aggregate` truncates silently, and the app gets a lower cap than you.**
+    A grouping with more groups than `maxGroupCount` drops the rest and STILL
+    reports `accuracy: ACCURATE`; the only sign is `excludedItems` (measured
+    2026-10-09: 95,663 payments grouped by id, cap 30,000, came back ACCURATE
+    with 65,663 excluded). `aggregate.ts` now throws on any `excludedItems`.
+    And the app's OAuth client is capped at **10,000 groups** where a user
+    token was allowed 30,000 (gotcha 10 again). Per-home sums at 20,000 homes
+    therefore run in ten slices, `startsWith PROP-0` through `PROP-9`.
+
+14. **Re-upload with `scripts/upload_all.py`, never by hand.** Dry run by
+    default. It keeps each dataset's existing column names and types (some
+    are lower-case `propertyid`, and the object types map to those), writes
+    the schema in CSV column order, uses the v1 atomic SNAPSHOT upload,
+    re-applies the schema, and reads every table back against the CSV row
+    count. It refuses to run if any column would be dropped. All thirteen
+    datasets, every time (gotcha 9).
+
 ## Foundry credentials
 
 - `FOUNDRY_TOKEN` lives in `~/.zshenv`, never just `export`ed — an export-only

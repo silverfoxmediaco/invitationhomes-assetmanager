@@ -52,10 +52,10 @@ function Overview(): React.ReactElement {
       </div>
 
       <p className={css.syntheticNotice}>
-        Invitation Homes is a real company. This data is not. The 76 communities,
-        their markets, cities and advertised starting rents were read from
-        invitationhomes.com; every home, resident, lease and payment below that
-        level is generated.
+        Invitation Homes is a real company. This data is not. Its 20 markets, 76
+        build-to-rent communities and the cities, home sizes and rent levels of its
+        live listings were read from invitationhomes.com; every home, street address,
+        resident, lease and payment is generated.
       </p>
 
       <p className={css.verdict}>
@@ -79,7 +79,7 @@ function Overview(): React.ReactElement {
         <div className={css.figure}>
           <div className={css.figureLabel}>Homes</div>
           <div className={css.figureValue}>{num.format(data.homes)}</div>
-          <div className={css.figureNote}>76 communities, 9 states</div>
+          <div className={css.figureNote}>20 markets, 76 communities</div>
         </div>
         <div className={css.figure}>
           <div className={css.figureLabel}>Occupancy</div>

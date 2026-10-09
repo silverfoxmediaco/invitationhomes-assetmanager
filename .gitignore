@@ -19,3 +19,7 @@ dist/
 # could be regenerated instead — but committing it pins the exact rows that were
 # uploaded to Foundry. If generate.py changes later, a regeneration would no
 # longer match what the ontology is serving, and there would be no way back.
+
+# Raw listing scrape: real street addresses from invitationhomes.com. Used only
+# locally as a sampling distribution; regenerate with scripts/scrape_listings.py.
+data/reference/invitation-homes-listings.csv
